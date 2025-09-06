@@ -17,3 +17,7 @@ app.listen(process.env.PORT, () =>
 })
 
 app.use(routes);
+
+app.use((req,res) => {
+    res.status(404).render("404", {title: "404"});
+})
