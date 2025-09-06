@@ -22,6 +22,9 @@
         <input type="text" name="username" placeholder="Username korisnika" required>
         <button type="submit">Pošalji pozivnicu</button>
     </form>
+<% if (error) { %>
+    <div class="alert alert-danger"><%= error %></div>
+<% } %>
 
     <!-- Ciljevi grupe -->
     <h2>Ciljevi grupe</h2>
