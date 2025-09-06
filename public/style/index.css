@@ -285,7 +285,7 @@ nav {
     background-image: url("/images/Background.png");
     background-position: center center;
     background-size: cover;
-    min-height: 100vh;
+    min-height: 101.7vh;
     position: relative;
     color: white;
     margin-top: -1rem;
