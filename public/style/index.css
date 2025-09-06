@@ -9,7 +9,7 @@ body {
 
 /* Navigacija */
 nav {
-    background-color: #0E0E0E;
+    background-color: #1e1e1e;
     padding: 0.75rem !important;
     position: absolute;
     margin-top: 1rem;
@@ -20,7 +20,7 @@ nav {
     border-radius: 1rem;
 }
 .nav-logo img {
-    width: 164px;
+    width: 12.5rem;
     height: auto;
 }
 .nav-link-style {
