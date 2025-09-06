@@ -57,47 +57,61 @@
           <!-- Aktivni ciljevi -->
           <h2 class="card-title">Aktivni ciljevi</h2>
           <% const activeGoals = Array.isArray(goals) ? goals.filter(g => !g.completed) : []; %>
+          <div class="goals-scroll">
           <% if (activeGoals.length === 0) { %>
             <p>Nema aktivnih ciljeva</p>
           <% } else { %>
             <% activeGoals.forEach(goal => { %>
               <% let amountValue = (amountToAdd && amountToAdd.goalId == goal.id) ? amountToAdd.amount : ''; %>
-              <div class="card mb-3 bg-secondary">
-                <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
-                  <strong class="mb-1"><%= goal.goal_name %></strong>
-                  <span><%= goal.current %> / <%= goal.target %>€</span>
-
-                  <!-- Dodavanje novca -->
-                  <form action="/groups/<%= group.id %>/add-money/<%= goal.id %>" method="POST" class="d-flex gap-2 flex-wrap mt-2 w-100">
-                    <input type="number" name="amount" placeholder="Iznos" min="0" required class="form-control flex-grow-1" style="min-width: 100px;" value="<%= amountValue %>">
-                    
-                    <% if (errorAddMoney && typeof errorAddMoney === 'object' && amountToAdd && goal.id == amountToAdd.goalId) { %>
-                      <input type="hidden" name="confirm" value="1">
-                      <button type="submit" class="btn btn-warning">Potvrdi i dodaj</button>
-                    <% } else { %>
-                      <button type="submit" class="btn btn-success">Dodaj</button>
-                    <% } %>
-                  </form>
-
-                  <% if (errorAddMoney && typeof errorAddMoney === 'object' && (!amountToAdd || goal.id != amountToAdd.goalId)) { %>
-                    <div class="text-warning mt-1"><%= errorAddMoney.message %></div>
-                  <% } %>
+              <div class="goal-card mb-3 bg-secondary">
+                <div class="goal-header d-flex justify-content-between align-items-center">
+                  <strong class="goal-name"><%= goal.goal_name %></strong>
+                  <span class="goal-progress-text"><%= goal.current %> / <%= goal.target %>€</span>
                 </div>
+                <div class="progress mb-2">
+                  <% let progressPercent = Math.min(100, Math.floor((goal.current/goal.target)*100)); %>
+                  <div class="progress-bar" role="progressbar" style="width: <%= progressPercent %>%;" aria-valuenow="<%= progressPercent %>" aria-valuemin="0" aria-valuemax="100"><%= progressPercent %>%</div>
+                </div>
+
+                <!-- Dodavanje novca -->
+                <form action="/groups/<%= group.id %>/add-money/<%= goal.id %>" method="POST" class="d-flex gap-2 flex-wrap mt-2 w-100">
+                  <input type="number" name="amount" placeholder="Iznos" min="0" required class="form-control flex-grow-1" style="min-width: 100px;" value="<%= amountValue %>">
+                  
+                  <% if (errorAddMoney && typeof errorAddMoney === 'object' && amountToAdd && goal.id == amountToAdd.goalId) { %>
+                    <input type="hidden" name="confirm" value="1">
+                    <button type="submit" class="btn btn-warning">Potvrdi i dodaj</button>
+                  <% } else { %>
+                    <button type="submit" class="btn btn-success">Dodaj</button>
+                  <% } %>
+                </form>
+
+                <% if (errorAddMoney && typeof errorAddMoney === 'object' && (!amountToAdd || goal.id != amountToAdd.goalId)) { %>
+                  <div class="text-warning mt-1"><%= errorAddMoney.message %></div>
+                <% } %>
               </div>
             <% }) %>
           <% } %>
+          </div>
 
-          <!-- Completed goals -->
+          <!-- Završeni ciljevi -->
           <h2 class="card-title mt-4">Završeni ciljevi</h2>
           <% const completedGoals = Array.isArray(goals) ? goals.filter(g => g.completed) : []; %>
           <% if (completedGoals.length === 0) { %>
             <p>Nema završених ciljeva</p>
           <% } else { %>
-            <ul>
+            <div class="completed-goals">
               <% completedGoals.forEach(goal => { %>
-                <li><%= goal.goal_name %> (Target: <%= goal.target %>€) ✅</li>
+                <div class="goal-card completed mb-2">
+                  <div class="goal-header d-flex justify-content-between align-items-center">
+                    <strong class="goal-name"><%= goal.goal_name %></strong>
+                    <span class="goal-progress-text"><%= goal.target %>€ ✅</span>
+                  </div>
+                  <div class="progress mb-1">
+                    <div class="progress-bar bg-success" role="progressbar" style="width:100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div>
+                  </div>
+                </div>
               <% }) %>
-            </ul>
+            </div>
           <% } %>
 
           <!-- Dodavanje novog cilja -->

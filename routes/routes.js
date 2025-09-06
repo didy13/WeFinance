@@ -263,7 +263,7 @@ router.post("/groups/:groupId/add-member", isAuthenticated, async (req, res) => 
 
 async function renderGroupWithError(res, groupId, options = {}) {
     try {
-        const [group] = await new Promise((resolve, reject) => 
+        const [group] = await new Promise((resolve, reject) =>
             connection.query("SELECT * FROM table_group WHERE id = ?", [groupId], (err, results) => err ? reject(err) : resolve(results))
         );
         if (!group) return res.status(404).send("Grupa nije pronađena");
