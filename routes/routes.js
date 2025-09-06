@@ -202,7 +202,7 @@ router.get("/groups", isAuthenticated, (req, res) => {
 
 
 // --- NEW GROUP PAGE ---
-router.get("/groups/new", isAuthenticated, (req, res) => {
+router.get("/newgroup", isAuthenticated, (req, res) => {
     res.render("new_group", {
         title: "WeInvest - Kreiraj novu grupu",
         user: req.session.user,
@@ -210,7 +210,7 @@ router.get("/groups/new", isAuthenticated, (req, res) => {
     });
 });
 
-router.post("/groups/new", isAuthenticated, async (req, res) => {
+router.post("/newgroup", isAuthenticated, async (req, res) => {
     const { name } = req.body;
 
     if (!name || name.trim() === "") {

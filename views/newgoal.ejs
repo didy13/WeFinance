@@ -6,7 +6,7 @@
     <%- include("./partials/nav.ejs") %>
     <form action="/creategoal" method="POST" class="dashboard-page__form">
         <input name="name" type="text" placeholder="Ime goal-a...">
-        <input name="target" type="text" placeholder="Cilj goal-a...">
+        <input name="target" type="number" placeholder="Cilj goal-a...">
         <span style="color: red;"> <%= error %></span>
         <button type="submit" class="dashboard-page__button">Kreiraj novi cilj</button>
     </form>
