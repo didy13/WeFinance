@@ -19,9 +19,36 @@ Group.setConnection(connection);
 Invite.setConnection(connection);
 
 cron.schedule("0 0 * * *", () => {
-    console.log("🕛 Running daily streak check for all users...");
-    updateAllStreaks();
+  console.log("🕛 Running daily streak and reset check...");
+
+  // Step 1: Get all users with their daily goal and daily saved
+  const query = "SELECT id, streak, daily_goal, daily_saved FROM users";
+  connection.query(query, (err, users) => {
+    if (err) return console.error(err);
+
+    users.forEach(user => {
+      let newStreak = user.streak;
+
+      // Step 2: Increment streak if daily goal was met
+      if (user.daily_goal !== null && user.daily_saved >= user.daily_goal) {
+        newStreak += 1;
+      } else {
+        newStreak = 0; // reset streak if goal not met
+      }
+
+      // Step 3: Update streak and reset daily_saved
+      const updateQuery = `
+        UPDATE users
+        SET streak = ?, daily_saved = 0
+        WHERE id = ?
+      `;
+      connection.query(updateQuery, [newStreak, user.id], err2 => {
+        if (err2) console.error(err2);
+      });
+    });
+  });
 });
+
 
 router.use(session({
     secret: process.env.SESSION_SECRET || "defaultsecret",
@@ -443,6 +470,73 @@ router.post("/creategoal", isAuthenticated, (req, res) => {
 });
 
 router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
+  const { goalbalance, goalId } = req.body; // goalId comes from the input/button
+  const userId = req.session.user.id;
+  const goals = await new Promise((resolve, reject) => {
+    connection.query("SELECT id, name, current, target FROM goals WHERE user_id = ?", [req.session.user.id], (err, results) => {
+        if (err) return reject(err);
+        resolve(results);
+    });
+    });
+  const [user] = await new Promise((resolve, reject) => {
+        connection.query("SELECT id, username, balance, streak FROM users WHERE id = ?", [req.session.user.id], (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
+  const amount = parseFloat(goalbalance);
+  if (isNaN(amount) || amount <= 0) {
+    return res.redirect("/profile"); // invalid input, just go back
+  }
+
+  // Step 1: get user's current balance and goal info
+  const query = `
+    SELECT u.balance, g.current, g.target
+    FROM users u
+    INNER JOIN goals g ON u.id = g.user_id
+    WHERE u.id = ? AND g.id = ?
+  `;
+
+  connection.query(query, [userId, goalId], (err, results) => {
+    if (err) return res.status(500).send("DB error: " + err.message);
+    if (results.length === 0) return res.redirect("/profile"); // no goal found
+
+    const userBalance = parseFloat(results[0].balance);
+    const goalCurrent = parseFloat(results[0].current);
+    const goalTarget = parseFloat(results[0].target);
+
+    if (amount > userBalance) {
+        // not enough money in user balance
+        return res.render("profile", {user, goals, error: "Nemate dovoljno novca", title: "WeInvest - Profile", css: 'profile'}); 
+      }
+
+    const newGoalCurrent = Math.min(goalCurrent + amount, goalTarget);
+    const newUserBalance = userBalance - amount;
+    const updateDailySavedQuery = `
+    UPDATE users
+    SET daily_saved = daily_saved + ?
+    WHERE id = ?
+    `;
+    connection.query(updateDailySavedQuery, [amount, userId], err => {
+        if (err) console.error(err);
+    });
+    // Step 2: update both user balance and goal current
+    const updateQuery = `
+      UPDATE users u
+      JOIN goals g ON g.user_id = u.id
+      SET g.current = ?, u.balance = ?
+      WHERE u.id = ? AND g.id = ?
+    `;
+    connection.query(updateQuery, [newGoalCurrent, newUserBalance, userId, goalId], (err2, result) => {
+      if (err2) return res.status(500).send("DB update error: " + err2.message);
+      res.redirect("/profile"); // back to profile after update
+    });
+  });
+});
+
+
+
+
     const { goalbalance, goalId } = req.body;
     const userId = req.session.user.id;
     const amount = parseFloat(goalbalance);
@@ -494,11 +588,12 @@ router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
         console.error(err);
         res.status(500).send("Error adding money to goal");
     }
-});
+;
 router.post("/changebalance", isAuthenticated, async (req, res) => {
     const userId = req.session.user.id;
     let { balans } = req.body;
     balans = parseFloat(balans);
+
 
     if (isNaN(balans) || balans <= 0) {
         // vrati profil sa greškom
