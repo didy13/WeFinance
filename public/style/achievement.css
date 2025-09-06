@@ -1,0 +1,74 @@
+body {
+    background: #0f1115;
+    color: #e5e5e5;
+    font-family: "Montserrat", sans-serif;
+}
+
+.achievement-card {
+    background: #1f1f25;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.achievement-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.6);
+}
+
+.achievement-icon {
+    margin-bottom: 10px;
+}
+
+.achievement-icon i {
+    color: white;
+    transition: transform 0.2s;
+}
+
+.achievement-icon i:hover {
+    transform: scale(1.2);
+}
+
+.achievement-name {
+    color: #fff;
+    font-weight: 600;
+}
+
+.achievement-desc {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.badge {
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+/* Boje po tipu achievementa preko CSS */
+.achievement-icon.bronze,
+.badge.bronze {
+    color: #cd7f32;
+}
+
+.achievement-icon.silver,
+.badge.silver {
+    color: #c0c0c0;
+}
+
+.achievement-icon.gold,
+.badge.gold {
+    color: #ffd700;
+}
+
+.achievement-icon.diamond,
+.badge.diamond {
+    color: #b9f2ff;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .achievement-card {
+        margin-bottom: 20px;
+    }
+}
