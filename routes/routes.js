@@ -139,7 +139,41 @@ router.put("/:id/goal", (req, res) => {
       res.json({ message: "Balance updated successfully" });
     });
   });
-  
+  router.get("/groups", isAuthenticated, (req, res) => {
+    // Primer: uzimamo grupe iz baze za trenutnog korisnika
+    const userId = req.session.user.id; // pretpostavimo da si čuvao id
+    const query = "SELECT * FROM groups WHERE members LIKE ?";
+    connection.query(query, [`%${userId}%`], (err, results) => {
+        if (err) return res.status(500).send("Greška na serveru");
+        res.render("groups", { title: "WeInvest - Grupe", user: req.session.user, groups: results });
+    });
+});
+
+// --- Pregled jedne grupe ---
+router.get("/groups/:id", isAuthenticated, (req, res) => {
+    const groupId = req.params.id;
+
+    // Uzimamo grupu i njene članove i ciljeve
+    const query = `
+        SELECT g.*, 
+               (SELECT JSON_ARRAYAGG(username) FROM users u JOIN group_members gm ON u.id = gm.user_id WHERE gm.group_id = g.id) AS members,
+               (SELECT JSON_ARRAYAGG(goal_name) FROM group_goals gg WHERE gg.group_id = g.id) AS goals
+        FROM groups g
+        WHERE g.id = ?
+    `;
+
+    connection.query(query, [groupId], (err, results) => {
+        if (err) return res.status(500).send("Greška na serveru");
+        if (results.length === 0) return res.status(404).send("Grupa nije pronađena");
+
+        const group = results[0];
+        // JSON_ARRAYAGG vraća string, pa parsiramo
+        group.members = JSON.parse(group.members || '[]');
+        group.goals = JSON.parse(group.goals || '[]');
+
+        res.render("group_detail", { title: `WeInvest - ${group.name}`, user: req.session.user, group });
+    });
+});  
   // Get user info
   router.get("/:id", (req, res) => {
     const username = req.params.username;
