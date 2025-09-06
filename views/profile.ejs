@@ -1,52 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include("./partials/head.ejs") %>
+<%- include("./partials/head.ejs") %>
 <body>
     <%- include("./partials/nav.ejs") %>
-    <div class="dashboard-container">
-        <div class="dashboard-header">
-            <div class="dashboard-balance">
-                <span class="dashboard-label">Balans:</span>
-                <span class="dashboard-amount"><%= user.balance %> $</span>
+
+    <div class="dashboard-container" style="padding:40px; background:#121212; color:#fff; min-height:calc(100vh - 120px);">
+        <!-- Header sa korisnikom i logout -->
+        <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+            <div class="dashboard-user-info">
+                <span style="font-weight:bold; font-size:18px;">Korisnik: <%= user.username %></span>
             </div>
-            <div class="dashboard-username">
-                <span><%= user.username %></span>
+            <div>
+                <form action="/logout" method="GET" style="display:inline;">
+                    <button type="submit" style="background:#e74c3c; color:#fff; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">Logout</button>
+                </form>
             </div>
         </div>
-        <div class="dashboard-page__change-balance">
-            <form action="/changebalance" method="POST" class="dashboard-page__form">
-                <input name="balans" step="0.01" type="number">
-                <button type="submit" class="dashboard-page__button">Promeni balans</button>
+
+        <!-- Balans -->
+        <div class="dashboard-balance" style="margin-bottom:20px;">
+            <span style="font-weight:bold;">Balans:</span>
+            <span><%= user.balance %> $</span>
+        </div>
+
+        <!-- Promena balansa -->
+        <div class="dashboard-change-balance" style="margin-bottom:30px;">
+            <form action="/changebalance" method="POST" style="display:flex; gap:10px; align-items:center;">
+                <input name="balans" step="0.01" type="number" placeholder="Novi balans" required style="padding:5px; border-radius:5px; border:none;">
+                <button type="submit" style="padding:5px 10px; border-radius:5px; border:none; background:#3498db; color:#fff; cursor:pointer;">Promeni balans</button>
             </form>
-            <span class="errorBalance" style="color: red;">  </span>
         </div>
+
+        <!-- Ciljevi korisnika -->
         <div class="dashboard-goal-section">
-            <span class="dashboard-goal-label">Tvoji ciljevi:</span>
+            <h2 style="margin-bottom:20px;">Tvoji ciljevi:</h2>
+
             <% if (goals.length > 0) { %>
                 <% goals.forEach(goal => { %>
-                    <div class="dashboard-single-goal">
-                        <div class="dashboard-goal-progress-info">
-                            <span class="dashboard-goal-name"><%= goal.name %></span>
-                            <div>
-                                <span class="dashboard-current">$<%= goal.current %></span>
-                                <span class="dashboard-separator">/</span>
-                                <span class="dashboard-goal-total">$<%= goal.target %></span>
-                            </div>
+                    <div class="dashboard-single-goal" style="margin-bottom:15px; padding:10px; background:#1e1e1e; border-radius:8px;">
+                        <div class="dashboard-goal-info" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                            <span class="dashboard-goal-name" style="font-weight:bold;"><%= goal.name %></span>
+                            <span><%= goal.current %> / <%= goal.target %> $</span>
                         </div>
-                        <div class="dashboard-progress-bar">
-                            <div class="dashboard-progress" style="width: <%= Math.min((goal.current / goal.target) * 100, 100) %>%;">
-                            </div>
+                        <div class="dashboard-progress-bar" style="width:100%; background:#333; height:15px; border-radius:8px;">
+                            <div class="dashboard-progress" style="width:<%= Math.min((goal.current / goal.target) * 100, 100) %>%; height:100%; background:#2ecc71; border-radius:8px;"></div>
                         </div>
                     </div>
                 <% }) %>
             <% } else { %>
                 <p>Nemaš nijedan cilj trenutno.</p>
             <% } %>
-            <form action="/newgoals" method="GET" class="dashboard-form">
-                <button type="submit" class="dashboard-button">Kreiraj novi cilj</button>
+
+            <!-- Dugme za kreiranje novog cilja -->
+            <form action="/newgoals" method="GET" style="margin-top:20px;">
+                <button type="submit" style="padding:8px 15px; border-radius:5px; border:none; background:#3498db; color:#fff; cursor:pointer;">Kreiraj novi cilj</button>
             </form>
         </div>
     </div>
+
     <%- include("./partials/footer.ejs") %>
 </body>
 </html>

@@ -261,7 +261,6 @@ async function renderGroupWithError(res, groupId, errorMsg) {
              WHERE i.group_id = ?`, [groupId],
             (err, results) => err ? reject(err) : resolve(results)
         ));
-        console.log(goals);
         res.render("group_detail", { 
             title: `WeInvest - ${group.name}`,
             user: res.req.session.user,
