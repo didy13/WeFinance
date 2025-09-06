@@ -29,7 +29,23 @@
             <% } %>
         </div>
     </div>
-
+    <!-- INVITES SECTION -->
+<% if(invites && invites.length > 0) { %>
+    <div class="invites-container" style="margin-bottom: 40px;">
+        <h2 style="color: #ffffff;">Pozivnice</h2>
+        <% invites.forEach(invite => { %>
+            <div class="invite-card" style="background:#2a2a2a;padding:15px;border-radius:10px;margin-bottom:10px;color:#fff;">
+                <p>Pozivnica za grupu <strong><%= invite.group_name %></strong> od <strong><%= invite.inviter_name %></strong></p>
+                <form action="/groups/invite/<%= invite.invite_id %>/accept" method="POST" style="display:inline-block;">
+                    <button type="submit" style="padding:5px 10px;margin-right:5px;">Prihvati</button>
+                </form>
+                <form action="/groups/invite/<%= invite.invite_id %>/decline" method="POST" style="display:inline-block;">
+                    <button type="submit" style="padding:5px 10px;">Odbij</button>
+                </form>
+            </div>
+        <% }) %>
+    </div>
+<% } %>
     <%- include("./partials/footer.ejs") %>
 </body>
 </html>
