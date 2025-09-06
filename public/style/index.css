@@ -163,3 +163,62 @@
  .register-page__link:hover {
      text-decoration: underline;
  }
+
+ .dashboard-page__container {
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     min-height: calc(100vh - 120px);
+     background: #121212;
+     padding: 20px;
+ }
+
+ .dashboard-page__card {
+     background: #1e1e1e;
+     padding: 40px;
+     border-radius: 12px;
+     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+     width: 100%;
+     max-width: 500px;
+     text-align: center;
+ }
+
+ .dashboard-page__title {
+     margin-bottom: 30px;
+     color: #ffffff;
+     font-size: 24px;
+ }
+
+ .dashboard-page__balance,
+ .dashboard-page__goal {
+     margin-bottom: 20px;
+ }
+
+ .dashboard-page__label {
+     display: block;
+     color: #bbbbbb;
+     margin-bottom: 6px;
+     font-size: 14px;
+ }
+
+ .dashboard-page__amount,
+ .dashboard-page__goal-name {
+     font-size: 20px;
+     color: #ffffff;
+     font-weight: bold;
+ }
+
+ .dashboard-page__button {
+     padding: 12px 20px;
+     background-color: #4e89ff;
+     color: #fff;
+     font-size: 16px;
+     border: none;
+     border-radius: 8px;
+     cursor: pointer;
+     transition: background 0.3s ease;
+ }
+
+ .dashboard-page__button:hover {
+     background-color: #3b6fe2;
+ }
