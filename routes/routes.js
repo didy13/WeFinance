@@ -8,24 +8,21 @@ const Korisnik = require("../models/Korisnik");
 const registerValidation = require("../public/js/registerValidation");
 const cron = require("node-cron");
 const { updateAllStreaks } = require("../public/js/streakManager");
-
 const Group = require("../models/Group");
 const Invite = require("../models/Invites");
 
 var index = "index";
 var group = "group";
-// --- Set DB connections ---
+
 Korisnik.setConnection(connection);
 Group.setConnection(connection);
 Invite.setConnection(connection);
 
-// --- Cron task for daily streak update ---
 cron.schedule("0 0 * * *", () => {
     console.log("🕛 Running daily streak check for all users...");
     updateAllStreaks();
 });
 
-// --- SESSION setup ---
 router.use(session({
     secret: process.env.SESSION_SECRET || "defaultsecret",
     resave: false,
@@ -33,13 +30,11 @@ router.use(session({
     cookie: { maxAge: 1000 * 60 * 60 * 24 * 7, secure: false, sameSite: "lax" }
 }));
 
-// --- Middleware for authentication ---
 const isAuthenticated = (req, res, next) => {
     if (req.session.user && req.session.user.id) return next();
     res.redirect("/login");
 };
 
-// --- DASHBOARD ---
 router.get("/", isAuthenticated, (req, res) => {
     res.render("index", {
         title: "WeInvest - Pametno upravljanje novcem za mlade",
@@ -56,8 +51,6 @@ router.get("/help", isAuthenticated, (req, res) => {
     });
 });
 
-
-// --- PROFILE ---
 router.get("/profile", isAuthenticated, async (req, res) => {
     const userId = req.session.user.id;
     try {
@@ -84,7 +77,6 @@ router.get("/profile", isAuthenticated, async (req, res) => {
     }
 });
 
-// --- LOGIN ---
 router.get("/login", (req, res) => {
     if (req.session.user) return res.redirect("/");
     res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "" });
@@ -92,14 +84,14 @@ router.get("/login", (req, res) => {
 
 router.post("/login", async (req, res) => {
     const { username, password } = req.body;
-    if (!username || !password) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Username i password su obavezni" });
+    if (!username || !password) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Korisničko ime i lozinka su obavezni" });
 
     try {
         const user = await Korisnik.findByUsername(username);
-        if (!user) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Nepostojeći korisnik" });
+        if (!user) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Nepostojeće korisničko ime" });
 
         const valid = await bcrypt.compare(password, user.password);
-        if (!valid) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Netačan password" });
+        if (!valid) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Netačna lozinka" });
 
         req.session.user = { id: user.id, username: user.username };
         req.session.save(() => res.redirect("/"));
@@ -109,7 +101,6 @@ router.post("/login", async (req, res) => {
     }
 });
 
-// --- LOGOUT ---
 router.get("/logout", (req, res) => {
     req.session.destroy(err => {
         if (err) return res.status(500).send("Greška pri odjavi");
@@ -118,7 +109,6 @@ router.get("/logout", (req, res) => {
     });
 });
 
-// --- REGISTER ---
 router.get("/register", (req, res) => {
     if (req.session.user) return res.redirect("/");
     res.render("register", { title: "WeInvest - Registracija", user: "", css: index, error: "", errors: [] });
@@ -131,7 +121,7 @@ router.post("/register", registerValidation, async (req, res) => {
     const { username, password } = req.body;
     try {
         const existing = await Korisnik.findByUsername(username);
-        if (existing) return res.render("register", { title: "WeInvest - Registracija", user: "", error: "Username već postoji", errors: [] });
+        if (existing) return res.render("register", { title: "WeInvest - Registracija", user: "", error: "Korisničko ime već postoji", errors: [] });
 
         const hashed = await bcrypt.hash(password, 10);
         const newUser = new Korisnik(username, hashed);
@@ -145,7 +135,6 @@ router.post("/register", registerValidation, async (req, res) => {
     }
 });
 
-// --- GROUPS LIST ---
 router.get("/groups", isAuthenticated, (req, res) => {
     const userId = req.session.user.id;
 
@@ -183,14 +172,13 @@ router.get("/groups", isAuthenticated, (req, res) => {
         });
 });
 
-// --- NEW GROUP ---
 router.get("/newgroup", isAuthenticated, (req, res) => {
     res.render("new_group", { title: "WeInvest - Kreiranje nove grupe", css: index, user: req.session.user, error: "" });
 });
 
 router.post("/newgroup", isAuthenticated, async (req, res) => {
     const { name } = req.body;
-    if (!name || name.trim() === "") return res.render("new_group", { title: "WeInvest - Kreiranje nove grupe", user: req.session.user, error: "Ime grupe je obavezno!" });
+    if (!name || name.trim() === "") return res.render("new_group", { title: "WeInvest - Kreiranje nove grupe", user: req.session.user, error: "Ime grupe je obavezno" });
 
     try {
         const group = new Group(name.trim());
@@ -207,13 +195,11 @@ router.post("/newgroup", isAuthenticated, async (req, res) => {
     }
 });
 
-// --- GROUP DETAIL ---
 router.get("/groups/:groupId", isAuthenticated, async (req, res) => {
     const groupId = req.params.groupId;
     await renderGroupWithError(res, groupId, "");
 });
 
-// --- ADD MEMBER / INVITE ---
 router.post("/groups/:groupId/add-member", isAuthenticated, async (req, res) => {
     const groupId = req.params.groupId;
     const { username } = req.body;
@@ -248,7 +234,6 @@ router.post("/groups/:groupId/add-member", isAuthenticated, async (req, res) => 
     }
 });
 
-// --- Helper function to render group detail with error ---
 async function renderGroupWithError(res, groupId, errorMsg) {
     try {
         const [group] = await new Promise((resolve, reject) => connection.query("SELECT * FROM table_group WHERE id = ?", [groupId], (err, results) => err ? reject(err) : resolve(results)));
@@ -288,7 +273,6 @@ async function renderGroupWithError(res, groupId, errorMsg) {
         res.status(500).send("Greška pri učitavanju grupe");
     }
 }
-// --- ADD GOAL TO GROUP ---
 router.post("/groups/:groupId/add-goal", isAuthenticated, async (req, res) => {
     const { groupId } = req.params;
     const { name, target } = req.body;
@@ -322,7 +306,6 @@ router.post("/groups/:groupId/add-money/:goalId", isAuthenticated, async (req, r
     }
 
     try {
-        // Uzmi trenutni balans korisnika
         const [user] = await new Promise((resolve, reject) => {
             connection.query(
                 "SELECT balance FROM users WHERE id = ?",
@@ -335,17 +318,14 @@ router.post("/groups/:groupId/add-money/:goalId", isAuthenticated, async (req, r
 
         const maxWarn = user.balance * 0.7;
 
-        // Ako je iznos veći od 70% balansa i nije potvrđeno, prikazi upozorenje
         if (amount > maxWarn && !confirm) {
             return renderGroupWithError(res, groupId, `Pažnja! Ovo je više od 70% vašeg balansa (${user.balance}€). Nije pametna odluka. Ako želite da nastavite, potvrdite u nastavku.`, amount);
         }
 
-        // Proveri da li korisnik ima dovoljno novca
         if (user.balance < amount) {
             return renderGroupWithError(res, groupId, `Nemate dovoljno novca. Trenutni balans: ${user.balance}`);
         }
 
-        // Oduzmi novac sa korisničkog balansa
         await new Promise((resolve, reject) => {
             connection.query(
                 "UPDATE users SET balance = balance - ? WHERE id = ?",
@@ -354,7 +334,6 @@ router.post("/groups/:groupId/add-money/:goalId", isAuthenticated, async (req, r
             );
         });
 
-        // Dodaj novac na grupni cilj
         await new Promise((resolve, reject) => {
             connection.query(
                 "UPDATE group_goals SET current = current + ? WHERE id = ? AND group_id = ?",
@@ -388,7 +367,6 @@ router.post("/groups/:groupId/accept", isAuthenticated, (req, res) => {
     });
 });
 
-// Odbijanje pozivnice
 router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
     const { invite_id } = req.body;
 
@@ -400,21 +378,19 @@ router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
     });
 });
 
-// Render the "New Goal" form
 router.get("/newgoals", isAuthenticated, (req, res) => {
-    res.render("newgoal", { title: "WeInvest - Kreiraj novi goal", user: req.session.user, css: index, error: "", errors: [] });
+    res.render("newgoal", { title: "WeInvest - Novi cilj štednje", user: req.session.user, css: index, error: "", errors: [] });
 });
 
-// Handle form submission to create a new goal
 router.post("/creategoal", isAuthenticated, (req, res) => {
     console.log(req.body);
     const { name, target } = req.body;
 
     if (!name || !target) {
         return res.render("newgoal", {
-            title: "WeInvest - Kreiraj novi goal",
+            title: "WeInvest - Novi cilj štednje",
             user: req.session.user,
-            error: "Morate popuniti oba polja!",
+            error: "Morate popuniti oba polja",
             errors: []
         });
     }
@@ -426,7 +402,6 @@ router.post("/creategoal", isAuthenticated, (req, res) => {
         res.redirect("/profile");
     });
 });
-
 
 router.post("/changebalance", isAuthenticated, async (req, res) => {
     let { balans } = req.body;
@@ -442,9 +417,8 @@ router.post("/changebalance", isAuthenticated, async (req, res) => {
             resolve(results);
         });
     });
-    // Check if input is empty
     if (isNaN(balans) || !balans) {
-        return res.render("profile", { title: 'WeInvest - Moj profil', goals, error: 'Morate popuniti balans!', user, css: 'index' });
+        return res.render("profile", { title: 'WeInvest - Moj profil', goals, error: 'Morate popuniti balans', user, css: 'index' });
     }
 
     const balance = parseFloat(balans) + parseFloat(user.balance);
@@ -458,12 +432,12 @@ router.post("/changebalance", isAuthenticated, async (req, res) => {
 });
 
 router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
-    const { goalbalance, goalId } = req.body; // goalId comes from the input/button
+    const { goalbalance, goalId } = req.body;
     const userId = req.session.user.id;
 
     const amount = parseFloat(goalbalance);
     if (isNaN(amount) || amount <= 0) {
-        return res.redirect("/profile"); // invalid input, just go back
+        return res.redirect("/profile");
     }
     const goals = await new Promise((resolve, reject) => {
         connection.query("SELECT id, name, current, target FROM goals WHERE user_id = ?", [req.session.user.id], (err, results) => {
@@ -477,7 +451,6 @@ router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
             resolve(results);
         });
     });
-    // Step 1: get user's current balance and goal info
     const query = `
       SELECT u.balance, g.current, g.target
       FROM users u
@@ -487,25 +460,23 @@ router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
 
     connection.query(query, [userId, goalId], (err, results) => {
         if (err) return res.status(500).send("DB error: " + err.message);
-        if (results.length === 0) return res.redirect("/profile"); // no goal found
+        if (results.length === 0) return res.redirect("/profile");
 
         const userBalance = parseFloat(results[0].balance);
         const goalCurrent = parseFloat(results[0].current);
         const goalTarget = parseFloat(results[0].target);
 
         if (amount > userBalance) {
-            // not enough money in user balance
-            return res.render("profile", { user, goals, error: "Nemate dovoljno novca!", title: "WeInvest - Moj profil", css: 'index' });
+            return res.render("profile", { user, goals, error: "Nemate dovoljno novca", title: "WeInvest - Moj profil", css: 'index' });
         }
 
         if (amount + goalCurrent > goalTarget) {
-            return res.render("profile", { user, goals, error: "Ukupan novac premasuje cilj!", title: "WeInvest - Moj profil", css: 'index' });
+            return res.render("profile", { user, goals, error: "Ukupan novac premasuje cilj", title: "WeInvest - Moj profil", css: 'index' });
         }
 
         const newGoalCurrent = Math.min(goalCurrent + amount, goalTarget);
         const newUserBalance = userBalance - amount;
 
-        // Step 2: update both user balance and goal current
         const updateQuery = `
         UPDATE users u
         JOIN goals g ON g.user_id = u.id
@@ -514,7 +485,7 @@ router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
       `;
         connection.query(updateQuery, [newGoalCurrent, newUserBalance, userId, goalId], (err2, result) => {
             if (err2) return res.status(500).send("DB update error: " + err2.message);
-            res.redirect("/profile"); // back to profile after update
+            res.redirect("/profile");
         });
     });
 });
