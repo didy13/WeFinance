@@ -81,11 +81,86 @@
         <section class="video-section mt-5">
             <h2 class="text-center mb-3">🎥 Video lekcija</h2>
             <div class="video-container text-center">
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/m6x1iDXp2ns" 
-                frameborder="0" allowfullscreen></iframe>
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/QQrpD9rlJR0?si=WIM0rNJ4taaJ9tgr" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
         </section>
     </main>
+    <!-- Dodatne edukativne sekcije -->
+<section class="additional-education py-5">
+    <div class="container">
+        <h2 class="text-center mb-4 naslov">📘 Dodatne lekcije</h2>
+        <div class="row g-4">
+
+            <!-- Finansijska sigurnost -->
+            <div class="col-md-4">
+                <div class="help-card">
+                    <h3>🛡️ Finansijska sigurnost</h3>
+                    <p>Upoznaj se sa osnovama osiguranja, hitnih fondova i zaštite imovine.</p>
+                    <button class="btn-help" onclick="toggleInfo('security')">Saznaj više</button>
+                    <div id="security" class="help-info">
+                        <p>Hitni fond treba da pokrije minimalno 3 meseca troškova.</p>
+                        <p>Različite vrste osiguranja štite od neočekivanih rizika.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rizik i nagrada -->
+            <div class="col-md-4">
+                <div class="help-card">
+                    <h3>📉 Rizik i nagrada</h3>
+                    <p>Nauči kako da proceniš rizik pre ulaganja i povećaš šanse za dobitak.</p>
+                    <button class="btn-help" onclick="toggleInfo('risk')">Saznaj više</button>
+                    <div id="risk" class="help-info">
+                        <p>Diversifikacija smanjuje rizik.</p>
+                        <p>Veći potencijalni profit obično znači i veći rizik.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Planiranje poreza -->
+            <div class="col-md-4">
+                <div class="help-card">
+                    <h3>🧾 Planiranje poreza</h3>
+                    <p>Razumevanje poreza može ti pomoći da optimizuješ prihode i uštede.</p>
+                    <button class="btn-help" onclick="toggleInfo('tax')">Saznaj više</button>
+                    <div id="tax" class="help-info">
+                        <p>Prati porez na dohodak i olakšice koje možeš iskoristiti.</p>
+                        <p>Planiranje poreza unapred smanjuje neočekivane troškove.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Još jedna sekcija sa video i tekstom -->
+        <div class="row g-4 mt-5">
+            <div class="col-md-6">
+                <div class="help-card">
+                    <h3>🎓 Edukativni video</h3>
+                    <p>Pogledaj ovaj kratki vodič o upravljanju ličnim finansijama.</p>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                                frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="help-card">
+                    <h3>💡 Saveti stručnjaka</h3>
+                    <p>Nekoliko ključnih saveta kako poboljšati finansijsku pismenost:</p>
+                    <ul style="text-align:left;">
+                        <li>Prati svoje troškove redovno.</li>
+                        <li>Uvek postavi hitni fond.</li>
+                        <li>Investiraj diversifikovano, ne stavlja sve u jednu korpu.</li>
+                        <li>Planiraj poreze i koristi olakšice.</li>
+                        <li>Obrazuj se kontinuirano kroz kurseve i članke.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
     <%- include("./partials/footer.ejs") %>
 
@@ -214,21 +289,7 @@
                 updateProgress(100);
             }
         }
-        function checkAnswer(i) {
-    const q = quizData[currentQuestion];
-    const resultEl = document.getElementById("quiz-result");
-    if (i === q.correct) {
-        score++;
-        resultEl.innerText = "✅ Tačno!";
-        resultEl.style.color = "#4caf50"; // Zelena
-        resultEl.style.textShadow = "0 0 8px rgba(76, 175, 80, 0.8)";
-    } else {
-        resultEl.innerText = "❌ Netačno!";
-        resultEl.style.color = "#ff4d4f"; // Crvena
-        resultEl.style.textShadow = "0 0 8px rgba(255, 77, 79, 0.8)";
-    }
-    document.getElementById("next-btn").style.display = "block";
-}
+        
         // Inicijalno učitavanje kviza
         loadQuestion();
     </script>

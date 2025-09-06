@@ -1,3 +1,119 @@
+.help-container {
+    color: white;
+}
+
+.help-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #4e89ff;
+}
+
+.help-subtitle {
+    color: #bbbbbb;
+    font-size: 1.2rem;
+}
+
+.help-card {
+    background: #1e1e1e;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 0.5rem 1.2rem rgba(0,0,0,0.6);
+    transition: transform 0.3s ease;
+}
+
+.help-card:hover {
+    transform: translateY(-5px);
+}
+
+.help-card h3 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.btn-help {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #4e89ff;
+    border: none;
+    border-radius: 0.5rem;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-help:hover {
+    background-color: #3b6fe2;
+}
+
+.help-info {
+    display: none;
+    margin-top: 1rem;
+    color: #bbbbbb;
+    font-size: 0.95rem;
+    text-align: left;
+}
+
+.quiz-section {
+    color: white;
+    margin-top: 3rem;
+}
+
+.quiz-card {
+    background: #1e1e1e;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    box-shadow: 0 0.5rem 1.2rem rgba(0,0,0,0.6);
+}
+
+.quiz-card button {
+    display: block;
+    margin: 0.5rem auto;
+    padding: 0.5rem 1rem;
+    background: #4e89ff;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.quiz-card button:hover {
+    background: #3b6fe2;
+}
+
+#quiz-result {
+    margin-top: 1rem;
+    font-weight: 600;
+}
+.progress {
+    height: 25px;
+    background: #333;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: #4e89ff;
+    text-align: center;
+    color: white;
+    font-weight: 600;
+}
+
+input {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    width: 80%;
+    border-radius: 0.5rem;
+    border: none;
+}
+
+.video-container {
+    display: flex;
+    justify-content: center;
+}
 /* Edukativne kartice */
 .help-card {
     background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
@@ -13,58 +129,24 @@
     box-shadow: 0 1.5rem 3rem rgba(0,0,0,0.8);
 }
 
-/* Dugmad - manje istaknuto */
-.help-card button {
+.btn-help {
     margin-top: 1rem;
-    padding: 0.65rem 1.2rem;
-    background: #4e89ff;
-    color: white;
-    font-weight: 600;
-    font-size: 0.95rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(90deg, #4e89ff, #3b6fe2);
     border: none;
     border-radius: 0.75rem;
+    color: white;
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
-    box-shadow: 0 0.2rem 0.5rem rgba(62, 111, 226, 0.3);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
 }
 
-.help-card button:hover {
-    transform: translateY(-2px);
-    background: #3b6fe2;
-    box-shadow: 0 0.3rem 0.8rem rgba(62, 111, 226, 0.4);
+.btn-help:hover {
+    background: linear-gradient(90deg, #3b6fe2, #1e5bcc);
+    transform: scale(1.05);
+    box-shadow: 0 0.5rem 1.5rem rgba(62, 111, 226, 0.5);
 }
-
-/* Rezultati simulacija i edukativnih kartica */
-.help-info p, #budget-result, #saving-result, #invest-result {
-    margin-top: 0.8rem;
-    padding: 0.5rem 0.75rem;
-    background: linear-gradient(90deg, #4e89ff, #3b6fe2);
-    color: white;
-    font-weight: 700;
-    font-size: 1rem;
-    border-radius: 0.75rem;
-    text-align: center;
-    box-shadow: 0 0.5rem 1.5rem rgba(62, 111, 226, 0.6);
-}
-
-/* Input polja */
-.help-info input {
-    margin: 0.5rem 0;
-    padding: 0.5rem;
-    width: 80%;
-    border-radius: 0.5rem;
-    border: 1px solid #333;
-    background: #2a2a2a;
-    color: white;
-    text-align: center;
-}
-
-/* Video i quiz sekcije ostaju isti sa modernim stilovima */
-.video-container {
-    display: flex;
-    justify-content: center;
-}
-
 .quiz-card button {
     display: block;
     margin: 0.5rem auto;
@@ -82,6 +164,7 @@
 }
 
 .quiz-card button:hover {
+    background: linear-gradient(90deg, #3b6fe2, #1e5bcc);
     transform: scale(1.05);
     box-shadow: 0 0.8rem 1.5rem rgba(62, 111, 226, 0.5);
 }
@@ -90,6 +173,147 @@
     margin-top: 1rem;
     font-weight: 700;
     font-size: 1.1rem;
-    color: #ffdd57; /* žuta za naglašavanje */
+    color: #ffdd57; /* Žuta za naglašavanje rezultata */
     text-shadow: 0 0 6px rgba(255, 221, 87, 0.8);
+}
+.hero-info h1 {
+    font-weight: 700;
+    font-size: 5rem;
+    background: linear-gradient(90deg, #4e89ff, #3b6fe2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: slideIn 1s ease-out;
+}
+
+@keyframes slideIn {
+    0% { opacity: 0; transform: translateY(-50px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.custom-button {
+    background: linear-gradient(90deg, #ff6a00, #ee0979);
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 1rem;
+    text-decoration: none;
+    box-shadow: 0 0.5rem 1.5rem rgba(255, 105, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+.custom-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0.8rem 2rem rgba(238, 9, 121, 0.5);
+}
+/* Dugmad u edukativnim karticama - plava verzija */
+.help-card button {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(90deg, #4e89ff, #3b6fe2);
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    border: none;
+    border-radius: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0.5rem 1.5rem rgba(62, 111, 226, 0.5);
+}
+
+.help-card button:hover {
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 0.8rem 2rem rgba(62, 111, 226, 0.7);
+    background: linear-gradient(90deg, #3b6fe2, #1e5bcc);
+}
+/* Rezultati simulacija i edukativnih kartica */#budget-result, #saving-result, #invest-result {
+    margin-top: 0.8rem;
+    padding: 0.5rem 0.75rem;
+    
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    
+}
+#next-btn
+{
+    background: linear-gradient(90deg, #0c5dff, #2a4fa0);
+}
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 ratio */
+    height: 0;
+    overflow: hidden;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+}
+
+.video-container iframe {
+    position: absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    border-radius: 1rem;
+}
+
+.additional-education .help-card {
+    background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 1rem 2rem rgba(0,0,0,0.7);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    color: #ffffff; /* Dodato: bela boja teksta */
+}
+
+.additional-education .help-card h3 {
+    color: #4e89ff; /* Plava boja naslova */
+}
+
+.additional-education .help-card p,
+.additional-education .help-card li {
+    color: #dddddd; /* Svetlosiva za paragraf i listu */
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.additional-education .help-card ul {
+    padding-left: 1rem;
+    text-align: left;
+}
+/* Dodatne edukativne sekcije */
+.additional-education .help-card {
+    background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 1rem 2rem rgba(0,0,0,0.7);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    color: #ffffff; /* bela boja teksta za sve unutar kartice */
+}
+
+.additional-education .help-card h3 {
+    color: #4e89ff; /* plavi naslov */
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.additional-education .help-card p,
+.additional-education .help-card li {
+    color: #dddddd; /* svetlosiva za paragraf i listu */
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.additional-education .help-card ul {
+    padding-left: 1rem;
+    text-align: left;
+}
+.naslov
+{
+    font-weight: 700;
+    font-size: 2.5rem;
+    color: white;
+    -webkit-background-clip: text;
 }
