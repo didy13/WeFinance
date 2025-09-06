@@ -26,9 +26,11 @@
     <div class="alert alert-danger"><%= error %></div>
 <% } %>
 
-    <!-- Ciljevi grupe -->
     <h2>Ciljevi grupe</h2>
-    <ul>
+<ul>
+    <% if (goals.length === 0) { %>
+        <li>Nema ciljeva u grupi</li>
+    <% } else { %>
         <% goals.forEach(goal => { %>
             <li>
                 
@@ -38,8 +40,10 @@
                     <button type="submit">Dodaj</button>
                 </form>
             </li>
+            <hr style="border-color:#444;">
         <% }) %>
-    </ul>
+    <% } %>
+</ul>
 
     <!-- Dodavanje novog cilja -->
     <h3>Dodaj cilj</h3>

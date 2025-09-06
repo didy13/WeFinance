@@ -259,7 +259,7 @@ async function renderGroupWithError(res, groupId, errorMsg) {
              WHERE i.group_id = ?`, [groupId],
             (err, results) => err ? reject(err) : resolve(results)
         ));
-
+        console.log(goals);
         res.render("group_detail", { 
             title: `WeInvest - ${group.name}`,
             user: res.req.session.user,
@@ -274,6 +274,53 @@ async function renderGroupWithError(res, groupId, errorMsg) {
         res.status(500).send("Greška pri učitavanju grupe");
     }
 }
+// --- ADD GOAL TO GROUP ---
+router.post("/groups/:groupId/add-goal", isAuthenticated, async (req, res) => {
+    const { groupId } = req.params;
+    const { name, target } = req.body;
+
+    if (!name || name.trim() === "") return renderGroupWithError(res, groupId, "Naziv cilja je obavezan");
+    if (!target || isNaN(target) || target <= 0) return renderGroupWithError(res, groupId, "Target mora biti veći od 0");
+
+    try {
+        await new Promise((resolve, reject) => {
+            connection.query(
+                "INSERT INTO group_goals (group_id, goal_name, current, target) VALUES (?, ?, 0, ?)",
+                [groupId, name.trim(), target],
+                (err, result) => err ? reject(err) : resolve(result)
+            );
+        });
+
+        res.redirect(`/groups/${groupId}`);
+    } catch (err) {
+        console.error(err);
+        renderGroupWithError(res, groupId, "Greška pri dodavanju cilja");
+    }
+});
+
+// --- ADD MONEY TO GROUP GOAL ---
+router.post("/groups/:groupId/add-money/:goalId", isAuthenticated, async (req, res) => {
+    const { groupId, goalId } = req.params;
+    const { amount } = req.body;
+
+    if (!amount || isNaN(amount) || amount <= 0) return renderGroupWithError(res, groupId, "Iznos mora biti veći od 0");
+
+    try {
+        await new Promise((resolve, reject) => {
+            connection.query(
+                "UPDATE group_goals SET current = current + ? WHERE id = ? AND group_id = ?",
+                [amount, goalId, groupId],
+                (err, result) => err ? reject(err) : resolve(result)
+            );
+        });
+
+        res.redirect(`/groups/${groupId}`);
+    } catch (err) {
+        console.error(err);
+        renderGroupWithError(res, groupId, "Greška pri dodavanju novca na cilj");
+    }
+});
+
 
 // --- EXPORT ROUTER ---
 module.exports = router;
