@@ -97,12 +97,10 @@ nav {
     margin-top: 1rem;
     color: #bbbbbb;
 }
-
 .signup-link a {
     color: #4e89ff;
     text-decoration: none;
 }
-
 .signup-link a:hover {
     text-decoration: underline;
 }
