@@ -63,7 +63,9 @@ router.get("/profile", isAuthenticated, async (req, res) => {
             });
         });
 
-        res.render("profile", { title: "WeInvest - Profile", user, goals });
+        const errorBalance = '';
+
+        res.render("profile", { title: "WeInvest - Profile", user, goals, errorBalance });
     } catch (err) {
         console.error(err);
         res.status(500).send("Greška pri učitavanju profila");
@@ -321,6 +323,82 @@ router.post("/groups/:groupId/add-money/:goalId", isAuthenticated, async (req, r
     }
 });
 
+router.post("/groups/:groupId/accept", isAuthenticated, (req, res) => {
+    const userId = req.session.user.id;
+    const { invite_id } = req.body;
+    const { groupId } = req.params;
+
+    const addMemberQuery = `INSERT INTO group_members (group_id, user_id) VALUES (?, ?)`;
+    const deleteInviteQuery = `DELETE FROM group_invites WHERE id = ?`;
+
+    connection.query(addMemberQuery, [groupId, userId], (err) => {
+        if (err) return res.status(500).send("Greška pri dodavanju člana");
+
+        connection.query(deleteInviteQuery, [invite_id], (err2) => {
+            if (err2) return res.status(500).send("Greška pri brisanju pozivnice");
+            res.redirect("/groups");
+        });
+    });
+});
+
+// Odbijanje pozivnice
+router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
+    const { invite_id } = req.body;
+
+    const deleteInviteQuery = `DELETE FROM group_invites WHERE id = ?`;
+
+    connection.query(deleteInviteQuery, [invite_id], (err) => {
+        if (err) return res.status(500).send("Greška pri brisanju pozivnice");
+        res.redirect("/groups");
+    });
+});
+
+// Render the "New Goal" form
+  router.get("/newgoals", isAuthenticated, (req, res) => {
+     res.render("newgoal", { title:"WeInvest - Kreiraj novi goal", user: req.session.user, error:"", errors: [] });
+});
+  
+  // Handle form submission to create a new goal
+  router.post("/creategoal", isAuthenticated, (req, res) => {
+    console.log(req.body);
+    const { name, target } = req.body;
+
+    if (!name || !target) {
+      return res.render("newgoal", {
+        title: "WeInvest - Kreiraj novi goal",
+        user: req.session.user,
+        error: "Morate popuniti oba polja!",
+        errors: []
+      });
+    }
+  
+    const query = "INSERT INTO goals (name, target, user_id) VALUES (?, ?, ?)";
+    connection.query(query, [name, target, req.session.user.id], (err, result) => {
+      if (err) return res.status(500).send("Error creating goal: " + err.message);
+  
+      res.redirect("/profile");
+    });
+  });
+
+
+  router.post("/changebalance", isAuthenticated, (req, res) => {
+    let { balans } = req.body;
+  
+    // Check if input is empty
+    
+  
+    const balance = parseFloat(balans);
+  
+    const query = "UPDATE users SET balance = ? WHERE id = ?";
+    connection.query(query, [balance, req.session.user.id], (err, result) => {
+      if (err) return res.status(500).send("Error updating balance: " + err.message);
+  
+      res.redirect("/profile");
+    });
+  });
+  
+  
+  
 
 // --- EXPORT ROUTER ---
 module.exports = router;

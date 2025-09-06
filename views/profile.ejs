@@ -13,6 +13,13 @@
                 <span><%= user.username %></span>
             </div>
         </div>
+        <div class="dashboard-page__change-balance">
+            <form action="/changebalance" method="POST" class="dashboard-page__form">
+                <input name="balans" step="0.01" type="number">
+                <button type="submit" class="dashboard-page__button">Promeni balans</button>
+            </form>
+            <span class="errorBalance" style="color: red;">  </span>
+        </div>
         <div class="dashboard-goal-section">
             <span class="dashboard-goal-label">Tvoji ciljevi:</span>
             <% if (goals.length > 0) { %>
