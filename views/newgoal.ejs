@@ -1,14 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include("./partials/head.ejs")%>
+<%- include("./partials/head.ejs") %>
+<style>
+    * {
+  font-family: "Montserrat", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0f1115;
+  color: #e0e0e0;
+}
+
+/* ===== Container ===== */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+/* ===== Goal Card ===== */
+.goal-card {
+  background: linear-gradient(145deg, #1e1e1e, #252525);
+  padding: 3rem 2rem;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.7);
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+}
+
+.goal-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #4e89ff;
+}
+
+/* ===== Error ===== */
+.goal-error {
+  background-color: #ff4d4f;
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* ===== Form ===== */
+.goal-form .form-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.goal-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #bbbbbb;
+}
+
+.goal-form input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #333;
+  background-color: #2a2a2a;
+  color: white;
+  font-size: 1rem;
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+.goal-form input:focus {
+  outline: none;
+  border: 1px solid #4e89ff;
+  box-shadow: 0 0 10px rgba(78,137,255,0.5);
+}
+
+/* ===== Button ===== */
+.btn-create-goal {
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #6a8cff, #3b6fe2);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+  transition: all 0.3s ease;
+}
+
+.btn-create-goal span {
+  font-size: 1.3rem;
+}
+
+.btn-create-goal:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+}
+
+.btn-create-goal::after {
+  content: "";
+  position: absolute;
+  width: 120%;
+  height: 100%;
+  top: 0;
+  left: -110%;
+  background: rgba(255,255,255,0.2);
+  transform: skewX(-20deg);
+  transition: all 0.5s ease;
+}
+
+.btn-create-goal:hover::after {
+  left: 110%;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 576px) {
+  .goal-card {
+    padding: 2rem 1.5rem;
+  }
+  .goal-title {
+    font-size: 2rem;
+  }
+  .btn-create-goal {
+    font-size: 1rem;
+  }
+}
+.btn-create-goal {
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #6a8cff, #3b6fe2);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-create-goal span {
+  font-size: 1.3rem;
+}
+
+/* Hover efekat - glatko svetlucanje */
+.btn-create-goal:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.6);
+  background-position: right center;
+}
+
+/* Gradient animacija */
+.btn-create-goal {
+  background-size: 200% auto;
+  background-image: linear-gradient(270deg, #6a8cff, #3b6fe2, #6a8cff);
+  transition: all 0.4s ease;
+}
+
+.btn-create-goal:hover {
+  background-position: left center;
+}
+</style>
 <body>
-    <%- include("./partials/nav.ejs") %>
-    <form action="/creategoal" method="POST" class="dashboard-page__form">
-        <input name="name" type="text" placeholder="Ime goal-a...">
-        <input name="target" type="number" placeholder="Cilj goal-a...">
-        <span style="color: red;"> <%= error %></span>
-        <button type="submit" class="dashboard-page__button">Kreiraj novi cilj</button>
-    </form>
-    <%- include("./partials/footer.ejs") %>
+  <%- include("./partials/nav.ejs") %>
+
+  <main class="create-goal-page">
+    <div class="container">
+      <div class="goal-card">
+        <h1 class="goal-title">Kreiraj novi cilj</h1>
+
+        <% if(error) { %>
+          <div class="goal-error"><%= error %></div>
+        <% } %>
+
+        <form action="/creategoal" method="POST" class="goal-form">
+          <div class="form-group">
+            <label for="name">Ime cilja</label>
+            <input type="text" id="name" name="name" placeholder="Unesi ime cilja..." required>
+          </div>
+
+          <div class="form-group">
+            <label for="target">Ciljna vrednost</label>
+            <input type="number" id="target" name="target" placeholder="Unesi cilj..." required>
+          </div>
+
+          <button type="submit" class="btn-create-goal">
+            <span>🚀</span> Kreiraj novi cilj
+          </button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <%- include("./partials/footer.ejs") %>
 </body>
 </html>

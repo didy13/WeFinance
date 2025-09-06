@@ -106,7 +106,7 @@
             <% const completedGoals = Array.isArray(goals) ? goals.filter(g => g.completed) : []; %>
             <div class="goals-scroll">
               <% if (completedGoals.length === 0) { %>
-                <p>Nema završених ciljeva</p>
+                <p>Nema završenih ciljeva</p>
               <% } else { %>
                 <% completedGoals.forEach(goal => { %>
                   <div class="goal-card completed">
