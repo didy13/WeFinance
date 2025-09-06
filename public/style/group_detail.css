@@ -1,0 +1,107 @@
+/* ===== Body & Fonts ===== */
+body {
+  background: #0f1115; /* tamna pozadina */
+  color: #e5e5e5;
+  font-family: "Montserrat", sans-serif;
+  line-height: 1.5;
+}
+
+/* ===== Naslovi ===== */
+h1, h2, h3, h5 {
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+/* ===== Card styles ===== */
+.card {
+  border-radius: 12px;
+  background: #1f1f25;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* ===== Lista članova ===== */
+.list-group-item {
+  border-radius: 8px;
+  margin-bottom: 6px; /* razmak između članova */
+  padding: 10px 15px;
+  background: #2a2a33;
+  color: #e5e5e5;
+  border: none;
+  transition: background 0.2s;
+}
+
+.list-group-item:hover {
+  background: #3b3b4a;
+}
+
+/* ===== Form controls ===== */
+.form-control {
+  background: #1f1f25;
+  color: #e5e5e5; /* boja unetog teksta */
+  border: 1px solid #444;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+.form-control:focus {
+  background: #1f1f25;
+  color: #e5e5e5;
+  border-color: #4e89ff;
+  box-shadow: none;
+}
+
+/* Placeholder */
+.form-control::placeholder {
+  color: #aaa; /* svetlo siva za vidljivost */
+  opacity: 1;
+}
+
+/* ===== Buttons ===== */
+.btn {
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Primary */
+.btn-primary {
+  background: #4e89ff;
+  border: none;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #3b6fe2;
+}
+
+/* Success */
+.btn-success {
+  background: #4e89ff;
+  border: none;
+  color: #fff;
+}
+
+.btn-success:hover {
+  background: #3b6fe2;
+}
+
+
+
+/* ===== Misc ===== */
+input::placeholder {
+  color: #aaa;
+}
+
+.btn, .form-control {
+  transition: all 0.2s ease-in-out;
+}

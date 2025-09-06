@@ -281,7 +281,7 @@ async function renderGroupWithError(res, groupId, errorMsg) {
         goals,
         invites,
         error: errorMsg || "",
-        css: index
+        css: "group_detail"
     });
     } catch (err) {
         console.error(err);
