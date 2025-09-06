@@ -362,3 +362,34 @@ nav {
 .page-error404-home-link:hover {
   background-color: #3b6fe2;
 }
+
+@media (max-width: 992px) {
+    .navbar-nav.position-absolute {
+        position: static !important;
+        top: auto !important;
+        left: auto !important;
+        transform: none !important;
+        margin: 0 !important;
+        text-align: center;
+    }
+
+    .navbar-nav.position-absolute .nav-item {
+        margin: 0.5rem 0 !important;
+    }
+
+    .navbar-nav.position-absolute .nav-item:first-child {
+        margin-top: 0.25rem !important;
+    }
+
+    .first-nav-link {
+        margin-top: 1rem;
+    }
+
+    .user-nav.ms-auto:has(.user-link) {
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        text-align: center;
+        width: 100%;
+        justify-content: center;
+    }
+}
