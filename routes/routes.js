@@ -517,6 +517,9 @@ router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
         // not enough money in user balance
         return res.render("profile", {user, goals, error: "Nemate dovoljno novca", title: "WeInvest - Profile", css: 'profile'}); 
       }
+    if (amount + goalCurrent > goalTarget) {
+        return res.render("profile", { user, goals, error: "Ukupan novac premasuje cilj!", title: "WeInvest - Moj profil", css: 'profile' });
+    }
 
     const newGoalCurrent = Math.min(goalCurrent + amount, goalTarget);
     const newUserBalance = userBalance - amount;
