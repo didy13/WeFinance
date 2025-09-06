@@ -75,9 +75,9 @@ router.get("/profile", isAuthenticated, async (req, res) => {
             });
         });
 
-        const errorBalance = '';
+       const error='';
 
-        res.render("profile", { title: "WeInvest - Profile", user, goals,css: index, errorBalance });
+        res.render("profile", { title: "WeInvest - Profile", user, goals,css: index, error });
     } catch (err) {
         console.error(err);
         res.status(500).send("Greška pri učitavanju profila");
@@ -409,7 +409,7 @@ router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
     });
     // Check if input is empty
     if(isNaN(balans) || !balans){
-        return res.render("profile", {title: 'WeInvest - Profile', goals, errorBalance: 'Morate popuniti balans!', user, css: 'index'});
+        return res.render("profile", {title: 'WeInvest - Profile', goals, error: 'Morate popuniti balans!', user, css: 'index'});
     }
   
     const balance = parseFloat(balans);
@@ -457,10 +457,10 @@ router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
       const userBalance = parseFloat(results[0].balance);
       const goalCurrent = parseFloat(results[0].current);
       const goalTarget = parseFloat(results[0].target);
-  
+
       if (amount > userBalance) {
         // not enough money in user balance
-        return res.render("profile", {user, goals, errorGoal: "Nemate dovoljno novca!", title: "WeInvest - Profile", css: 'index'}); 
+        return res.render("profile", {user, goals, error: "Nemate dovoljno novca!", title: "WeInvest - Profile", css: 'index'}); 
       }
   
       const newGoalCurrent = Math.min(goalCurrent + amount, goalTarget);
