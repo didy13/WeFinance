@@ -10,7 +10,7 @@ const { validationResult } = require("express-validator");
 
 Korisnik.setConnection(connection);
 
-// SESSION setup
+// SESSION setup (ako nije već u server.js)
 router.use(session({
     secret: process.env.SESSION_SECRET || "defaultsecret",
     resave: false,
@@ -22,7 +22,7 @@ router.use(session({
     }
 }));
 
-// Middleware da proverimo da li je user ulogovan
+// Middleware za proveru da li je user ulogovan
 const isAuthenticated = (req, res, next) => {
     if (req.session.user) {
         return next();
@@ -32,13 +32,10 @@ const isAuthenticated = (req, res, next) => {
 
 // --- ROUTES ---
 
-// Home (dashboard kad si ulogovan)
-router.get("/", (req, res) => {
-    if (!req.session.user) {
-        return res.redirect("/login");
-    }
-    res.render("dashboard", {
-        title: "WeInvest Dashboard",
+// INDEX (dashboard)
+router.get("/", isAuthenticated, (req, res) => {
+    res.render("index", {
+        title: "WeInvest - Dashboard",
         user: req.session.user
     });
 });
@@ -102,7 +99,7 @@ router.post("/register", registerValidation, async (req, res) => {
     const { ime, prezime, nickname, email, lozinka, date } = req.body;
 
     try {
-        // Da li korisnik postoji?
+        // Provera da li postoji korisnik
         const checkQuery = "SELECT * FROM Korisnik WHERE email = ? OR nickname = ?";
         const existingUsers = await new Promise((resolve, reject) => {
             connection.query(checkQuery, [email, nickname], (err, results) => {
@@ -121,14 +118,14 @@ router.post("/register", registerValidation, async (req, res) => {
             });
         }
 
-        // Hash password
+        // Hash lozinke
         const hashedPassword = await bcrypt.hash(lozinka, 10);
 
         // Novi korisnik
         const newUser = new Korisnik(ime, prezime, nickname, email, hashedPassword, date);
         await newUser.save();
 
-        // Login nakon registracije
+        // Odmah logujemo usera posle registracije
         req.session.user = { username: newUser.nickname, admin: false };
         req.session.save(() => res.redirect("/"));
     } catch (error) {
