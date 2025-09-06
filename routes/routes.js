@@ -45,6 +45,14 @@ router.get("/", isAuthenticated, (req, res) => {
     });
 });
 
+router.get("/help", isAuthenticated, (req, res) => {
+    res.render("help", { 
+        title: "WeInvest - Pametno upravljanje novcem za mlade", 
+        user: req.session.user 
+    });
+});
+
+
 // --- PROFILE ---
 router.get("/profile", isAuthenticated, async (req, res) => {
     const userId = req.session.user.id;
