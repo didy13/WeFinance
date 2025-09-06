@@ -76,6 +76,33 @@ nav {
     background: #2a2a2a;
     color: white;
 }
+
+.login-error {
+    background-color: #ff4d4f;
+    color: white;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.login-error-list {
+    background-color: #ff4d4f;
+    color: white;
+    padding: 5px 10px;
+    margin-top: 15px;
+    border-radius: 6px;
+}
+
+.login-error-list ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.login-error-list li {
+    list-style-type: none;
+}
+
 .login-input-group input::placeholder {
     color: #777;
 }
@@ -292,4 +319,57 @@ nav {
 }
 .dashboard-button:hover {
     background-color: #3b6fe2;
+}
+
+/* Error 404 */
+.page-error404-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 120px); /* nav + footer oduzeti */
+  background-color: #121212;
+  color: #fff;
+  text-align: center;
+  overflow: hidden; /* da ukloni scroll */
+}
+
+.page-error404-content {
+  max-width: 500px;
+  width: 90%;
+}
+
+.page-error404-image {
+  max-width: 250px;
+  min-height: 150px;
+  height: auto;
+  margin-bottom: 20px;
+  /* uklonjen filter da pozadina slike ostane transparentna */
+}
+
+.page-error404-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0;
+  color: #ff4d4f;
+}
+
+.page-error404-text {
+  font-size: 1rem;
+  color: #aaa;
+  margin-bottom: 20px;
+}
+
+.page-error404-home-link {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #4e89ff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background 0.3s ease;
+  font-size: 1rem;
+}
+
+.page-error404-home-link:hover {
+  background-color: #3b6fe2;
 }

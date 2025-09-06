@@ -31,11 +31,13 @@ app.use(session({
 
 // Routes
 app.use("/", authRoutes); // mountujemo router na root
-
-// 404 fallback
 app.use((req, res) => {
-    res.status(404).render("404", { title: "404" });
+  res.status(404).render("404", {
+    title: "Stranica nije pronađena",
+  });
 });
+
+
 
 const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => {
