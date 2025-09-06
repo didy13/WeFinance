@@ -323,53 +323,42 @@ nav {
 
 /* Error 404 */
 .page-error404-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: calc(100vh - 120px); /* nav + footer oduzeti */
-  background-color: #121212;
-  color: #fff;
-  text-align: center;
-  overflow: hidden; /* da ukloni scroll */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 7.5rem);
+    color: white;
+    text-align: center;
+    overflow: hidden;
 }
-
 .page-error404-content {
-  max-width: 500px;
-  width: 90%;
+    max-width: 44rem;
 }
-
 .page-error404-image {
-  max-width: 250px;
-  min-height: 150px;
-  height: auto;
-  margin-bottom: 20px;
-  /* uklonjen filter da pozadina slike ostane transparentna */
+    max-width: 16rem;
+    height: auto;
+    margin-bottom: 1.5rem;
 }
-
 .page-error404-title {
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin: 0;
-  color: #ff4d4f;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #4e89ff;
 }
-
 .page-error404-text {
-  font-size: 1rem;
-  color: #aaa;
-  margin-bottom: 20px;
+    font-size: 1rem;
+    color: #bbbbbb;
+    margin-bottom: 2rem;
 }
-
 .page-error404-home-link {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #4e89ff;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 6px;
-  transition: background 0.3s ease;
-  font-size: 1rem;
+    display: inline-block;
+    padding: 0.75rem 1.25rem;
+    background-color: #4e89ff;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background 0.3s ease;
 }
-
 .page-error404-home-link:hover {
   background-color: #3b6fe2;
 }
