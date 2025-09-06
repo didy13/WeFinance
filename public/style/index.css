@@ -340,37 +340,45 @@ nav {
     border-radius: 0.75rem;
     margin-top: 3rem;
 }
-.third-section {
+.fourth-section {
     padding-top: 4rem;
     padding-bottom: 4rem;
     color: white;
     background-color: #1e1e1e;
+    text-align: center;
 }
-.third-left-column p {
+.fourth-section span {
     font-family: "Alex Brush", cursive;
     letter-spacing: 0.2rem;
     font-size: 1.75rem;
 }
-.third-left-column h2 {
+.fourth-section h2 {
     font-size: 3rem;
     font-weight: 600;
 }
-.third-info-wrapper {
-    display: flex;
-    justify-content: end;
-    align-items: end;
-}
-.third-right-column p {
-    width: 90%;
-}
-.third-cards {
-    margin-top: 3rem;
-}
-.third-card {
+.card-info {
+    background-color: #1e1e1e;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    color: white;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: start;
-    gap: 1rem;
+    border-radius: 0.75rem;
+}
+.card-info img {
+    width: 100%;
+    display: block; /* uklanja beli razmak ispod slike */
+    object-fit: cover; /* osigurava da slika popuni širinu */
+    border-radius: 0.75rem 0.75rem 0 0;
+}
+.card-text {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+}
+.tim-name {
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-top: 0.75rem;
 }
 
 /* Footer */
