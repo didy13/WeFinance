@@ -71,7 +71,9 @@ router.get("/profile", isAuthenticated, async (req, res) => {
             });
         });
 
-        res.render("profile", { title: "WeInvest - Profile", user, goals });
+        const errorBalance = '';
+
+        res.render("profile", { title: "WeInvest - Profile", user, goals, errorBalance });
     } catch (err) {
         console.error(err);
         res.status(500).send("Greška pri učitavanju profila");
@@ -419,6 +421,25 @@ router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
       res.redirect("/profile");
     });
   });
+
+
+  router.post("/changebalance", isAuthenticated, (req, res) => {
+    let { balans } = req.body;
+  
+    // Check if input is empty
+    
+  
+    const balance = parseFloat(balans);
+  
+    const query = "UPDATE users SET balance = ? WHERE id = ?";
+    connection.query(query, [balance, req.session.user.id], (err, result) => {
+      if (err) return res.status(500).send("Error updating balance: " + err.message);
+  
+      res.redirect("/profile");
+    });
+  });
+  
+  
   
 
 module.exports = router;
