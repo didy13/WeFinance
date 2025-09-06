@@ -4,9 +4,15 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "weinstall": "npm i express dotenv mysql2 path"
+    "weinstall": "npm i express dotenv mysql2 path ejs"
   },
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.4",
+    "path": "^0.12.7"
+  }
 }
