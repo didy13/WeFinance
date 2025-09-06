@@ -12,51 +12,13 @@ body {
   font-weight: 400;
 }
 
-/* ===== Navbar ===== */
-nav {
-  background-color: #1e1e1e;
-  padding: 0.75rem !important;
-  position: absolute;
-  margin-top: 1rem;
-  margin-left: auto;
-  margin-right: auto;
-  width: 90%;
-  z-index: 1000;
-  border-radius: 0.75rem;
-}
 
-.nav-logo img {
-  width: 12.5rem;
-  height: auto;
-}
-
-.nav-link-style {
-  color: white;
-}
-
-.nav-link-style:hover {
-  color: rgb(200, 200, 200);
-}
-
-.navbar-links-wrapper ul {
-  margin-left: auto;
-}
-
-.navbar-toggler {
-  border-color: white;
-}
-
-.navbar-toggler-icon {
-  filter: invert(1);
-}
-
-/* ===== Groups page ===== */
 .groups-page { 
   width: 90%;
   margin-left: auto;
   margin-right: auto;
   padding: 40px;
-  min-height: calc(100vh - 120px); /* nav + footer */
+  min-height: calc(100vh - 120px); 
 }
 
 .groups-title {

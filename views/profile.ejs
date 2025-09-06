@@ -27,7 +27,7 @@
                 <input id="balans" name="balans" step="0.01" type="number">
                 <button type="submit" class="dashboard-page__button">Promeni balans</button>
             </form>
-            <span id="errorBalance" style="color: red;"> <%= errorBalance %> </span>
+            <span id="errorBalance" style="color: red;"> <%= error %> </span>
         </div>
 
         <!-- Ciljevi korisnika -->
@@ -50,6 +50,7 @@
                                 <input value="<%= goal.id %>" name="goalId" type="number" hidden>
                                 <button type="submit" class="dashboard-page__button">Dodaj novac</button>
                             </form>
+                            
                         </div>
                     </div>
                 <% }) %>
