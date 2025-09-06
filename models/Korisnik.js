@@ -1,12 +1,8 @@
 let connection;
 class Korisnik {
-    constructor(ime, prezime, nickname, email, lozinka, datumRodjenja) {
-      this.ime = ime;
-      this.prezime = prezime;
-      this.nickname = nickname;
-      this.email = email;
-      this.lozinka = lozinka;
-      this.datumRodjenja = datumRodjenja;
+    constructor(username, password) {
+      this.username = username;
+      this.password = password;
     }
     static setConnection(conn)
     {
@@ -14,8 +10,8 @@ class Korisnik {
     }
     save() 
     {
-        const query = 'INSERT INTO Korisnik (ime, prezime, nickname, email, lozinka, datumRodjenja) VALUES (?, ?, ?, ?, ?, ?)';
-        const values = [this.ime, this.prezime, this.nickname, this.email, this.lozinka, this.datumRodjenja];
+        const query = 'INSERT INTO users (username, password) VALUES (?, ?)';
+        const values = [this.username, this.password];
     
         return new Promise((resolve, reject) => {
           connection.query(query, values, (error, results) => {
@@ -27,8 +23,8 @@ class Korisnik {
         });
     }
     delete() {
-      const query = 'DELETE FROM Korisnik WHERE email = ?';
-      const values = [this.email]; 
+      const query = 'DELETE FROM Korisnik WHERE username = ?';
+      const values = [this.username]; 
   
       return new Promise((resolve, reject) => {
           connection.query(query, values, (error, results) => {
