@@ -355,6 +355,14 @@ nav {
     font-size: 3rem;
     font-weight: 600;
 }
+.third-info-wrapper {
+    display: flex;
+    justify-content: end;
+    align-items: end;
+}
+.third-right-column p {
+    width: 90%;
+}
 .third-cards {
     margin-top: 3rem;
 }
