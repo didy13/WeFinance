@@ -5,19 +5,21 @@ const routes = require("./routes/routes");
 const dotenv = require("dotenv");
 dotenv.config();
 
-
-app.set('views', path.join(__dirname, 'views'));
+// EJS & public
+app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
-app.use(express.static('public'));
-app.use(express.urlencoded({extended: true}));
+app.use(express.static("public"));
+app.use(express.urlencoded({ extended: true }));
 
-app.listen(process.env.PORT, () =>
-{
-    console.log(`Server je pokrenut na portu ${process.env.PORT}`);
-})
-
+// Routes
 app.use(routes);
 
-app.use((req,res) => {
-    res.status(404).render("404", {title: "404"});
-})
+// 404 fallback
+app.use((req, res) => {
+    res.status(404).render("404", { title: "404" });
+});
+
+const PORT = process.env.PORT || 7000;
+app.listen(PORT, () => {
+    console.log(`✅ Server pokrenut na portu ${PORT}`);
+});

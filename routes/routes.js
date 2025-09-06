@@ -1,118 +1,108 @@
 const express = require("express");
 const session = require("express-session");
-require('dotenv').config();
+require("dotenv").config();
 const router = express.Router();
 const connection = require("../controller/config");
 const bcrypt = require("bcrypt");
 const Korisnik = require("../models/Korisnik");
 const registerValidation = require("../public/js/registerValidation");
-const { validationResult } = require('express-validator');
-const axios = require('axios');
-const { OpenWeatherAPI } = require("openweather-api-node")
-const translate = require('@iamtraction/google-translate');
-const NodeCache = require('node-cache');
-router.use(express.json());
+const { validationResult } = require("express-validator");
 
 Korisnik.setConnection(connection);
 
+// SESSION setup
 router.use(session({
-    secret: process.env.SESSION_SECRET || "defaultsecret", // Proveri da li postoji vrednost u .env
-    resave: false, // Nemoj ponovo snimati sesiju ako se ne menja
-    saveUninitialized: false, // Nemoj čuvati prazne sesije
+    secret: process.env.SESSION_SECRET || "defaultsecret",
+    resave: false,
+    saveUninitialized: false,
     cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 7, // Kolačić traje 7 dana
-        secure: false, // Postavi na true ako koristiš HTTPS
-        sameSite: "lax" // Poboljšava sigurnost sesije
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 dana
+        secure: false,
+        sameSite: "lax"
     }
 }));
-    
-const isAuthenticated = (req, res, next) =>
-{
-    console.log(req.session);
-    if (req.session.user) {
-        next(); 
-    } else {
-        res.redirect("/login"); 
-    }
-}
 
-const cache = new NodeCache({ stdTTL: 300, checkperiod: 320 }); // Cache expires in 5 min
-
-router.get("/login", (req, res) => {
+// Middleware da proverimo da li je user ulogovan
+const isAuthenticated = (req, res, next) => {
     if (req.session.user) {
-        return res.redirect("/");
+        return next();
     }
-    res.render("login",{title: "GeoQuest Prijava", user: "", error: ""});
+    res.redirect("/login");
+};
+
+// --- ROUTES ---
+
+// Home (dashboard kad si ulogovan)
+router.get("/", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/login");
+    }
+    res.render("dashboard", {
+        title: "WeInvest Dashboard",
+        user: req.session.user
+    });
 });
 
+// LOGIN stranica
+router.get("/login", (req, res) => {
+    if (req.session.user) return res.redirect("/");
+    res.render("login", { title: "WeInvest - Prijava", user: "", error: "" });
+});
+
+// LOGIN obrada
 router.post("/login", (req, res) => {
     const { nickname, lozinka } = req.body;
     const query = "SELECT * FROM Korisnik WHERE nickname = ?";
 
     connection.query(query, [nickname], async (err, results) => {
-        if (err) {
-            return res.status(500).send("Internal Server Error");
-        }
+        if (err) return res.status(500).send("Greška na serveru");
 
         if (results.length > 0) {
             const validPassword = await bcrypt.compare(lozinka, results[0].lozinka);
             if (validPassword) {
-                req.session.user = { username: results[0].nickname, admin: results[0].admin};
-                req.session.save((saveErr) => { // Eksplicitno sačuvaj sesiju
-                    if (saveErr) {
-                        console.error("Error saving session:", saveErr);
-                        return res.status(500).send("Error saving session");
-                    }
-                    return res.redirect("/");
-                });
-                return; // Završava funkciju nakon redirect-a
+                req.session.user = { username: results[0].nickname, admin: results[0].admin };
+                return req.session.save(() => res.redirect("/"));
             }
         }
-
-        res.render("login", { error: "Netačna lozinka ili korisničko ime", title: "GeoQuest Prijava", user: "" });
+        res.render("login", { error: "Netačna lozinka ili korisničko ime", title: "WeInvest - Prijava", user: "" });
     });
 });
 
+// LOGOUT
 router.get("/logout", (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             console.error("Error destroying session:", err);
-            return res.status(500).send("Unable to log out");
+            return res.status(500).send("Greška pri odjavi");
         }
-        res.clearCookie("connect.sid", { path: "/" }); // Postavi tačan path ako je drugačiji
+        res.clearCookie("connect.sid");
         res.redirect("/login");
     });
 });
 
+// REGISTER stranica
 router.get("/register", (req, res) => {
-    let username = "";
-    if(req.session.user)
-    {
-        username = req.session.user;
-    }
-    res.render("register", { error: "",title: "GeoQuest Registracija", user: username, errors: [] }); // Pretpostavljamo da postoji odgovarajuća view datoteka
+    if (req.session.user) return res.redirect("/");
+    res.render("register", { error: "", title: "WeInvest - Registracija", user: "", errors: [] });
 });
 
-// POST: Obrada podataka za registraciju
-router.post('/register', registerValidation, async (req, res) => {
-    // Validate the form inputs
+// REGISTER obrada
+router.post("/register", registerValidation, async (req, res) => {
     const errors = validationResult(req);
-
     if (!errors.isEmpty()) {
-        // Validation errors detected
-        return res.status(400).render('register', {
-            errors: errors.array(), // Pass validation errors
-            formData: req.body, // Retain form input data
-            title: 'GeoQuest Register', // Page title
-            user: req.session.user || '', // Pass session user (if available)
-            error: null // No global error message
+        return res.status(400).render("register", {
+            errors: errors.array(),
+            formData: req.body,
+            title: "WeInvest - Registracija",
+            user: "",
+            error: null
         });
     }
 
     const { ime, prezime, nickname, email, lozinka, date } = req.body;
 
     try {
-        // Check if the user already exists (email or nickname)
+        // Da li korisnik postoji?
         const checkQuery = "SELECT * FROM Korisnik WHERE email = ? OR nickname = ?";
         const existingUsers = await new Promise((resolve, reject) => {
             connection.query(checkQuery, [email, nickname], (err, results) => {
@@ -120,48 +110,35 @@ router.post('/register', registerValidation, async (req, res) => {
                 resolve(results);
             });
         });
-        
+
         if (existingUsers.length > 0) {
-            // User with email or nickname already exists
-            return res.status(400).render('register', {
-                errors: [], // No validation errors
-                formData: req.body, // Retain form input data
-                title: 'GeoQuest Registracija', 
-                user: req.session.user || '',
-                error: 'Email ili korisničko ime već postoje!' // Global error message
+            return res.status(400).render("register", {
+                errors: [],
+                formData: req.body,
+                title: "WeInvest - Registracija",
+                user: "",
+                error: "Email ili korisničko ime već postoji!"
             });
         }
-        
 
-        // Hash the password
+        // Hash password
         const hashedPassword = await bcrypt.hash(lozinka, 10);
 
-        // Create a new user instance
+        // Novi korisnik
         const newUser = new Korisnik(ime, prezime, nickname, email, hashedPassword, date);
-
-        // Save the user to the database
         await newUser.save();
 
-        // Store the user in the session
+        // Login nakon registracije
         req.session.user = { username: newUser.nickname, admin: false };
-        req.session.save((err) => {
-            if (err) {
-                console.error('Error saving session:', err);
-                return res.status(500).send('Error saving session');
-            }
-            // Redirect to the homepage after successful registration
-            res.redirect('/');
-        });
+        req.session.save(() => res.redirect("/"));
     } catch (error) {
-        console.error('Error during registration:', error);
-
-        // Render the registration page with an error message
-        res.status(500).render('register', {
-            errors: [], // No validation errors
-            formData: req.body, // Retain form input data
-            title: 'GeoQuest Registracija',
-            user: req.session.user || '',
-            error: 'Došlo je do greške. Pokušajte ponovo.' // General error message
+        console.error("Greška pri registraciji:", error);
+        res.status(500).render("register", {
+            errors: [],
+            formData: req.body,
+            title: "WeInvest - Registracija",
+            user: "",
+            error: "Došlo je do greške. Pokušajte ponovo."
         });
     }
 });
