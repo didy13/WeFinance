@@ -69,14 +69,30 @@ router.get("/", isAuthenticated, (req, res) => {
         user: req.session.user
     });
 });
-router.get("/achievement", isAuthenticated, (req, res) => {
-    res.render("achievement", {
-        title: "WeInvest - Pametno upravljanje novcem za mlade",
-        css: "achievement",
-        user: req.session.user
-    });
+router.get("/achievement", isAuthenticated, async (req, res) => {
+    try {
+        const achievements = await new Promise((resolve, reject) => {
+            connection.query("SELECT a.id, a.name, a.description, a.target, a.types, ua.current FROM achievements a INNER JOIN user_achievements ua ON a.id = ua.achievement_id WHERE ua.user_id = ?", [req.session.user.id], (err, results) => {
+                if (err) return reject(err);
+                resolve(results);
+            });
+        });
+
+        res.render("achievement", {
+            title: "WeInvest - Pametno upravljanje novcem za mlade",
+            css: "achievement",
+            user: req.session.user,
+            achievements: achievements,
+            error: ""
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Greška pri učitavanju dostignuca");
+    }
+
+    
 });
-router.get("/help", isAuthenticated, (req, res) => {
+router.get("/help", isAuthenticated, async (req, res) => {
     res.render("help", {
         title: "WeInvest - Pomoć & Edukacija",
         css: "help",

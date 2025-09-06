@@ -9,7 +9,7 @@
 
       <div class="row">
         <% 
-          const types = ["bronza", "srebro", "zlato", "dijamant"];
+          /*const types = ["bronza", "srebro", "zlato", "dijamant"];
           const icons = {
             bronza: "fas fa-medal",    // Font Awesome medal icon
             srebro: "fas fa-award",
@@ -26,18 +26,18 @@
               description: `Opis za achievement ${i}`,
               type
             });
-          }
+          }*/
         %>
 
         <% achievements.forEach(ach => { %>
           <div class="col-md-3 col-sm-6 mb-4">
             <div class="card achievement-card text-center h-100 p-3">
               <div class="achievement-icon mb-2">
-                <i class="<%= icons[ach.type] %> fa-3x <%= ach.type %>"></i>
+                <i class="<%= ach.name %> fa-3x <%= ach.types %>"></i>
               </div>
               <h5 class="achievement-name mb-1"><%= ach.name %></h5>
               <p class="achievement-desc mb-0"><%= ach.description %></p>
-              <span class="achievement-type mt-2 badge <%= ach.type %>"><%= ach.type.toUpperCase() %></span>
+              <span class="achievement-type mt-2 badge <%= ach.types %>"><%= ach.types.toUpperCase() %></span>
             </div>
           </div>
         <% }) %>
