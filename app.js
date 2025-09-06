@@ -34,6 +34,7 @@ app.use("/", authRoutes); // mountujemo router na root
 app.use((req, res) => {
   res.status(404).render("404", {
     title: "Stranica nije pronađena",
+    user: "",
     css: "index",
   });
 });
