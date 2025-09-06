@@ -7,7 +7,6 @@ const connection = require("../controller/config");
 const Korisnik = require("../models/Korisnik");
 const registerValidation = require("../public/js/registerValidation");
 const cron = require("node-cron");
-const { updateAllStreaks } = require("../public/js/streakManager");
 const Group = require("../models/Group");
 const Invite = require("../models/Invites");
 
@@ -18,7 +17,7 @@ Korisnik.setConnection(connection);
 Group.setConnection(connection);
 Invite.setConnection(connection);
 
-cron.schedule("0 0 * * *", () => {
+cron.schedule("53 23 * * *", () => {
   console.log("🕛 Running daily streak and reset check...");
 
   // Step 1: Get all users with their daily goal and daily saved
@@ -42,6 +41,7 @@ cron.schedule("0 0 * * *", () => {
         SET streak = ?, daily_saved = 0
         WHERE id = ?
       `;
+      console.log(user);
       connection.query(updateQuery, [newStreak, user.id], err2 => {
         if (err2) console.error(err2);
       });
