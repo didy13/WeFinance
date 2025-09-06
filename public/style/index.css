@@ -3,6 +3,7 @@
     font-size: 16px;
     font-weight: 400;
 }
+
 body {
     background: #121212;
 }
@@ -19,22 +20,28 @@ nav {
     z-index: 1000;
     border-radius: 0.75rem;
 }
+
 .nav-logo img {
     width: 12.5rem;
     height: auto;
 }
+
 .nav-link-style {
     color: white;
 }
+
 .nav-link-style:hover {
     color: rgb(200, 200, 200);
 }
+
 .navbar-links-wrapper ul {
     margin-left: auto;
 }
+
 .navbar-toggler {
     border-color: white;
 }
+
 .navbar-toggler-icon {
     filter: invert(1);
 }
@@ -46,6 +53,7 @@ nav {
     align-items: center;
     height: calc(100vh - 7.5rem);
 }
+
 .login-card {
     background: #1e1e1e;
     padding: 2.5rem;
@@ -55,19 +63,23 @@ nav {
     max-width: 25rem;
     text-align: center;
 }
+
 .login-card h2 {
     margin-bottom: 1.5rem;
     color: white;
 }
+
 .login-input-group {
     margin-bottom: 1.25rem;
     text-align: left;
 }
+
 .login-input-group label {
     display: block;
     margin-bottom: 0.5rem;
     color: #bbbbbb;
 }
+
 .login-input-group input {
     width: 100%;
     padding: 0.75rem;
@@ -76,9 +88,11 @@ nav {
     background: #2a2a2a;
     color: white;
 }
+
 .login-input-group input::placeholder {
     color: #777;
 }
+
 .btn-login {
     width: 100%;
     padding: 0.75rem;
@@ -90,9 +104,11 @@ nav {
     cursor: pointer;
     transition: background 0.3s ease;
 }
+
 .btn-login:hover {
     background-color: #3b6fe2;
 }
+
 .signup-link {
     margin-top: 1rem;
     color: #bbbbbb;
@@ -114,6 +130,7 @@ nav {
     align-items: center;
     height: calc(100vh - 7.5rem);
 }
+
 .register-card {
     background: #1e1e1e;
     padding: 2.5rem;
@@ -123,19 +140,23 @@ nav {
     max-width: 28.125rem;
     text-align: center;
 }
+
 .register-card h2 {
     margin-bottom: 1.5rem;
     color: white;
 }
+
 .register-input-group {
     margin-bottom: 1.25rem;
     text-align: left;
 }
+
 .register-input-group label {
     display: block;
     margin-bottom: 0.5rem;
     color: #bbbbbb;
 }
+
 .register-input-group input {
     width: 100%;
     padding: 0.75rem;
@@ -144,9 +165,37 @@ nav {
     background: #2a2a2a;
     color: white;
 }
+
 .register-input-group input::placeholder {
     color: #777;
 }
+
+.register-error {
+    background-color: #ff4d4f;
+    color: white;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.register-error-list {
+    background-color: #ff4d4f;
+    color: white;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+}
+
+.register-error-list ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.register-error-list li {
+    list-style-type: disc;
+}
+
 .btn-register {
     width: 100%;
     padding: 0.75rem;
@@ -158,17 +207,21 @@ nav {
     cursor: pointer;
     transition: background 0.3s ease;
 }
+
 .btn-register:hover {
     background-color: #3b6fe2;
 }
+
 .login-link {
     margin-top: 1rem;
     color: #bbbbbb;
 }
+
 .login-link a {
     color: #4e89ff;
     text-decoration: none;
 }
+
 .login-link a:hover {
     text-decoration: underline;
 }
