@@ -70,7 +70,7 @@ router.get("/", isAuthenticated, (req, res) => {
     });
 });
 router.get("/achievement", isAuthenticated, (req, res) => {
-    res.render("index", {
+    res.render("achievement", {
         title: "WeInvest - Pametno upravljanje novcem za mlade",
         css: "achievement",
         user: req.session.user
