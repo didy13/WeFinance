@@ -349,6 +349,7 @@ router.post("/groups/:groupId/add-money/:goalId", isAuthenticated, async (req, r
     }
 
     try {
+        // Dobavi korisnika
         const [user] = await new Promise((resolve, reject) =>
             connection.query("SELECT balance FROM users WHERE id = ?", [req.session.user.id], (err, results) => err ? reject(err) : resolve(results))
         );
@@ -359,8 +360,13 @@ router.post("/groups/:groupId/add-money/:goalId", isAuthenticated, async (req, r
             });
         }
 
+        // Dobavi cilj
         const [goal] = await new Promise((resolve, reject) =>
-            connection.query("SELECT id, current, target, completed FROM group_goals WHERE id = ? AND group_id = ?", [goalId, groupId], (err, results) => err ? reject(err) : resolve(results))
+            connection.query(
+                "SELECT id, current, target, completed FROM group_goals WHERE id = ? AND group_id = ?",
+                [goalId, groupId],
+                (err, results) => err ? reject(err) : resolve(results)
+            )
         );
 
         if (!goal) {
@@ -375,29 +381,29 @@ router.post("/groups/:groupId/add-money/:goalId", isAuthenticated, async (req, r
             });
         }
 
-        // ❌ nema dovoljno
-        if (amount > user.balance) {
+        const userBalance = Number(user.balance);
+        const goalCurrent = Number(goal.current);
+        const goalTarget = Number(goal.target);
+
+        if (amount > userBalance) {
             return renderGroupWithError(res, groupId, {
-                errorAddMoney: { goalId: parseInt(goalId), message: `Nemate dovoljno novca. Trenutni balans: ${user.balance}` }
+                errorAddMoney: { goalId: parseInt(goalId), message: `Nemate dovoljno novca. Trenutni balans: ${userBalance}` }
             });
         }
 
-        // Koliko još treba do cilja
-        const remaining = goal.target - goal.current;
-
-        // Ako je korisnik uneo više nego što treba → skidamo samo "remaining"
+        const remaining = goalTarget - goalCurrent;
         const finalAmount = Math.min(amount, remaining);
 
-        // Ako je više od 70% balansa i nije potvrđeno
-        const maxWarn = user.balance * 0.7;
+        // Provera 70% balansa
+        const maxWarn = userBalance * 0.7;
         if (finalAmount > maxWarn && !confirm) {
             return renderGroupWithError(res, groupId, {
-                errorAddMoney: { goalId: parseInt(goalId), message: `Pažnja! Ovo je više od 70% vašeg balansa (${user.balance}€). Potvrdite ako želite da nastavite.` },
+                errorAddMoney: { goalId: parseInt(goalId), message: `Pažnja! Ovo je više od 70% vašeg balansa (${userBalance}€). Potvrdite ako želite da nastavite.` },
                 amountToAdd: { goalId: parseInt(goalId), amount: finalAmount }
             });
         }
 
-        // ✅ izvrši transakciju
+        // Update balance i cilj u bazi
         await new Promise((resolve, reject) =>
             connection.query("UPDATE users SET balance = balance - ? WHERE id = ?", [finalAmount, req.session.user.id], err => err ? reject(err) : resolve())
         );
@@ -406,8 +412,9 @@ router.post("/groups/:groupId/add-money/:goalId", isAuthenticated, async (req, r
             connection.query("UPDATE group_goals SET current = current + ? WHERE id = ? AND group_id = ?", [finalAmount, goalId, groupId], err => err ? reject(err) : resolve())
         );
 
-        // Proveri da li je dostignut cilj
-        if (goal.current + finalAmount >= goal.target) {
+        // Proveri da li je dostignut cilj nakon update-a
+        const newCurrent = goalCurrent + finalAmount;
+        if (newCurrent >= goalTarget) {
             await new Promise((resolve, reject) =>
                 connection.query("UPDATE group_goals SET completed = 1 WHERE id = ?", [goalId], err => err ? reject(err) : resolve())
             );
@@ -422,6 +429,7 @@ router.post("/groups/:groupId/add-money/:goalId", isAuthenticated, async (req, r
         });
     }
 });
+
 
 router.post("/groups/:groupId/accept", isAuthenticated, (req, res) => {
     const userId = req.session.user.id;
