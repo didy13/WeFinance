@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include("./partials/head.ejs") %>
+<body>
+    <%- include("./partials/nav.ejs") %>
+
+    <div class="groups-container" style="padding: 40px; min-height: calc(100vh - 120px); background: #121212;">
+        <h1 style="color: #ffffff; margin-bottom: 24px;">Moje grupe</h1>
+
+        <!-- Dugme za kreiranje nove grupe -->
+        <div style="margin-bottom: 30px;">
+            <a href="/groups/new" class="register-page__button" style="width: auto; padding: 10px 20px;">Kreiraj novu grupu</a>
+        </div>
+
+        <!-- Lista grupa -->
+        <div class="groups-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+            <% if(groups && groups.length > 0) { %>
+                <% groups.forEach(group => { %>
+                    <div class="group-card" style="background: #1e1e1e; padding: 20px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); color: #e0e0e0;">
+                        <h2 style="margin-top: 0; color: #ffffff;"><%= group.name %></h2>
+                        <p><strong>Opis:</strong> <%= group.description %></p>
+                        <p><strong>Broj članova:</strong> <%= group.members.length %></p>
+                        <p><strong>Ciljevi:</strong> <%= group.goals.length %></p>
+                        <a href="/groups/<%= group.id %>" class="register-page__button" style="margin-top: 10px; width: 100%;">Pogledaj grupu</a>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p style="color: #bbb;">Trenutno nisi član nijedne grupe.</p>
+            <% } %>
+        </div>
+    </div>
+
+    <%- include("./partials/footer.ejs") %>
+</body>
+</html>

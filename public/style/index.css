@@ -1,165 +1,230 @@
- body {
-     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-     background: #121212;
-     color: #e0e0e0;
-     margin: 0;
-     padding: 0;
- }
+* {
+    font-family: "Montserrat", serif;
+    font-size: 16px;
+    font-weight: 400;
+}
+body {
+    background: #121212;
+}
 
- .login-container {
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     height: calc(100vh - 120px);
-     /* uzima u obzir header i footer visinu */
- }
+/* Navigacija */
+nav {
+    background-color: #0E0E0E;
+    padding: 0.75rem !important;
+    position: absolute;
+    margin-top: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+    z-index: 1000;
+    border-radius: 1rem;
+}
+.nav-logo img {
+    width: 164px;
+    height: auto;
+}
+.nav-link-style {
+    color: white;
+}
+.nav-link-style:hover {
+    color: rgb(200, 200, 200);
+}
+.navbar-links-wrapper ul {
+    margin-left: auto;
+}
+.navbar-toggler {
+    border-color: white;
+}
+.navbar-toggler-icon {
+    filter: invert(1);
+}
 
- .login-card {
-     background: #1e1e1e;
-     padding: 40px;
-     border-radius: 12px;
-     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-     width: 100%;
-     max-width: 400px;
-     text-align: center;
- }
+/* Login */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 120px);
+}
+.login-card {
+    background: #1e1e1e;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+.login-card h2 {
+    margin-bottom: 24px;
+    color: #ffffff;
+}
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+.input-group label {
+    display: block;
+    margin-bottom: 6px;
+    color: #bbbbbb;
+}
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    font-size: 16px;
+    background: #2a2a2a;
+    color: #fff;
+}
+.input-group input::placeholder {
+    color: #777;
+}
+.btn-prijava {
+    width: 100%;
+    padding: 12px;
+    background-color: #4e89ff;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+.btn-prijava:hover {
+    background-color: #3b6fe2;
+}
 
- .login-card h2 {
-     margin-bottom: 24px;
-     color: #ffffff;
- }
+/* Registracija */
+.signup-link {
+    margin-top: 16px;
+    font-size: 14px;
+    color: #999;
+}
+.signup-link a {
+    color: #4e89ff;
+    text-decoration: none;
+}
+.signup-link a:hover {
+    text-decoration: underline;
+}
+.register-page__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 120px);
+    background: #121212;
+}
+.register-page__card {
+    background: #1e1e1e;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+}
+.register-page__title {
+    margin-bottom: 24px;
+    color: #ffffff;
+}
+.register-page__input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+.register-page__label {
+    display: block;
+    margin-bottom: 6px;
+    color: #bbbbbb;
+}
+.register-page__input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    font-size: 16px;
+    background: #2a2a2a;
+    color: #fff;
+}
+.register-page__input::placeholder {
+    color: #777;
+}
+.register-page__button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4e89ff;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+.register-page__button:hover {
+    background-color: #3b6fe2;
+}
+.register-page__login-link {
+    margin-top: 16px;
+    font-size: 14px;
+    color: #999;
+}
+.register-page__link {
+    color: #4e89ff;
+    text-decoration: none;
+}
+.register-page__link:hover {
+    text-decoration: underline;
+}
 
- .input-group {
-     margin-bottom: 20px;
-     text-align: left;
- }
-
- .input-group label {
-     display: block;
-     margin-bottom: 6px;
-     color: #bbbbbb;
- }
-
- .input-group input {
-     width: 100%;
-     padding: 12px;
-     border: 1px solid #333;
-     border-radius: 8px;
-     font-size: 16px;
-     background: #2a2a2a;
-     color: #fff;
- }
-
- .input-group input::placeholder {
-     color: #777;
- }
-
- .btn-prijava {
-     width: 100%;
-     padding: 12px;
-     background-color: #4e89ff;
-     color: #fff;
-     font-size: 16px;
-     border: none;
-     border-radius: 8px;
-     cursor: pointer;
-     transition: background 0.3s ease;
- }
-
- .btn-prijava:hover {
-     background-color: #3b6fe2;
- }
-
- .signup-link {
-     margin-top: 16px;
-     font-size: 14px;
-     color: #999;
- }
-
- .signup-link a {
-     color: #4e89ff;
-     text-decoration: none;
- }
-
- .signup-link a:hover {
-     text-decoration: underline;
- }
-
- .register-page__container {
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     height: calc(100vh - 120px);
-     background: #121212;
- }
-
- .register-page__card {
-     background: #1e1e1e;
-     padding: 40px;
-     border-radius: 12px;
-     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-     width: 100%;
-     max-width: 450px;
-     text-align: center;
- }
-
- .register-page__title {
-     margin-bottom: 24px;
-     color: #ffffff;
- }
-
- .register-page__input-group {
-     margin-bottom: 20px;
-     text-align: left;
- }
-
- .register-page__label {
-     display: block;
-     margin-bottom: 6px;
-     color: #bbbbbb;
- }
-
- .register-page__input {
-     width: 100%;
-     padding: 12px;
-     border: 1px solid #333;
-     border-radius: 8px;
-     font-size: 16px;
-     background: #2a2a2a;
-     color: #fff;
- }
-
- .register-page__input::placeholder {
-     color: #777;
- }
-
- .register-page__button {
-     width: 100%;
-     padding: 12px;
-     background-color: #4e89ff;
-     color: #fff;
-     font-size: 16px;
-     border: none;
-     border-radius: 8px;
-     cursor: pointer;
-     transition: background 0.3s ease;
- }
-
- .register-page__button:hover {
-     background-color: #3b6fe2;
- }
-
- .register-page__login-link {
-     margin-top: 16px;
-     font-size: 14px;
-     color: #999;
- }
-
- .register-page__link {
-     color: #4e89ff;
-     text-decoration: none;
- }
-
- .register-page__link:hover {
-     text-decoration: underline;
- }
+/* Dashboard */
+.dashboard-page__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 120px);
+    background: #121212;
+    padding: 20px;
+}
+.dashboard-page__card {
+    background: #1e1e1e;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+}
+.dashboard-page__title {
+    margin-bottom: 30px;
+    color: #ffffff;
+    font-size: 24px;
+}
+.dashboard-page__balance,
+.dashboard-page__goal {
+    margin-bottom: 20px;
+}
+.dashboard-page__label {
+    display: block;
+    color: #bbbbbb;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+.dashboard-page__amount,
+.dashboard-page__goal-name {
+    font-size: 20px;
+    color: #ffffff;
+    font-weight: bold;
+}
+.dashboard-page__button {
+    padding: 12px 20px;
+    background-color: #4e89ff;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+.dashboard-page__button:hover {
+    background-color: #3b6fe2;
+}

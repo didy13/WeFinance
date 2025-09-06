@@ -1,6 +1,9 @@
-<%- include("./partials/head.ejs")%>
-
-<div class="register-page__container">
+<!DOCTYPE html>
+<html lang="en">
+    <%- include("./partials/head.ejs")%>
+<body>
+    <%- include("./partials/nav.ejs") %>
+    <div class="register-page__container">
   <div class="register-page__card">
     <h2 class="register-page__title">Registracija</h2>
     <form action="/register" method="POST" class="register-page__form">
@@ -21,3 +24,6 @@
     </form>
   </div>
 </div>
+    <%- include("./partials/footer.ejs") %>
+</body>
+</html>
