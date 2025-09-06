@@ -10,17 +10,18 @@ class Korisnik {
         connection = conn;
     }
 
-    save() {
-        const query = 'INSERT INTO users (username, password) VALUES (?, ?)';
-        const values = [this.username, this.password];
-
-        return new Promise((resolve, reject) => {
-            connection.query(query, values, (err, results) => {
+    async save() {
+    return new Promise((resolve, reject) => {
+        connection.query(
+            "INSERT INTO users (username, password) VALUES (?, ?)",
+            [this.username, this.password],
+            (err, result) => {
                 if (err) return reject(err);
-                resolve(results);
-            });
-        });
-    }
+                resolve(result.insertId); // 🔥 samo insertId, ne ceo objekat
+            }
+        );
+    });
+}
 
     static findByUsername(username) {
         return new Promise((resolve, reject) => {
