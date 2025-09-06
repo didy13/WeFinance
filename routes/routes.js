@@ -41,6 +41,7 @@ const isAuthenticated = (req, res, next) => {
 router.get("/", isAuthenticated, (req, res) => {
     res.render("index", { 
         title: "WeInvest - Pametno upravljanje novcem za mlade", 
+        css: "index",
         user: req.session.user 
     });
 });
@@ -48,6 +49,7 @@ router.get("/", isAuthenticated, (req, res) => {
 router.get("/help", isAuthenticated, (req, res) => {
     res.render("help", { 
         title: "WeInvest - Pametno upravljanje novcem za mlade", 
+        css: "index",
         user: req.session.user 
     });
 });
@@ -73,7 +75,7 @@ router.get("/profile", isAuthenticated, async (req, res) => {
 
         const errorBalance = '';
 
-        res.render("profile", { title: "WeInvest - Profile", user, goals, errorBalance });
+        res.render("profile", { title: "WeInvest - Profile", user, goals,css: "index", errorBalance });
     } catch (err) {
         console.error(err);
         res.status(500).send("Greška pri učitavanju profila");
@@ -83,7 +85,7 @@ router.get("/profile", isAuthenticated, async (req, res) => {
 // --- LOGIN ---
 router.get("/login", (req, res) => {
     if (req.session.user) return res.redirect("/");
-    res.render("login", { title: "WeInvest - Prijava", user: "", error: "" });
+    res.render("login", { title: "WeInvest - Prijava",css: "index", user: "", error: "" });
 });
 
 router.post("/login", async (req, res) => {
@@ -117,7 +119,7 @@ router.get("/logout", (req, res) => {
 // --- REGISTER ---
 router.get("/register", (req, res) => {
     if (req.session.user) return res.redirect("/");
-    res.render("register", { title:"WeInvest - Registracija", user:"", error:"", errors: [] });
+    res.render("register", { title:"WeInvest - Registracija", user:"",css: "index", error:"", errors: [] });
 });
 
 router.post("/register", registerValidation, async (req, res) => {
@@ -171,7 +173,7 @@ router.get("/groups", isAuthenticated, (req, res) => {
             members: Array(g.members_count).fill("Član"),
             goals: Array(g.goals_count).fill("Cilj")
         }));
-        res.render("groups", { title: "WeInvest - Grupe", user: req.session.user, groups: formattedGroups, invites });
+        res.render("groups", { title: "WeInvest - Grupe", user: req.session.user,css: "group", groups: formattedGroups, invites });
     })
     .catch(err => {
         console.error(err);
@@ -181,7 +183,7 @@ router.get("/groups", isAuthenticated, (req, res) => {
 
 // --- NEW GROUP ---
 router.get("/newgroup", isAuthenticated, (req, res) => {
-    res.render("new_group", { title: "WeInvest - Kreiraj novu grupu", user: req.session.user, error: "" });
+    res.render("new_group", { title: "WeInvest - Kreiraj novu grupu",css: "index", user: req.session.user, error: "" });
 });
 
 router.post("/newgroup", isAuthenticated, async (req, res) => {
@@ -276,6 +278,7 @@ async function renderGroupWithError(res, groupId, errorMsg) {
             members,
             goals,
             invites,
+            css: "index",
             error: errorMsg || ""
         });
     } catch (err) {
