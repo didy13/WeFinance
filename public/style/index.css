@@ -1,0 +1,92 @@
+ body {
+     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+     background: #121212;
+     color: #e0e0e0;
+     margin: 0;
+     padding: 0;
+ }
+
+ .login-container {
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     height: calc(100vh - 120px);
+     /* uzima u obzir header i footer visinu */
+ }
+
+ .login-card {
+     background: #1e1e1e;
+     padding: 40px;
+     border-radius: 12px;
+     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+     width: 100%;
+     max-width: 400px;
+     text-align: center;
+ }
+
+ .login-card h2 {
+     margin-bottom: 24px;
+     color: #ffffff;
+ }
+
+ .input-group {
+     margin-bottom: 20px;
+     text-align: left;
+ }
+
+ .input-group label {
+     display: block;
+     margin-bottom: 6px;
+     color: #bbbbbb;
+ }
+
+ .input-group input {
+     width: 100%;
+     padding: 12px;
+     border: 1px solid #333;
+     border-radius: 8px;
+     font-size: 16px;
+     background: #2a2a2a;
+     color: #fff;
+ }
+
+ .input-group input::placeholder {
+     color: #777;
+ }
+
+ .btn-prijava {
+     width: 100%;
+     padding: 12px;
+     background-color: #4e89ff;
+     color: #fff;
+     font-size: 16px;
+     border: none;
+     border-radius: 8px;
+     cursor: pointer;
+     transition: background 0.3s ease;
+ }
+
+ .btn-prijava:hover {
+     background-color: #3b6fe2;
+ }
+
+ .signup-link {
+     margin-top: 16px;
+     font-size: 14px;
+     color: #999;
+ }
+
+ .signup-link a {
+     color: #4e89ff;
+     text-decoration: none;
+ }
+
+ .signup-link a:hover {
+     text-decoration: underline;
+ }
+.nav-logo img {
+    width: 40px;
+}
+body {
+    background-color: grey;
+}
