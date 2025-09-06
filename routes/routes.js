@@ -45,11 +45,11 @@ const isAuthenticated = (req, res, next) => {
 
 // INDEX / Dashboard
 router.get("/", isAuthenticated, (req, res) => {
-    res.render("index", { title: "WeInvest - Dashboard", user: req.session.user });
+    res.render("index", { title: "WeInvest - Pametno upravljanje novcem za mlade", user: req.session.user });
 });
 
 router.get("/profile", isAuthenticated, (req, res) => {
-    res.render("profile", { title: "WeInvest - Dashboard", user: req.session.user });
+    res.render("profile", { title: "WeInvest - Profile", user: req.session.user });
 });
 
 // LOGIN stranica
