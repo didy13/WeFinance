@@ -45,7 +45,9 @@
                             <div style="font-weight:bold; font-size:1.1em;"><%= goal.goal_name %></div>
                             <div><%= goal.current %> / <%= goal.target %></div>
                         </div>
-
+                        <div class="dashboard-progress-bar" style="width:100%; background:#333; height:15px; border-radius:8px;">
+                            <div class="dashboard-progress" style="width:<%= Math.min((goal.current / goal.target) * 100, 100) %>%; height:100%; background:#2ecc71; border-radius:8px;"></div>
+                        </div>
                         <!-- Dodavanje novca -->
                         <form action="/groups/<%= group.id %>/add-money/<%= goal.id %>" method="POST" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
                             <input type="number" name="amount" placeholder="Iznos" min="0" required style="padding:5px; flex:1; min-width:150px;">

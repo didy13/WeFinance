@@ -447,7 +447,7 @@ router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
         return res.render("profile", {title: 'WeInvest - Profile', goals, error: 'Morate popuniti balans!', user, css: 'index'});
     }
   
-    const balance = parseFloat(balans);
+    const balance = parseFloat(balans) + parseFloat(user.balance);
   
     const query = "UPDATE users SET balance = ? WHERE id = ?";
     connection.query(query, [balance, req.session.user.id], (err, result) => {
@@ -496,6 +496,10 @@ router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
       if (amount > userBalance) {
         // not enough money in user balance
         return res.render("profile", {user, goals, error: "Nemate dovoljno novca!", title: "WeInvest - Profile", css: 'index'}); 
+      }
+
+      if(amount + goalCurrent > goalTarget){
+        return res.render("profile", {user, goals, error: "Ukupan novac premasuje cilj!", title: "WeInvest - Profile", css: 'index'}); 
       }
   
       const newGoalCurrent = Math.min(goalCurrent + amount, goalTarget);
