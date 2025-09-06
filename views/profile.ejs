@@ -32,7 +32,7 @@
                             <span class="dashboard-page__goal-total">$<%= goal.target %></span>
                         </div>
                         <div class="dashboard-page__progress-bar">
-                            <div class="dashboard-page__progress" style="width: <%= Math.min((goal.current / goal.target) * 100, 100) %>%;">
+                            <div class="dashboard-page__progress" style="width: <%= Math.min((goal.current / goal.target) * 100, 100) %> %;">
                             </div>
                         </div>
                     </div>
@@ -42,7 +42,7 @@
             <% } %>
 
             <!-- Dugme za kreiranje novog cilja -->
-            <form action="/goals/new" method="GET" class="dashboard-page__form">
+            <form action="/newgoals" method="GET" class="dashboard-page__form">
                 <button type="submit" class="dashboard-page__button">Kreiraj novi cilj</button>
             </form>
         </div>

@@ -220,4 +220,32 @@ router.post("/groups/invite/:inviteId/decline", isAuthenticated, (req, res) => {
     });
 });
 
+// Render the "New Goal" form
+  router.get("/newgoals", isAuthenticated, (req, res) => {
+     res.render("newgoal", { title:"WeInvest - Kreiraj novi goal", user: req.session.user, error:"", errors: [] });
+});
+  
+  // Handle form submission to create a new goal
+  router.post("/creategoal", isAuthenticated, (req, res) => {
+    console.log(req.body);
+    const { name, target } = req.body;
+
+    if (!name || !target) {
+      return res.render("newgoal", {
+        title: "WeInvest - Kreiraj novi goal",
+        user: req.session.user,
+        error: "Morate popuniti oba polja!",
+        errors: []
+      });
+    }
+  
+    const query = "INSERT INTO goals (name, target, user_id) VALUES (?, ?, ?)";
+    connection.query(query, [name, target, req.session.user.id], (err, result) => {
+      if (err) return res.status(500).send("Error creating goal: " + err.message);
+  
+      res.redirect("/profile");
+    });
+  });
+  
+
 module.exports = router;
