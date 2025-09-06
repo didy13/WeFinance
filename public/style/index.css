@@ -39,7 +39,7 @@ nav {
     filter: invert(1);
 }
 
-/* Login */
+/* Prijava */
 .login-container {
     display: flex;
     justify-content: center;
@@ -59,16 +59,16 @@ nav {
     margin-bottom: 1.5rem;
     color: white;
 }
-.input-group {
+.login-input-group {
     margin-bottom: 1.25rem;
     text-align: left;
 }
-.input-group label {
+.login-input-group label {
     display: block;
     margin-bottom: 0.5rem;
     color: #bbbbbb;
 }
-.input-group input {
+.login-input-group input {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid #333;
@@ -76,10 +76,10 @@ nav {
     background: #2a2a2a;
     color: white;
 }
-.input-group input::placeholder {
+.login-input-group input::placeholder {
     color: #777;
 }
-.btn-prijava {
+.btn-login {
     width: 100%;
     padding: 0.75rem;
     margin-top: 0.75rem;
@@ -90,7 +90,7 @@ nav {
     cursor: pointer;
     transition: background 0.3s ease;
 }
-.btn-prijava:hover {
+.btn-login:hover {
     background-color: #3b6fe2;
 }
 .signup-link {
@@ -106,71 +106,68 @@ nav {
 }
 
 /* Registracija */
-.register-page__container {
+.register-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 120px);
-    background: #121212;
+    height: calc(100vh - 7.5rem);
 }
-.register-page__card {
+.register-card {
     background: #1e1e1e;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    padding: 2.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.6);
     width: 100%;
-    max-width: 450px;
+    max-width: 28.125rem;
     text-align: center;
 }
-.register-page__title {
-    margin-bottom: 24px;
-    color: #ffffff;
+.register-card h2 {
+    margin-bottom: 1.5rem;
+    color: white;
 }
-.register-page__input-group {
-    margin-bottom: 20px;
+.register-input-group {
+    margin-bottom: 1.25rem;
     text-align: left;
 }
-.register-page__label {
+.register-input-group label {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 0.5rem;
     color: #bbbbbb;
 }
-.register-page__input {
+.register-input-group input {
     width: 100%;
-    padding: 12px;
+    padding: 0.75rem;
     border: 1px solid #333;
-    border-radius: 8px;
-    font-size: 16px;
+    border-radius: 0.5rem !important;
     background: #2a2a2a;
-    color: #fff;
+    color: white;
 }
-.register-page__input::placeholder {
+.register-input-group input::placeholder {
     color: #777;
 }
-.register-page__button {
+.btn-register {
     width: 100%;
-    padding: 12px;
+    padding: 0.75rem;
+    margin-top: 0.75rem;
     background-color: #4e89ff;
-    color: #fff;
-    font-size: 16px;
+    color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 0.5rem;
     cursor: pointer;
     transition: background 0.3s ease;
 }
-.register-page__button:hover {
+.btn-register:hover {
     background-color: #3b6fe2;
 }
-.register-page__login-link {
-    margin-top: 16px;
-    font-size: 14px;
-    color: #999;
+.login-link {
+    margin-top: 1rem;
+    color: #bbbbbb;
 }
-.register-page__link {
+.login-link a {
     color: #4e89ff;
     text-decoration: none;
 }
-.register-page__link:hover {
+.login-link a:hover {
     text-decoration: underline;
 }
 
