@@ -8,24 +8,21 @@ const Korisnik = require("../models/Korisnik");
 const registerValidation = require("../public/js/registerValidation");
 const cron = require("node-cron");
 const { updateAllStreaks } = require("../public/js/streakManager");
-
 const Group = require("../models/Group");
 const Invite = require("../models/Invites");
 
 var index = "index";
 var group = "group";
-// --- Set DB connections ---
+
 Korisnik.setConnection(connection);
 Group.setConnection(connection);
 Invite.setConnection(connection);
 
-// --- Cron task for daily streak update ---
 cron.schedule("0 0 * * *", () => {
     console.log("🕛 Running daily streak check for all users...");
     updateAllStreaks();
 });
 
-// --- SESSION setup ---
 router.use(session({
     secret: process.env.SESSION_SECRET || "defaultsecret",
     resave: false,
@@ -33,13 +30,11 @@ router.use(session({
     cookie: { maxAge: 1000 * 60 * 60 * 24 * 7, secure: false, sameSite: "lax" }
 }));
 
-// --- Middleware for authentication ---
 const isAuthenticated = (req, res, next) => {
     if (req.session.user && req.session.user.id) return next();
     res.redirect("/login");
 };
 
-// --- DASHBOARD ---
 router.get("/", isAuthenticated, (req, res) => {
     res.render("index", {
         title: "WeInvest - Pametno upravljanje novcem za mlade",
@@ -56,8 +51,6 @@ router.get("/help", isAuthenticated, (req, res) => {
     });
 });
 
-
-// --- PROFILE ---
 router.get("/profile", isAuthenticated, async (req, res) => {
     const userId = req.session.user.id;
     try {
@@ -84,7 +77,6 @@ router.get("/profile", isAuthenticated, async (req, res) => {
     }
 });
 
-// --- LOGIN ---
 router.get("/login", (req, res) => {
     if (req.session.user) return res.redirect("/");
     res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "" });
@@ -92,14 +84,14 @@ router.get("/login", (req, res) => {
 
 router.post("/login", async (req, res) => {
     const { username, password } = req.body;
-    if (!username || !password) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Username i password su obavezni" });
+    if (!username || !password) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Korisničko ime i lozinka su obavezni" });
 
     try {
         const user = await Korisnik.findByUsername(username);
-        if (!user) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Nepostojeći korisnik" });
+        if (!user) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Nepostojeće korisničko ime" });
 
         const valid = await bcrypt.compare(password, user.password);
-        if (!valid) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Netačan password" });
+        if (!valid) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Netačna lozinka" });
 
         req.session.user = { id: user.id, username: user.username };
         req.session.save(() => res.redirect("/"));
@@ -109,7 +101,6 @@ router.post("/login", async (req, res) => {
     }
 });
 
-// --- LOGOUT ---
 router.get("/logout", (req, res) => {
     req.session.destroy(err => {
         if (err) return res.status(500).send("Greška pri odjavi");
@@ -118,7 +109,6 @@ router.get("/logout", (req, res) => {
     });
 });
 
-// --- REGISTER ---
 router.get("/register", (req, res) => {
     if (req.session.user) return res.redirect("/");
     res.render("register", { title: "WeInvest - Registracija", user: "", css: index, error: "", errors: [] });
@@ -131,7 +121,7 @@ router.post("/register", registerValidation, async (req, res) => {
     const { username, password } = req.body;
     try {
         const existing = await Korisnik.findByUsername(username);
-        if (existing) return res.render("register", { title: "WeInvest - Registracija", user: "", error: "Username već postoji", errors: [] });
+        if (existing) return res.render("register", { title: "WeInvest - Registracija", user: "", error: "Korisničko ime već postoji", errors: [] });
 
         const hashed = await bcrypt.hash(password, 10);
         const newUser = new Korisnik(username, hashed);
@@ -145,7 +135,6 @@ router.post("/register", registerValidation, async (req, res) => {
     }
 });
 
-// --- GROUPS LIST ---
 router.get("/groups", isAuthenticated, (req, res) => {
     const userId = req.session.user.id;
 
@@ -183,14 +172,13 @@ router.get("/groups", isAuthenticated, (req, res) => {
         });
 });
 
-// --- NEW GROUP ---
 router.get("/newgroup", isAuthenticated, (req, res) => {
     res.render("new_group", { title: "WeInvest - Kreiranje nove grupe", css: index, user: req.session.user, error: "" });
 });
 
 router.post("/newgroup", isAuthenticated, async (req, res) => {
     const { name } = req.body;
-    if (!name || name.trim() === "") return res.render("new_group", { title: "WeInvest - Kreiranje nove grupe", user: req.session.user, error: "Ime grupe je obavezno!" });
+    if (!name || name.trim() === "") return res.render("new_group", { title: "WeInvest - Kreiranje nove grupe", user: req.session.user, error: "Ime grupe je obavezno" });
 
     try {
         const group = new Group(name.trim());
@@ -207,13 +195,11 @@ router.post("/newgroup", isAuthenticated, async (req, res) => {
     }
 });
 
-// --- GROUP DETAIL ---
 router.get("/groups/:groupId", isAuthenticated, async (req, res) => {
     const groupId = req.params.groupId;
     await renderGroupWithError(res, groupId, {});
 });
 
-// --- ADD MEMBER / INVITE ---
 router.post("/groups/:groupId/add-member", isAuthenticated, async (req, res) => {
     const groupId = req.params.groupId;
     const { username } = req.body;
@@ -301,7 +287,6 @@ async function renderGroupWithError(res, groupId, options = {}) {
     }
 }
 
-// --- ADD GOAL TO GROUP ---
 router.post("/groups/:groupId/add-goal", isAuthenticated, async (req, res) => {
     const { groupId } = req.params;
     const { name, target } = req.body;
@@ -440,12 +425,10 @@ router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
     });
 });
 
-// Render the "New Goal" form
 router.get("/newgoals", isAuthenticated, (req, res) => {
-    res.render("newgoal", { title: "WeInvest - Kreiraj novi goal", user: req.session.user, css: index, error: "", errors: [] });
+    res.render("newgoal", { title: "WeInvest - Novi cilj štednje", user: req.session.user, css: index, error: "", errors: [] });
 });
 
-// Handle form submission to create a new goal
 router.post("/creategoal", isAuthenticated, (req, res) => {
     console.log(req.body);
     const { name, target } = req.body;
