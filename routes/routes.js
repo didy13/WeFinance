@@ -11,6 +11,10 @@ const { updateAllStreaks } = require("../public/js/streakManager");
 
 
 const Group = require("../models/Group");
+
+// Set connection
+Korisnik.setConnection(connection);
+
 const Invite = require("../models/Invites");
 
 // Set connection
@@ -197,55 +201,325 @@ router.get("/groups", isAuthenticated, (req, res) => {
 });
 
 
-router.post("/groups/new", isAuthenticated, async (req, res) => {
+// --- NEW GROUP PAGE ---
+router.get("/newgroup", isAuthenticated, (req, res) => {
+    res.render("new_group", {
+        title: "WeInvest - Kreiraj novu grupu",
+        user: req.session.user,
+        error: ""
+    });
+});
+
+router.post("/newgroup", isAuthenticated, async (req, res) => {
     const { name } = req.body;
+
+    if (!name || name.trim() === "") {
+        return res.render("new_group", {
+            title: "WeInvest - Kreiraj novu grupu",
+            user: req.session.user,
+            error: "Ime grupe je obavezno"
+        });
+    }
+
     try {
-        const group = new Group(name);
+        const group = new Group(name.trim());
         const groupId = await group.save();
-        await connection.query("INSERT INTO group_members (group_id, user_id) VALUES (?, ?)", [groupId, req.session.user.id]);
-        res.redirect("/groups");
-    } catch(err) {
+
+        // Dodaj trenutnog korisnika kao člana grupe
+        connection.query(
+            "INSERT INTO group_members (group_id, user_id) VALUES (?, ?)",
+            [groupId, req.session.user.id],
+            (err) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send("Greška pri dodavanju člana grupe");
+                }
+                res.redirect("/groups");
+            }
+        );
+    } catch (err) {
         console.error(err);
         res.status(500).send("Greška pri kreiranju grupe");
     }
 });
 
-router.post("/:inviteId/accept", isAuthenticated, async (req, res) => {
-    const inviteId = req.params.inviteId;
-    const userId = req.session.user.id;
+router.get("/groups/:groupId", isAuthenticated, async (req, res) => {
+    const groupId = req.params.groupId;
 
     try {
-        // Dohvati invite
-        const invites = await Invite.getUserInvites(userId);
-        const invite = invites.find(i => i.invite_id == inviteId);
-        if (!invite) return res.status(404).send("Invite nije pronađen");
+        // Dohvati osnovne info o grupi
+        const [group] = await new Promise((resolve, reject) => {
+            connection.query("SELECT * FROM table_group WHERE id = ?", [groupId], (err, results) => {
+                if(err) return reject(err);
+                resolve(results);
+            });
+        });
 
-        // Dodaj korisnika u grupu
-        connection.query("INSERT INTO group_members (group_id, user_id) VALUES (?, ?)", [invite.group_id, userId]);
+        if(!group) return res.status(404).send("Grupa nije pronađena");
 
-        // Obriši invite
-        await Invite.delete(inviteId);
+        // Dohvati članove grupe
+        const members = await new Promise((resolve, reject) => {
+            connection.query(`
+                SELECT u.id, u.username 
+                FROM users u 
+                JOIN group_members gm ON u.id = gm.user_id 
+                WHERE gm.group_id = ?
+            `, [groupId], (err, results) => {
+                if(err) return reject(err);
+                resolve(results);
+            });
+        });
 
-        res.redirect("/groups");
-    } catch (err) {
+        // Dohvati ciljeve grupe
+        const goals = await new Promise((resolve, reject) => {
+            connection.query(`
+                SELECT * FROM group_goals WHERE group_id = ?
+            `, [groupId], (err, results) => {
+                if(err) return reject(err);
+                resolve(results);
+            });
+        });
+
+        res.render("group_detail", { 
+            title: `WeInvest - ${group.name}`,
+            user: req.session.user,
+            group,
+            members,
+            goals
+        });
+
+    } catch(err) {
         console.error(err);
-        res.status(500).send("Greška pri prihvatanju invite-a");
+        res.status(500).send("Greška pri učitavanju detalja grupe");
     }
 });
 
-// --- POST /groups/:inviteId/decline ---
-router.post("/:inviteId/decline", isAuthenticated, async (req, res) => {
-    const inviteId = req.params.inviteId;
-    const userId = req.session.user.id;
+// --- ADD NEW MEMBER (INVITE) ---
+router.post("/groups/:groupId/add-member", isAuthenticated, async (req, res) => {
+    const groupId = req.params.groupId;
+    const { username } = req.body;
+    const inviterId = req.session.user.id;
 
     try {
-        // Obriši invite
-        await Invite.delete(inviteId);
-        res.redirect("/groups");
+        // 1️⃣ Pronađi korisnika po username
+        const [user] = await new Promise((resolve, reject) => {
+            connection.query("SELECT * FROM users WHERE username = ?", [username], (err, results) => {
+                if (err) return reject(err);
+                resolve(results);
+            });
+        });
+
+        if (!user) {
+            return renderGroupWithError(res, groupId, "Korisnik nije pronađen");
+        }
+
+        // 2️⃣ Proveri da li je već član grupe
+        const [isMember] = await new Promise((resolve, reject) => {
+            connection.query(
+                "SELECT * FROM group_members WHERE group_id = ? AND user_id = ?", 
+                [groupId, user.id], 
+                (err, results) => {
+                    if (err) return reject(err);
+                    resolve(results);
+                }
+            );
+        });
+
+        if (isMember) {
+            return renderGroupWithError(res, groupId, "Korisnik je već član grupe");
+        }
+
+        // 3️⃣ Proveri da li već postoji pozivnica
+        const [existingInvite] = await new Promise((resolve, reject) => {
+            connection.query(
+                "SELECT * FROM group_invites WHERE group_id = ? AND user_id = ?", 
+                [groupId, user.id], 
+                (err, results) => {
+                    if (err) return reject(err);
+                    resolve(results);
+                }
+            );
+        });
+
+        if (existingInvite) {
+            return renderGroupWithError(res, groupId, "Pozivnica je već poslata ovom korisniku");
+        }
+
+        // 4️⃣ Ako nije član i nema pozivnicu → pošalji novu
+        const invite = new Invite(groupId, user.id, inviterId);
+        await invite.save();
+
+        res.redirect(`/groups/${groupId}`);
     } catch (err) {
         console.error(err);
-        res.status(500).send("Greška pri odbijanju invite-a");
+        renderGroupWithError(res, groupId, "Greška pri dodavanju člana");
     }
 });
+
+
+// Pomoćna funkcija za renderovanje stranice grupe sa error porukom
+async function renderGroupWithError(res, groupId, errorMsg) {
+    try {
+        // Dohvati osnovne info o grupi
+        const [group] = await new Promise((resolve, reject) => {
+            connection.query("SELECT * FROM table_group WHERE id = ?", [groupId], (err, results) => {
+                if (err) return reject(err);
+                resolve(results);
+            });
+        });
+
+        if (!group) return res.status(404).send("Grupa nije pronađena");
+
+        // Dohvati članove grupe
+        const members = await new Promise((resolve, reject) => {
+            connection.query(`
+                SELECT u.id, u.username 
+                FROM users u 
+                JOIN group_members gm ON u.id = gm.user_id 
+                WHERE gm.group_id = ?
+            `, [groupId], (err, results) => {
+                if (err) return reject(err);
+                resolve(results);
+            });
+        });
+
+        // Dohvati ciljeve grupe
+        const goals = await new Promise((resolve, reject) => {
+            connection.query("SELECT * FROM group_goals WHERE group_id = ?", [groupId], (err, results) => {
+                if (err) return reject(err);
+                resolve(results);
+            });
+        });
+
+        // Dohvati pozivnice
+        const invites = await new Promise((resolve, reject) => {
+            connection.query(`
+                SELECT i.id AS invite_id, g.id AS group_id, g.name AS group_name, u.username AS inviter_name
+                FROM group_invites i
+                JOIN table_group g ON g.id = i.group_id
+                JOIN users u ON u.id = i.inviter_id
+                WHERE i.user_id IN (SELECT user_id FROM group_members WHERE group_id = ?)
+            `, [groupId], (err, results) => {
+                if (err) return reject(err);
+                resolve(results);
+            });
+        });
+
+        res.render("group_detail", { 
+            title: `WeInvest - ${group.name}`,
+            user: res.req.session.user,
+            group,
+            members,
+            goals,
+            invites,
+            error: errorMsg // ovo možeš prikazati u frontend template-u
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Greška pri učitavanju grupe");
+    }
+}
+
+
+// --- ADD/UPDATE GOAL ---
+router.post("/groups/:groupId/add-goal", isAuthenticated, async (req, res) => {
+    const groupId = req.params.groupId;
+    const { name, target } = req.body;
+
+    try {
+        await new Promise((resolve, reject) => {
+            connection.query("INSERT INTO group_goals (group_id, goal_name, target, current) VALUES (?, ?, ?, 0)", 
+                [groupId, name, target], (err, result) => {
+                    if(err) return reject(err);
+                    resolve(result);
+                });
+        });
+
+        res.redirect(`/groups/${groupId}`);
+    } catch(err) {
+        console.error(err);
+        res.status(500).send("Greška pri dodavanju cilja");
+    }
+});
+
+// --- ADD MONEY TO GOAL ---
+router.post("/groups/:groupId/add-money/:goalId", isAuthenticated, async (req, res) => {
+    const { groupId, goalId } = req.params;
+    const { amount } = req.body;
+
+    try {
+        await new Promise((resolve, reject) => {
+            connection.query("UPDATE group_goals SET current = current + ? WHERE id = ? AND group_id = ?", 
+                [amount, goalId, groupId], (err, result) => {
+                    if(err) return reject(err);
+                    resolve(result);
+                });
+        });
+
+        res.redirect(`/groups/${groupId}`);
+    } catch(err) {
+        console.error(err);
+        res.status(500).send("Greška pri dodavanju novca");
+    }
+});
+
+router.post("/groups/:groupId/accept", isAuthenticated, (req, res) => {
+    const userId = req.session.user.id;
+    const { invite_id } = req.body;
+    const { groupId } = req.params;
+
+    const addMemberQuery = `INSERT INTO group_members (group_id, user_id) VALUES (?, ?)`;
+    const deleteInviteQuery = `DELETE FROM group_invites WHERE id = ?`;
+
+    connection.query(addMemberQuery, [groupId, userId], (err) => {
+        if (err) return res.status(500).send("Greška pri dodavanju člana");
+
+        connection.query(deleteInviteQuery, [invite_id], (err2) => {
+            if (err2) return res.status(500).send("Greška pri brisanju pozivnice");
+            res.redirect("/groups");
+        });
+    });
+});
+
+// Odbijanje pozivnice
+router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
+    const { invite_id } = req.body;
+
+    const deleteInviteQuery = `DELETE FROM group_invites WHERE id = ?`;
+
+    connection.query(deleteInviteQuery, [invite_id], (err) => {
+        if (err) return res.status(500).send("Greška pri brisanju pozivnice");
+        res.redirect("/groups");
+    });
+});
+
+// Render the "New Goal" form
+  router.get("/newgoals", isAuthenticated, (req, res) => {
+     res.render("newgoal", { title:"WeInvest - Kreiraj novi goal", user: req.session.user, error:"", errors: [] });
+});
+  
+  // Handle form submission to create a new goal
+  router.post("/creategoal", isAuthenticated, (req, res) => {
+    console.log(req.body);
+    const { name, target } = req.body;
+
+    if (!name || !target) {
+      return res.render("newgoal", {
+        title: "WeInvest - Kreiraj novi goal",
+        user: req.session.user,
+        error: "Morate popuniti oba polja!",
+        errors: []
+      });
+    }
+  
+    const query = "INSERT INTO goals (name, target, user_id) VALUES (?, ?, ?)";
+    connection.query(query, [name, target, req.session.user.id], (err, result) => {
+      if (err) return res.status(500).send("Error creating goal: " + err.message);
+  
+      res.redirect("/profile");
+    });
+  });
+  
 
 module.exports = router;

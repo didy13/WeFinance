@@ -1,9 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include("./partials/head.ejs")%>
+<%- include("./partials/head.ejs") %>
 <body>
-    <%- include("./partials/nav.ejs") %>
-    
-    <%- include("./partials/footer.ejs") %>
+<%- include("./partials/nav.ejs") %>
+
+<div class="container" style="padding:40px; min-height:calc(100vh - 120px); background:#121212; color:#fff;">
+    <h1><%= group.name %></h1>
+    <p><strong>Opis:</strong> <%= group.description || "Nema opisa" %></p>
+
+    <!-- Članovi grupe -->
+    <h2>Članovi</h2>
+    <ul>
+        <% members.forEach(member => { %>
+            <li><%= member.username %></li>
+        <% }) %>
+    </ul>
+
+    <!-- Dodavanje novog člana -->
+    <h3>Dodaj člana (invite)</h3>
+    <form action="/groups/<%= group.id %>/add-member" method="POST">
+        <input type="text" name="username" placeholder="Username korisnika" required>
+        <button type="submit">Pošalji pozivnicu</button>
+    </form>
+<% if (error) { %>
+    <div class="alert alert-danger"><%= error %></div>
+<% } %>
+
+    <!-- Ciljevi grupe -->
+    <h2>Ciljevi grupe</h2>
+    <ul>
+        <% goals.forEach(goal => { %>
+            <li>
+                <strong><%= goal.name %></strong>: <%= goal.current %> / <%= goal.target %>
+                <form action="/groups/<%= group.id %>/add-money/<%= goal.id %>" method="POST" style="display:inline-block;">
+                    <input type="number" name="amount" placeholder="Iznos" min="0" required>
+                    <button type="submit">Dodaj</button>
+                </form>
+            </li>
+        <% }) %>
+    </ul>
+
+    <!-- Dodavanje novog cilja -->
+    <h3>Dodaj cilj</h3>
+    <form action="/groups/<%= group.id %>/add-goal" method="POST">
+        <input type="text" name="name" placeholder="Naziv cilja" required>
+        <input type="number" name="target" placeholder="Target iznos" min="0" required>
+        <button type="submit">Dodaj cilj</button>
+    </form>
+</div>
+
+<%- include("./partials/footer.ejs") %>
 </body>
 </html>

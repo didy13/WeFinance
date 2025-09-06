@@ -1,9 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include("./partials/head.ejs")%>
+<%- include("./partials/head.ejs") %>
 <body>
-    <%- include("./partials/nav.ejs") %>
-    
-    <%- include("./partials/footer.ejs") %>
+<%- include("./partials/nav.ejs") %>
+
+<div class="new-group-container" style="padding: 40px; min-height: calc(100vh - 120px); background: #121212;">
+    <h1 style="color: #ffffff; margin-bottom: 24px;">Kreiraj novu grupu</h1>
+
+    <% if(error && error.length > 0) { %>
+        <p style="color:red;margin-bottom:20px;"><%= error %></p>
+    <% } %>
+
+    <form action="/newgroup" method="POST" style="max-width:400px;">
+        <div style="margin-bottom: 15px;">
+            <label for="name" style="color:#fff;">Ime grupe:</label>
+            <input type="text" id="name" name="name" placeholder="Unesite ime grupe"
+                   style="width:100%; padding:10px; border-radius:8px; border:none;">
+        </div>
+
+        <button type="submit" style="padding:10px 20px; border:none; border-radius:8px; background:#4caf50; color:#fff; cursor:pointer;">
+            Kreiraj grupu
+        </button>
+        <a href="/groups" style="padding:10px 20px; border-radius:8px; background:#555; color:#fff; text-decoration:none; margin-left:10px;">Odustani</a>
+    </form>
+</div>
+
+<%- include("./partials/footer.ejs") %>
 </body>
 </html>

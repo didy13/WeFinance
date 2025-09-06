@@ -5,32 +5,29 @@
   <%- include("./partials/nav.ejs") %>
   <div class="register-container">
     <div class="register-card">
-
       <h2>Registracija</h2>
-
       <form action="/register" method="POST">
         <div class="register-input-group">
           <label for="username">Korisničko ime</label>
-          <input type="text" id="username" name="username" placeholder="Unesite korisničko ime" value="<%= typeof user !== 'undefined' ? user.username : '' %>" required>
+          <input type="text" id="username" name="username" placeholder="Unesite korisničko ime" value="<%= typeof user !== 'undefined' ? user.username : '' %>">
         </div>
         <div class="register-input-group">
           <label for="password">Lozinka</label>
-          <input type="password" id="password" name="password" placeholder="Unesite lozinku" required>
+          <input type="password" id="password" name="password" placeholder="Unesite lozinku">
         </div>
         <div class="register-input-group">
           <label for="confirmPassword">Potvrdi lozinku</label>
-          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Ponovite lozinku" required>
+          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Ponovite lozinku">
         </div>
-
-      <% if (typeof errors !== "undefined" && errors.length > 0) { %>
-        <div class="register-error-list">
-          <ul>
-            <% errors.forEach(err => { %>
-              <li><%= err.msg %></li>
-            <% }) %>
-          </ul>
-        </div>
-      <% } %>
+        <% if (typeof errors !== "undefined" && errors.length > 0) { %>
+          <div class="register-error-list">
+            <ul>
+              <% errors.forEach(err => { %>
+                <li><%= err.msg %></li>
+              <% }) %>
+            </ul>
+          </div>
+        <% } %>
         <button type="submit" class="btn-register">Registracija</button>
         <p class="login-link">Već imate nalog? <a href="/login">Prijavite se</a></p>
       </form>
