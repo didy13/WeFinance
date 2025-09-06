@@ -17,7 +17,7 @@ Korisnik.setConnection(connection);
 Group.setConnection(connection);
 Invite.setConnection(connection);
 
-cron.schedule("53 23 * * *", () => {
+cron.schedule("0 0 * * *", () => {
   console.log("🕛 Running daily streak and reset check...");
 
   // Step 1: Get all users with their daily goal and daily saved
@@ -82,7 +82,7 @@ router.get("/profile", isAuthenticated, async (req, res) => {
     const userId = req.session.user.id;
     try {
         const [user] = await new Promise((resolve, reject) => {
-            connection.query("SELECT id, username, balance, streak FROM users WHERE id = ?", [userId], (err, results) => {
+            connection.query("SELECT id, username, balance, streak, daily_goal, daily_saved FROM users WHERE id = ?", [userId], (err, results) => {
                 if (err) return reject(err);
                 resolve(results);
             });
@@ -572,6 +572,34 @@ router.post("/changebalance", isAuthenticated, async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).send("Greška pri dodavanju novca na balans");
+    }
+});
+
+router.post("/changedailygoal", isAuthenticated, async (req, res) => {
+    const userId = req.session.user.id;
+    let { dailyGoal } = req.body;
+    dailyGoal = parseFloat(dailyGoal);
+
+
+    if (isNaN(dailyGoal) || dailyGoal <= 0) {
+        // vrati profil sa greškom
+        const [user] = await new Promise((resolve, reject) =>
+            connection.query("SELECT id, username, balance, streak, daily_goal, daily_saved FROM users WHERE id = ?", [userId], (err, results) => err ? reject(err) : resolve(results))
+        );
+        const goals = await new Promise((resolve, reject) =>
+            connection.query("SELECT id, name, current, target FROM goals WHERE user_id = ?", [userId], (err, results) => err ? reject(err) : resolve(results))
+        );
+        return res.render("profile", { user, goals, error: "Dnevni cilj mora biti veći od 0", title: "WeInvest - Moj profil", css: "profile" });
+    }
+
+    try {
+        await new Promise((resolve, reject) => {
+            connection.query("UPDATE users SET daily_goal =  ? WHERE id = ?", [dailyGoal, userId], (err) => err ? reject(err) : resolve());
+        });
+        res.redirect("/profile");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Greška pri menjanju dnevnog cilja");
     }
 });
 module.exports = router;

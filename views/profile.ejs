@@ -34,17 +34,53 @@
                 </button>
             </form>
         </div>
+        <div id="errorBalance" class="text-danger text-center col-12"><%= error %></div>
     </div>
+    
 
     <!-- Dodavanje novca na balans -->
-    <form action="/changebalance" method="POST" class="dashboard-page__change-balance mb-4 d-flex flex-wrap gap-2">
-        <input id="balans" name="balans" step="0.01" type="number" placeholder="Iznos" class="form-control">
-        <button type="submit" class="btn btn-primary">
-            <i class="fas fa-plus-circle me-1"></i> Dodaj novac
-        </button>
-        <span id="errorBalance" class="text-danger"><%= error %></span>
-    </form>
+     <div class="row align-items-center mb-4 text-light">
+        <div class="col-4">
+            
+            <form action="/changebalance" method="POST" class="dashboard-page__change-balance mb-4 d-flex flex-wrap gap-2">
+                
+                <input id="balans" name="balans" step="0.01" type="number" placeholder="Iznos" class="form-control">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus-circle me-1"></i> Dodaj novac
+                </button>
+                
+            </form>
+        </div>
 
+        
+        
+    </div>
+    
+    <div class="row dashboard-goal-section">
+       
+                <div class="col-md-12 mb-3">
+                    <div class="dashboard-single-goal p-3 bg-dark text-light rounded shadow-sm">
+                        <div class="dashboard-goal-info d-flex justify-content-between mb-2">
+                            <strong><i class="fas fa-bullseye me-2"></i> Dnevni cilj</strong>
+                            <span><%= user.daily_saved %> / <%= user.daily_goal %> $</span>
+                        </div>
+                        <div class="progress mb-2" style="height: 10px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width:<%= Math.min((user.daily_saved / user.daily_goal) * 100, 100) %>%"></div>
+                        </div>
+                        <form action="/changedailygoal" method="POST" class="dashboard-page__change-balance mb-4 d-flex flex-wrap gap-2">
+                
+                            <input id="dailyGoal" name="dailyGoal" step="0.01" type="number" placeholder="Iznos" class="form-control">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus-circle me-1"></i> Promeni dnevni cilj
+                            </button>
+                            
+                        </form>
+                    </div>
+                </div>
+            
+       
+    </div>
     <!-- Ciljevi -->
     <h2 class="mb-3">Tvoji ciljevi:</h2>
     <div class="row dashboard-goal-section">
