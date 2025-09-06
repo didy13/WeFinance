@@ -2,6 +2,9 @@
 <html lang="en">
 <%- include("./partials/head.ejs")%>
 <body>
+    <div id="preloader">
+        <div class="preloader-text"></div>
+    </div>
     <section class="hero-section">
         <%- include("./partials/nav.ejs") %>
         <div class="container">
@@ -64,6 +67,40 @@
             </div>
         </div>
     </section>
+    <script>
+    const texts = ["Keš 💸", "Kolica 🛒", "Šmekerica 😎"];
+    const durations = [550, 500, 500];
+    const preloader = document.getElementById("preloader");
+    const preloaderText = document.querySelector(".preloader-text");
+
+    let index = 0;
+
+    function showNextText() {
+        preloaderText.classList.remove("show");
+
+        setTimeout(() => {
+        preloaderText.textContent = texts[index];
+        preloaderText.classList.add("show");
+
+        const currentDuration = durations[index];
+        index++;
+        if (index < texts.length) {
+            setTimeout(showNextText, currentDuration);
+        } else {
+            setTimeout(() => {
+            preloader.style.opacity = "0";
+            setTimeout(() => {
+                preloader.style.display = "none";
+            }, 500);
+            }, currentDuration + 200);
+        }
+        }, 250);
+    }
+
+    window.addEventListener("load", () => {
+        showNextText();
+    });
+    </script>
     <%- include("./partials/footer.ejs") %>
 </body>
 </html>

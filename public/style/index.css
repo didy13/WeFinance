@@ -385,6 +385,32 @@ footer img {
     height: auto;
 }
 
+/* Preloader */
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #0f1115;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+.preloader-text {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+.preloader-text.show {
+  opacity: 1;
+}
+
 @media (max-width: 992px) {
     .navbar-nav.position-absolute {
         position: static !important;
