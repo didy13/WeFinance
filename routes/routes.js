@@ -35,7 +35,7 @@ router.get("/login", (req, res) => {
 // LOGIN obrada
 router.post("/login", (req, res) => {
     const { nickname, lozinka } = req.body;
-    const query = "SELECT * FROM Korisnik WHERE nickname = ?";
+    const query = "SELECT * FROM users WHERE username = ?";
 
     connection.query(query, [nickname], async (err, results) => {
         if (err) return res.status(500).send("Greška na serveru");
@@ -82,13 +82,13 @@ router.post("/register", registerValidation, async (req, res) => {
         });
     }
 
-    const { ime, prezime, nickname, email, lozinka, date } = req.body;
+    const { username, password } = req.body;
 
     try {
         // Provera da li postoji korisnik
-        const checkQuery = "SELECT * FROM Korisnik WHERE email = ? OR nickname = ?";
+        const checkQuery = "SELECT * FROM users WHERE username = ?";
         const existingUsers = await new Promise((resolve, reject) => {
-            connection.query(checkQuery, [email, nickname], (err, results) => {
+            connection.query(checkQuery, [email, username], (err, results) => {
                 if (err) return reject(err);
                 resolve(results);
             });
@@ -100,15 +100,15 @@ router.post("/register", registerValidation, async (req, res) => {
                 formData: req.body,
                 title: "WeInvest - Registracija",
                 user: "",
-                error: "Email ili korisničko ime već postoji!"
+                error: "Korisničko ime već postoji!"
             });
         }
 
         // Hash lozinke
-        const hashedPassword = await bcrypt.hash(lozinka, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         // Novi korisnik
-        const newUser = new Korisnik(ime, prezime, nickname, email, hashedPassword, date);
+        const newUser = new Korisnik(username, hashedPassword);
         await newUser.save();
 
         // Odmah logujemo usera posle registracije
