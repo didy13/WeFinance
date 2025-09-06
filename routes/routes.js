@@ -381,11 +381,24 @@ router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
   });
 
 
-  router.post("/changebalance", isAuthenticated, (req, res) => {
+  router.post("/changebalance", isAuthenticated, async (req, res) => {
     let { balans } = req.body;
-  
+    const goals = await new Promise((resolve, reject) => {
+        connection.query("SELECT id, name, current, target FROM goals WHERE user_id = ?", [req.session.user.id], (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
+    const [user] = await new Promise((resolve, reject) => {
+        connection.query("SELECT id, username, balance, streak FROM users WHERE id = ?", [req.session.user.id], (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
     // Check if input is empty
-    
+    if(isNaN(balans) || !balans){
+        return res.render("profile", {title: 'WeInvest - Profile', goals, errorBalance: 'Morate popuniti balans!', user});
+    }
   
     const balance = parseFloat(balans);
   
