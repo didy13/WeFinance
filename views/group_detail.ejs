@@ -31,7 +31,8 @@
     <ul>
         <% goals.forEach(goal => { %>
             <li>
-                <strong><%= goal.name %></strong>: <%= goal.current %> / <%= goal.target %>
+                
+                <strong><%= goal.goal_name %></strong>: <%= goal.current %> / <%= goal.target %>
                 <form action="/groups/<%= group.id %>/add-money/<%= goal.id %>" method="POST" style="display:inline-block;">
                     <input type="number" name="amount" placeholder="Iznos" min="0" required>
                     <button type="submit">Dodaj</button>
