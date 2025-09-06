@@ -119,10 +119,10 @@ router.post("/register", registerValidation, async (req, res) => {
 });
 router.put("/:id/goal", (req, res) => {
     const username = req.params.username;
-    const { savings_goal } = req.body;
+    const { target } = req.body;
   
-    const query = "UPDATE goals SET current = ? WHERE username = ?";
-    db.query(query, [username], (err, result) => {
+    const query = "UPDATE goals SET target = ? WHERE (SELECT id FROM users WHERE username = ?)";
+    db.query(query, [target, username], (err, result) => {
       if (err) return res.status(500).json({ error: err.message });
       res.json({ message: "Savings goal updated successfully" });
     });
@@ -130,10 +130,10 @@ router.put("/:id/goal", (req, res) => {
   
   // Update balance
   router.put("/:id/balance", (req, res) => {
-    const userId = req.params.id;
+    const username = req.params.username;
     const { balance } = req.body;
   
-    const query = "UPDATE users SET balance = ? WHERE id = ?";
+    const query = "UPDATE goals SET balance = ? WHERE id = ?";
     db.query(query, [balance, userId], (err, result) => {
       if (err) return res.status(500).json({ error: err.message });
       res.json({ message: "Balance updated successfully" });
@@ -142,10 +142,16 @@ router.put("/:id/goal", (req, res) => {
   
   // Get user info
   router.get("/:id", (req, res) => {
-    const userId = req.params.id;
-  
-    const query = "SELECT id, username, balance, savings_goal FROM users WHERE id = ?";
-    db.query(query, [userId], (err, results) => {
+    const username = req.params.username;
+    const query = `SELECT u.username AS username, 
+                   u.balance AS balance, 
+                   g.target AS target, 
+                   g.current AS current,
+                   u.streak AS streak,
+                   FROM users AS u 
+                   INNER JOIN goals AS g ON u.id = g.user_id 
+                   WHERE username = ? `;
+    db.query(query, [username], (err, results) => {
       if (err) return res.status(500).json({ error: err.message });
       res.json(results[0]);
     });
