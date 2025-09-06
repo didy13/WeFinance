@@ -1,79 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include("./partials/head.ejs") %>
-    <body>
-        <%- include("./partials/nav.ejs") %>
+  <%- include("./partials/head.ejs") %>
+  <body>
+    <%- include("./partials/nav.ejs") %>
 
-            <main class="groups-page">
-                <!-- Naslov -->
-                <h1 class="groups-title">Moje grupe</h1>
+    <main class="container groups-page">
+      <div class="row">
+        <!-- Leva strana - Grupe -->
+        <div class="col-lg-9">
+          <h1 class="groups-title">Moje grupe</h1>
 
-                <!-- Dugme za kreiranje nove grupe -->
-                <div class="groups-actions">
-                    <a href="/newgroup" class="btn-primary">Kreiraj novu grupu</a>
+          <div class="groups-actions mb-4">
+            <a href="/newgroup" class="btn btn-primary">Kreiraj novu grupu</a>
+          </div>
+
+          <div class="row g-4">
+            <% if(groups && groups.length > 0) { %>
+              <% groups.forEach(group => { %>
+                <div class="col-md-6 col-lg-4">
+                  <div class="group-card">
+                    <h2><%= group.name %></h2>
+                    <p><strong>Opis:</strong> <%= group.description %></p>
+                    <p><strong>Broj članova:</strong> <%= group.members.length %></p>
+                    <p><strong>Ciljevi:</strong> <%= group.goals.length %></p>
+                    <a href="/groups/<%= group.id %>" class="btn btn-primary w-100 mt-2">Pogledaj grupu</a>
+                  </div>
                 </div>
+              <% }) %>
+            <% } else { %>
+              <p class="groups-empty">Trenutno nisi član nijedne grupe.</p>
+            <% } %>
+          </div>
+        </div>
 
-                <!-- Lista grupa -->
-                <section class="groups-list">
-                    <% if(groups && groups.length> 0) { %>
-                        <% groups.forEach(group=> { %>
-                            <div class="group-card">
-                                <h2>
-                                    <%= group.name %>
-                                </h2>
-                                <p><strong>Opis:</strong>
-                                    <%= group.description %>
-                                </p>
-                                <p><strong>Broj članova:</strong>
-                                    <%= group.members.length %>
-                                </p>
-                                <p><strong>Ciljevi:</strong>
-                                    <%= group.goals.length %>
-                                </p>
-                                <a href="/groups/<%= group.id %>" class="btn-primary full-width">Pogledaj grupu</a>
-                            </div>
-                            <% }) %>
-                                <% } else { %>
-                                    <p class="groups-empty">Trenutno nisi član nijedne grupe.</p>
-                                    <% } %>
-                </section>
+        <!-- Desna strana - Pozivnice -->
+        <div class="col-lg-3">
+          <div class="invites-section">
+            <h2>Pozivnice</h2>
 
-                <!-- Pozivnice -->
-                <section class="invites-section">
-                    <h2>Pozivnice</h2>
+            <% if (invites && invites.length > 0) { %>
+              <ul class="list-unstyled invites-list">
+                <% invites.forEach(invite => { %>
+                  <li class="invite-item">
+                    Pozvao te <strong><%= invite.inviter_name %></strong> u grupu 
+                    <strong><%= invite.group_name %></strong>
 
-                    <% if (invites && invites.length> 0) { %>
-                        <ul class="invites-list">
-                            <% invites.forEach(invite=> { %>
-                                <li class="invite-item">
-                                    Pozvao te <strong>
-                                        <%= invite.inviter_name %>
-                                    </strong> u grupu
-                                    <strong>
-                                        <%= invite.group_name %>
-                                    </strong>
+                    <div class="invite-actions mt-2">
+                      <form action="/groups/<%= invite.group_id %>/accept" method="POST" class="d-inline">
+                        <input type="hidden" name="invite_id" value="<%= invite.invite_id %>">
+                        <button type="submit" class="btn btn-success btn-sm">Prihvati</button>
+                      </form>
 
-                                    <div class="invite-actions">
-                                        <form action="/groups/<%= invite.group_id %>/accept" method="POST">
-                                            <input type="hidden" name="invite_id" value="<%= invite.invite_id %>">
-                                            <button type="submit" class="btn-success">Prihvati</button>
-                                        </form>
+                      <form action="/groups/<%= invite.group_id %>/decline" method="POST" class="d-inline">
+                        <input type="hidden" name="invite_id" value="<%= invite.invite_id %>">
+                        <button type="submit" class="btn btn-danger btn-sm">Odbij</button>
+                      </form>
+                    </div>
+                  </li>
+                <% }) %>
+              </ul>
+            <% } else { %>
+              <p class="groups-empty">Nema novih pozivnica.</p>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </main>
 
-                                        <form action="/groups/<%= invite.group_id %>/decline" method="POST">
-                                            <input type="hidden" name="invite_id" value="<%= invite.invite_id %>">
-                                            <button type="submit" class="btn-danger">Odbij</button>
-                                        </form>
-                                    </div>
-                                </li>
-                                <% }) %>
-                        </ul>
-                        <% } else { %>
-                            <p class="groups-empty">Nema novih pozivnica.</p>
-                            <% } %>
-                </section>
-            </main>
-
-            <%- include("./partials/footer.ejs") %>
-    </body>
-
+    <%- include("./partials/footer.ejs") %>
+  </body>
 </html>

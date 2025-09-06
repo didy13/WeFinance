@@ -1,21 +1,18 @@
-/* General page styles */
+/* ===== Global styles ===== */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
   background: #121212;
   color: #e0e0e0;
+  text-align: left;
 }
 
 * {
-  font-family: "Montserrat", serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 16px;
   font-weight: 400;
 }
 
-body {
-  background: #121212;
-}
-
+/* ===== Navbar ===== */
 nav {
   background-color: #1e1e1e;
   padding: 0.75rem !important;
@@ -53,10 +50,13 @@ nav {
   filter: invert(1);
 }
 
-.groups-page {
+/* ===== Groups page ===== */
+.groups-page { 
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
   padding: 40px;
-  min-height: calc(100vh - 120px);
-  /* nav + footer */
+  min-height: calc(100vh - 120px); /* nav + footer */
 }
 
 .groups-title {
@@ -68,23 +68,18 @@ nav {
   margin-bottom: 30px;
 }
 
-/* Button styles */
+/* ===== Buttons ===== */
 .btn-primary,
 .btn-success,
 .btn-danger {
-  display: inline-block;
-  padding: 10px 20px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-size: 1rem;
-  cursor: pointer;
+  border-radius: 8px !important;
+  font-size: 1rem !important;
   transition: background 0.3s ease, transform 0.2s ease;
-  border: none;
 }
 
 .btn-primary {
   background: #4e89ff;
-  color: #fff;
+  border: none;
 }
 
 .btn-primary:hover {
@@ -94,7 +89,7 @@ nav {
 
 .btn-success {
   background: #4caf50;
-  color: #fff;
+  border: none;
 }
 
 .btn-success:hover {
@@ -104,7 +99,7 @@ nav {
 
 .btn-danger {
   background: #e74c3c;
-  color: #fff;
+  border: none;
 }
 
 .btn-danger:hover {
@@ -112,24 +107,14 @@ nav {
   transform: translateY(-2px);
 }
 
-.full-width {
-  width: 100%;
-  text-align: center;
-}
-
-/* Groups grid */
-.groups-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
-}
-
+/* ===== Groups (left column) ===== */
 .group-card {
   background: #1e1e1e;
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
   transition: transform 0.2s, box-shadow 0.2s;
+  margin-bottom: 20px;
 }
 
 .group-card:hover {
@@ -147,9 +132,9 @@ nav {
   color: #bbb;
 }
 
-/* Invites */
+/* ===== Invites (right column) ===== */
 .invites-section {
-  margin-top: 60px;
+  margin-top: 20px;
 }
 
 .invites-section h2 {
