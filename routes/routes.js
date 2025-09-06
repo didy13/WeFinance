@@ -36,6 +36,10 @@ router.get("/", isAuthenticated, (req, res) => {
     res.render("index", { title: "WeInvest - Dashboard", user: req.session.user });
 });
 
+router.get("/profile", isAuthenticated, (req, res) => {
+    res.render("profile", { title: "WeInvest - Dashboard", user: req.session.user });
+});
+
 // LOGIN stranica
 router.get("/login", (req, res) => {
     if (req.session.user) return res.redirect("/");
@@ -142,7 +146,7 @@ router.put("/:id/goal", (req, res) => {
   router.get("/groups", isAuthenticated, (req, res) => {
     // Primer: uzimamo grupe iz baze za trenutnog korisnika
     const userId = req.session.user.id; // pretpostavimo da si čuvao id
-    const query = "SELECT * FROM groups WHERE members LIKE ?";
+    const query = "SELECT * FROM table_group WHERE id IN (SELECT group_id FROM group_members WHERE user_id = (SELECT id FROM users WHERE username LIKE ?))";
     connection.query(query, [`%${userId}%`], (err, results) => {
         if (err) return res.status(500).send("Greška na serveru");
         res.render("groups", { title: "WeInvest - Grupe", user: req.session.user, groups: results });
