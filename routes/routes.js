@@ -533,8 +533,31 @@ router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
     });
   });
 });
+router.post("/changebalance", isAuthenticated, async (req, res) => {
+    const userId = req.session.user.id;
+    let { balans } = req.body;
+    balans = parseFloat(balans);
 
 
+    if (isNaN(balans) || balans <= 0) {
+        // vrati profil sa greškom
+        const [user] = await new Promise((resolve, reject) =>
+            connection.query("SELECT id, username, balance, streak FROM users WHERE id = ?", [userId], (err, results) => err ? reject(err) : resolve(results))
+        );
+        const goals = await new Promise((resolve, reject) =>
+            connection.query("SELECT id, name, current, target FROM goals WHERE user_id = ?", [userId], (err, results) => err ? reject(err) : resolve(results))
+        );
+        return res.render("profile", { user, goals, error: "Iznos mora biti veći od 0", title: "WeInvest - Moj profil", css: "profile" });
+    }
 
-
+    try {
+        await new Promise((resolve, reject) => {
+            connection.query("UPDATE users SET balance = balance + ? WHERE id = ?", [balans, userId], (err) => err ? reject(err) : resolve());
+        });
+        res.redirect("/profile");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Greška pri dodavanju novca na balans");
+    }
+});
 module.exports = router;
