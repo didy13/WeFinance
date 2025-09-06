@@ -2,6 +2,9 @@
 <html lang="en">
 <%- include("./partials/head.ejs")%>
 <body>
+    <div id="preloader">
+        <div class="preloader-text"></div>
+    </div>
     <section class="hero-section">
         <%- include("./partials/nav.ejs") %>
         <div class="container">
@@ -9,7 +12,7 @@
                 <h1>Keš Kolica & Šmekerica</h1>
                 <p>Da li si znao da prosečan mladi građanin u <span style="color: #C73339; font-weight: 700;">Sr</span><span style="color: #0C4076; font-weight: 700;">bi</span><span style="font-weight: 700;">ji</span> u 25. godini <span style="font-weight: 700;">NIJE</span> uštedeo ni dinar <br> dok bi mogao da zaradi svoj prvi auto samo ako štedi svakodnevno 1 godinu?</p>
                 <div class="buttons-wrapper">
-                    <a class="custom-button" href="/profile">Moj profil</a>
+                    <a class="custom-button" href="/profile">Profil</a>
                     <a class="custom-button" href="/help">Pomoć</a>
                 </div>
             </div>
@@ -25,7 +28,7 @@
                 <div class="col-md-6 col-12 second-right-column">
                     <p>Sa Welnvest-om, možete postaviti lične ciljeve štednje koji će vas inspirisati da efikasnije štedite. Udružite se sa prijateljima za grupne ciljeve, čineći štednju zabavnim i zajedničkim iskustvom. Bilo da je u pitanju putovanje ili poseban događaj, zajednički rad pojačava motivaciju i odgovornost.</p>
                 <div class="buttons-wrapper">
-                    <a class="custom-button" href="/profile">Moj profil</a>
+                    <a class="custom-button" href="/profile">Profil</a>
                     <a class="custom-button" href="/groups">Grupe</a>
                 </div>
                 </div>
@@ -33,6 +36,71 @@
             <img src="/images/Cilj.jpg" alt="Cilj">
         </div>
     </section>
+    <section class="third-section">
+        <div class="container">
+            <div class="row third-info-wrapper">
+                <div class="col-md-6 col-12 third-left-column">
+                    <p>Osobine</p>
+                    <h2>Otkrijte naše uzbudljive <br> funkcije štednje</h2>
+                </div>
+                <div class="col-md-1 col-12"></div>
+                <div class="col-md-5 col-12 third-right-column text-end">
+                    <p>Welnvest čini štednju novca zanimljivom i korisnom. Uz naše mini izazove možete se baviti zabavnim zadacima koji vam pomažu da ostvarite svoje ciljeve. Ostanite motivisani sa prijateljima i uživajte u zajedničkom putovanju štednje!</p>
+                </div>
+            </div>
+            <div class="row third-cards">
+                <div class="col-md-4 col-12 third-card">
+                    <img src="/images/Pig.png" alt="Pig">
+                    <h3>Zanimljivi mini izazovi za svakoga</h3>
+                    <p>Pratite svoj napredak i održavajte niz štednje!</p>
+                </div>
+                <div class="col-md-4 col-12 third-card">
+                    <img src="/images/Pig.png" alt="Pig">
+                    <h3>Prihvatite uzbudljive izazove da biste povećali svoju ušteđevinu!</h3>
+                    <p>Zaradite nagrade za svoja dostignuća u štednji</p>
+                </div>
+                <div class="col-md-4 col-12 third-card">
+                    <img src="/images/Pig.png" alt="Pig">
+                    <h3>Ostanite dosledni sa našim sistemima niza štednje</h3>
+                    <p>Otključajte uzbudljive nagrade dok dostižete svoje ciljeve!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+    const texts = ["Keš 💸", "Kolica 🛒", "Šmekerica 😎"];
+    const durations = [550, 500, 500];
+    const preloader = document.getElementById("preloader");
+    const preloaderText = document.querySelector(".preloader-text");
+
+    let index = 0;
+
+    function showNextText() {
+        preloaderText.classList.remove("show");
+
+        setTimeout(() => {
+        preloaderText.textContent = texts[index];
+        preloaderText.classList.add("show");
+
+        const currentDuration = durations[index];
+        index++;
+        if (index < texts.length) {
+            setTimeout(showNextText, currentDuration);
+        } else {
+            setTimeout(() => {
+            preloader.style.opacity = "0";
+            setTimeout(() => {
+                preloader.style.display = "none";
+            }, 500);
+            }, currentDuration + 200);
+        }
+        }, 250);
+    }
+
+    window.addEventListener("load", () => {
+        showNextText();
+    });
+    </script>
     <%- include("./partials/footer.ejs") %>
 </body>
 </html>
