@@ -27,7 +27,7 @@ const isAuthenticated = (req, res, next) => {
 
 // --- DASHBOARD ---
 router.get("/", isAuthenticated, (req, res) => {
-    res.render("index", { title: "WeInvest - Dashboard", user: req.session.user });
+    res.render("index", { title: "WeInvest - Pametno upravljanje novcem za mlade", user: req.session.user });
 });
 
 // --- PROFILE ---

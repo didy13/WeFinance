@@ -5,11 +5,29 @@
   <%- include("./partials/nav.ejs") %>
   <div class="register-container">
     <div class="register-card">
+
       <h2>Registracija</h2>
+
+      <% if (typeof error !== "undefined" && error) { %>
+        <div class="register-error">
+          <%= error %>
+        </div>
+      <% } %>
+
+      <% if (typeof errors !== "undefined" && errors.length > 0) { %>
+        <div class="register-error-list">
+          <ul>
+            <% errors.forEach(err => { %>
+              <li><%= err.msg %></li>
+            <% }) %>
+          </ul>
+        </div>
+      <% } %>
+
       <form action="/register" method="POST">
         <div class="register-input-group">
           <label for="username">Korisničko ime</label>
-          <input type="text" id="username" name="username" placeholder="Unesite korisničko ime" required>
+          <input type="text" id="username" name="username" placeholder="Unesite korisničko ime" value="<%= typeof user !== 'undefined' ? user.username : '' %>" required>
         </div>
         <div class="register-input-group">
           <label for="password">Lozinka</label>
