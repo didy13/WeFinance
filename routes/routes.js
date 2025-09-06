@@ -234,30 +234,39 @@ router.post("/groups/:groupId/add-member", isAuthenticated, async (req, res) => 
     }
 });
 
-async function renderGroupWithError(res, groupId, errorMsg) {
+async function renderGroupWithError(res, groupId, options = {}) {
     try {
-        const [group] = await new Promise((resolve, reject) => connection.query("SELECT * FROM table_group WHERE id = ?", [groupId], (err, results) => err ? reject(err) : resolve(results)));
+        const [group] = await new Promise((resolve, reject) => 
+            connection.query("SELECT * FROM table_group WHERE id = ?", [groupId], (err, results) => err ? reject(err) : resolve(results))
+        );
         if (!group) return res.status(404).send("Grupa nije pronađena");
 
-        const members = await new Promise((resolve, reject) => connection.query(
-            "SELECT u.id, u.username FROM users u JOIN group_members gm ON u.id = gm.user_id WHERE gm.group_id = ?",
-            [groupId],
-            (err, results) => err ? reject(err) : resolve(results)
-        ));
+        const members = await new Promise((resolve, reject) =>
+            connection.query(
+                "SELECT u.id, u.username FROM users u JOIN group_members gm ON u.id = gm.user_id WHERE gm.group_id = ?",
+                [groupId],
+                (err, results) => err ? reject(err) : resolve(results)
+            )
+        );
 
-        const goals = await new Promise((resolve, reject) => connection.query(
-            "SELECT * FROM group_goals WHERE group_id = ?", [groupId],
-            (err, results) => err ? reject(err) : resolve(results)
-        ));
+        const goals = await new Promise((resolve, reject) =>
+            connection.query("SELECT * FROM group_goals WHERE group_id = ?", [groupId],
+                (err, results) => err ? reject(err) : resolve(results)
+            )
+        );
 
-        const invites = await new Promise((resolve, reject) => connection.query(
-            `SELECT i.id AS invite_id, g.id AS group_id, g.name AS group_name, u.username AS inviter_name
-             FROM group_invites i
-             JOIN table_group g ON g.id = i.group_id
-             JOIN users u ON u.id = i.inviter_id
-             WHERE i.group_id = ?`, [groupId],
-            (err, results) => err ? reject(err) : resolve(results)
-        ));
+        const invites = await new Promise((resolve, reject) =>
+            connection.query(
+                `SELECT i.id AS invite_id, g.id AS group_id, g.name AS group_name, u.username AS inviter_name
+                 FROM group_invites i
+                 JOIN table_group g ON g.id = i.group_id
+                 JOIN users u ON u.id = i.inviter_id
+                 WHERE i.group_id = ?`,
+                [groupId],
+                (err, results) => err ? reject(err) : resolve(results)
+            )
+        );
+
         res.render("group_detail", {
             title: `WeInvest - ${group.name}`,
             user: res.req.session.user,
@@ -265,7 +274,10 @@ async function renderGroupWithError(res, groupId, errorMsg) {
             members,
             goals,
             invites,
-            error: errorMsg || "",
+            errorAddMoney: options.errorAddMoney || "",
+            errorAddMember: options.errorAddMember || "",
+            errorAddGoal: options.errorAddGoal || "",
+            amountToAdd: options.amountToAdd || null,
             css: "group_detail"
         });
     } catch (err) {
@@ -273,6 +285,7 @@ async function renderGroupWithError(res, groupId, errorMsg) {
         res.status(500).send("Greška pri učitavanju grupe");
     }
 }
+
 router.post("/groups/:groupId/add-goal", isAuthenticated, async (req, res) => {
     const { groupId } = req.params;
     const { name, target } = req.body;
@@ -299,53 +312,46 @@ router.post("/groups/:groupId/add-goal", isAuthenticated, async (req, res) => {
 router.post("/groups/:groupId/add-money/:goalId", isAuthenticated, async (req, res) => {
     const { groupId, goalId } = req.params;
     let { amount, confirm } = req.body;
-
     amount = parseFloat(amount);
+
     if (!amount || isNaN(amount) || amount <= 0) {
-        return renderGroupWithError(res, groupId, "Iznos mora biti veći od 0");
+        return renderGroupWithError(res, groupId, { errorAddMoney: "Iznos mora biti veći od 0" });
     }
 
     try {
-        const [user] = await new Promise((resolve, reject) => {
-            connection.query(
-                "SELECT balance FROM users WHERE id = ?",
-                [req.session.user.id],
-                (err, results) => err ? reject(err) : resolve(results)
-            );
-        });
+        const [user] = await new Promise((resolve, reject) =>
+            connection.query("SELECT balance FROM users WHERE id = ?", [req.session.user.id], (err, results) => err ? reject(err) : resolve(results))
+        );
 
-        if (!user) return renderGroupWithError(res, groupId, "Korisnik nije pronađen");
+        if (!user) return renderGroupWithError(res, groupId, { errorAddMoney: "Korisnik nije pronađen" });
 
         const maxWarn = user.balance * 0.7;
 
         if (amount > maxWarn && !confirm) {
-            return renderGroupWithError(res, groupId, `Pažnja! Ovo je više od 70% vašeg balansa (${user.balance}€). Nije pametna odluka. Ako želite da nastavite, potvrdite u nastavku.`, amount);
+            return renderGroupWithError(res, groupId, { 
+                errorAddMoney: `Pažnja! Ovo je više od 70% vašeg balansa (${user.balance}€). Potvrdite ako želite da nastavite.`,
+                amountToAdd: { goalId: parseInt(goalId), amount } 
+            });
         }
 
-        if (user.balance < amount) {
-            return renderGroupWithError(res, groupId, `Nemate dovoljno novca. Trenutni balans: ${user.balance}`);
+        if (amount > user.balance) {
+            return renderGroupWithError(res, groupId, { errorAddMoney: `Nemate dovoljno novca. Trenutni balans: ${user.balance}` });
         }
 
-        await new Promise((resolve, reject) => {
-            connection.query(
-                "UPDATE users SET balance = balance - ? WHERE id = ?",
-                [amount, req.session.user.id],
-                (err) => err ? reject(err) : resolve()
-            );
-        });
+        // Oduzmi iznos sa balansa
+        await new Promise((resolve, reject) =>
+            connection.query("UPDATE users SET balance = balance - ? WHERE id = ?", [amount, req.session.user.id], err => err ? reject(err) : resolve())
+        );
 
-        await new Promise((resolve, reject) => {
-            connection.query(
-                "UPDATE group_goals SET current = current + ? WHERE id = ? AND group_id = ?",
-                [amount, goalId, groupId],
-                (err) => err ? reject(err) : resolve()
-            );
-        });
+        // Dodaj iznos na grupni cilj
+        await new Promise((resolve, reject) =>
+            connection.query("UPDATE group_goals SET current = current + ? WHERE id = ? AND group_id = ?", [amount, goalId, groupId], err => err ? reject(err) : resolve())
+        );
 
         res.redirect(`/groups/${groupId}`);
     } catch (err) {
         console.error(err);
-        renderGroupWithError(res, groupId, "Greška pri dodavanju novca na cilj");
+        renderGroupWithError(res, groupId, { errorAddMoney: "Greška pri dodavanju novca na cilj" });
     }
 });
 
@@ -418,7 +424,7 @@ router.post("/changebalance", isAuthenticated, async (req, res) => {
         });
     });
     if (isNaN(balans) || !balans) {
-        return res.render("profile", { title: 'WeInvest - Moj profil', goals, error: 'Morate popuniti balans', user, css: 'index' });
+        return res.render("profile", { title: 'WeInvest - Moj profil', goals, error: 'Morate popuniti balans', user, css: 'profile' });
     }
 
     const balance = parseFloat(balans) + parseFloat(user.balance);
@@ -458,26 +464,16 @@ router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
       WHERE u.id = ? AND g.id = ?
     `;
 
-    connection.query(query, [userId, goalId], (err, results) => {
-        if (err) return res.status(500).send("DB error: " + err.message);
-        if (results.length === 0) return res.redirect("/profile");
-
-        const userBalance = parseFloat(results[0].balance);
-        const goalCurrent = parseFloat(results[0].current);
-        const goalTarget = parseFloat(results[0].target);
-
-        if (amount > userBalance) {
-            return res.render("profile", { user, goals, error: "Nemate dovoljno novca", title: "WeInvest - Moj profil", css: 'index' });
-        }
-
-        if (amount + goalCurrent > goalTarget) {
-            return res.render("profile", { user, goals, error: "Ukupan novac premasuje cilj", title: "WeInvest - Moj profil", css: 'index' });
-        }
-
-        const newGoalCurrent = Math.min(goalCurrent + amount, goalTarget);
-        const newUserBalance = userBalance - amount;
-
-        const updateQuery = `
+      if (amount > userBalance) {
+        // not enough money in user balance
+        return res.render("profile", {user, goals, error: "Nemate dovoljno novca", title: "WeInvest - Profile", css: 'profile'}); 
+      }
+  
+      const newGoalCurrent = Math.min(goalCurrent + amount, goalTarget);
+      const newUserBalance = userBalance - amount;
+  
+      // Step 2: update both user balance and goal current
+      const updateQuery = `
         UPDATE users u
         JOIN goals g ON g.user_id = u.id
         SET g.current = ?, u.balance = ?
@@ -488,6 +484,6 @@ router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
             res.redirect("/profile");
         });
     });
-});
+;
 
 module.exports = router;

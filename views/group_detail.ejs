@@ -24,6 +24,17 @@
             <% }) %>
           </ul>
 
+<<<<<<< HEAD
+        <!-- Dodavanje novog člana -->
+        <h3 style="margin-top:20px;">Dodaj člana (invite)</h3>
+        <form action="/groups/<%= group.id %>/add-member" method="POST" style="display:flex; gap:10px; flex-wrap:wrap;">
+            <input type="text" name="username" placeholder="Username korisnika" required style="padding:5px; flex:1; min-width:200px;">
+            <button type="submit" style="padding:5px 15px; background:#1E90FF; border:none; color:#fff; cursor:pointer;">Pošalji pozivnicu</button>
+        </form>
+        <% if (errorAddMember) { %>
+            <div class="alert alert-danger" style="margin-top:10px; color:#FFA500; background:#222; padding:10px; border-radius:5px;"><%= errorAddMember %></div>
+        <% } %>
+=======
           <h5 class="mt-3">Dodaj člana (invite)</h5>
           <form action="/groups/<%= group.id %>/add-member" method="POST" class="d-flex gap-2 flex-wrap">
             <input type="text" name="username" placeholder="Username korisnika" required class="form-control flex-grow-1" style="min-width: 150px;">
@@ -34,6 +45,7 @@
           <% } %>
         </div>
       </div>
+>>>>>>> 7619acbea03313cce999ed460079fdd68bef7757
     </div>
 
     <!-- Desna kolona: Ciljevi -->
