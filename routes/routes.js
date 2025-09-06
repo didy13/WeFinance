@@ -73,7 +73,7 @@ router.get("/", isAuthenticated, (req, res) => {
 router.get("/help", isAuthenticated, (req, res) => {
     res.render("help", {
         title: "WeInvest - Pomoć & Edukacija",
-        css: index,
+        css: "help",
         user: req.session.user
     });
 });

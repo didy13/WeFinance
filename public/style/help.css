@@ -1,0 +1,89 @@
+.help-container {
+    color: white;
+}
+
+.help-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #4e89ff;
+}
+
+.help-subtitle {
+    color: #bbbbbb;
+    font-size: 1.2rem;
+}
+
+.help-card {
+    background: #1e1e1e;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 0.5rem 1.2rem rgba(0,0,0,0.6);
+    transition: transform 0.3s ease;
+}
+
+.help-card:hover {
+    transform: translateY(-5px);
+}
+
+.help-card h3 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.btn-help {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #4e89ff;
+    border: none;
+    border-radius: 0.5rem;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-help:hover {
+    background-color: #3b6fe2;
+}
+
+.help-info {
+    display: none;
+    margin-top: 1rem;
+    color: #bbbbbb;
+    font-size: 0.95rem;
+    text-align: left;
+}
+
+.quiz-section {
+    color: white;
+    margin-top: 3rem;
+}
+
+.quiz-card {
+    background: #1e1e1e;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    box-shadow: 0 0.5rem 1.2rem rgba(0,0,0,0.6);
+}
+
+.quiz-card button {
+    display: block;
+    margin: 0.5rem auto;
+    padding: 0.5rem 1rem;
+    background: #4e89ff;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.quiz-card button:hover {
+    background: #3b6fe2;
+}
+
+#quiz-result {
+    margin-top: 1rem;
+    font-weight: 600;
+}

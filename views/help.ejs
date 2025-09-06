@@ -1,9 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
-<%- include("./partials/head.ejs")%>
+<html lang="sr">
+<%- include("./partials/head.ejs", { css: "help" }) %>
 <body>
     <%- include("./partials/nav.ejs") %>
-    
+
+    <main class="help-container container py-5">
+        <h1 class="help-title text-center mb-4">Pomoć i edukacija</h1>
+        <p class="help-subtitle text-center mb-5">
+            Ovde možeš da naučiš osnovne pojmove finansija i da unaprediš svoje veštine kroz interaktivne primere.
+        </p>
+
+        <!-- Sekcija sa karticama -->
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="help-card">
+                    <h3>📊 Budžet</h3>
+                    <p>Nauči kako da rasporediš prihod na štednju, troškove i zabavu.</p>
+                    <button class="btn-help" onclick="toggleInfo('budget')">Saznaj više</button>
+                    <div id="budget" class="help-info">
+                        <p>Pravilo 50/30/20:  
+                        - 50% osnovne potrebe,  
+                        - 30% želje,  
+                        - 20% štednja.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="help-card">
+                    <h3>💰 Štednja</h3>
+                    <p>Postavi ciljeve i uči kako mali koraci dovode do velikih rezultata.</p>
+                    <button class="btn-help" onclick="toggleInfo('saving')">Saznaj više</button>
+                    <div id="saving" class="help-info">
+                        <p>Ako svaki dan uštediš 200 RSD, za godinu dana imaćeš 73.000 RSD!</p>
+                        <p><b>Tip:</b> Probaj naše izazove štednje.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="help-card">
+                    <h3>📈 Investiranje</h3>
+                    <p>Otkrij osnovne principe investiranja i kako smanjiti rizik.</p>
+                    <button class="btn-help" onclick="toggleInfo('investing')">Saznaj više</button>
+                    <div id="investing" class="help-info">
+                        <p>Diverzifikacija je ključ! Ne ulaži sve na jedno mesto.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz -->
+        <section class="quiz-section mt-5">
+            <h2 class="text-center mb-4">🎯 Mini kviz</h2>
+            <p class="text-center">Proveri svoje znanje o štednji!</p>
+            <div class="quiz-card">
+                <p>Šta znači pravilo 50/30/20 u budžetu?</p>
+                <button onclick="checkAnswer(this, true)">50% potrebe, 30% želje, 20% štednja</button>
+                <button onclick="checkAnswer(this, false)">50% zabava, 30% štednja, 20% računi</button>
+                <p id="quiz-result"></p>
+            </div>
+        </section>
+    </main>
+
     <%- include("./partials/footer.ejs") %>
+
+    <script>
+        function toggleInfo(id) {
+            const el = document.getElementById(id);
+            el.style.display = (el.style.display === "block") ? "none" : "block";
+        }
+
+        function checkAnswer(btn, correct) {
+            const result = document.getElementById("quiz-result");
+            if (correct) {
+                result.innerHTML = "✅ Tačno! Ovo je osnova dobrog budžetiranja.";
+                result.style.color = "lightgreen";
+            } else {
+                result.innerHTML = "❌ Netačno! Pokušaj ponovo.";
+                result.style.color = "red";
+            }
+        }
+    </script>
 </body>
 </html>
