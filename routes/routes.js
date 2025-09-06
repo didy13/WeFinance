@@ -409,7 +409,7 @@ router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
     });
     // Check if input is empty
     if(isNaN(balans) || !balans){
-        return res.render("profile", {title: 'WeInvest - Profile', goals, errorBalance: 'Morate popuniti balans!', user});
+        return res.render("profile", {title: 'WeInvest - Profile', goals, errorBalance: 'Morate popuniti balans!', user, css: 'index'});
     }
   
     const balance = parseFloat(balans);
@@ -419,6 +419,64 @@ router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
       if (err) return res.status(500).send("Error updating balance: " + err.message);
   
       res.redirect("/profile");
+    });
+  });
+  
+  router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
+    const { goalbalance, goalId } = req.body; // goalId comes from the input/button
+    const userId = req.session.user.id;
+  
+    const amount = parseFloat(goalbalance);
+    if (isNaN(amount) || amount <= 0) {
+      return res.redirect("/profile"); // invalid input, just go back
+    }
+    const goals = await new Promise((resolve, reject) => {
+        connection.query("SELECT id, name, current, target FROM goals WHERE user_id = ?", [req.session.user.id], (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
+    const [user] = await new Promise((resolve, reject) => {
+        connection.query("SELECT id, username, balance, streak FROM users WHERE id = ?", [req.session.user.id], (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
+    // Step 1: get user's current balance and goal info
+    const query = `
+      SELECT u.balance, g.current, g.target
+      FROM users u
+      INNER JOIN goals g ON u.id = g.user_id
+      WHERE u.id = ? AND g.id = ?
+    `;
+  
+    connection.query(query, [userId, goalId], (err, results) => {
+      if (err) return res.status(500).send("DB error: " + err.message);
+      if (results.length === 0) return res.redirect("/profile"); // no goal found
+  
+      const userBalance = parseFloat(results[0].balance);
+      const goalCurrent = parseFloat(results[0].current);
+      const goalTarget = parseFloat(results[0].target);
+  
+      if (amount > userBalance) {
+        // not enough money in user balance
+        return res.render("profile", {user, goals, errorGoal: "Nemate dovoljno novca!", title: "WeInvest - Profile", css: 'index'}); 
+      }
+  
+      const newGoalCurrent = Math.min(goalCurrent + amount, goalTarget);
+      const newUserBalance = userBalance - amount;
+  
+      // Step 2: update both user balance and goal current
+      const updateQuery = `
+        UPDATE users u
+        JOIN goals g ON g.user_id = u.id
+        SET g.current = ?, u.balance = ?
+        WHERE u.id = ? AND g.id = ?
+      `;
+      connection.query(updateQuery, [newGoalCurrent, newUserBalance, userId, goalId], (err2, result) => {
+        if (err2) return res.status(500).send("DB update error: " + err2.message);
+        res.redirect("/profile"); // back to profile after update
+      });
     });
   });
   
