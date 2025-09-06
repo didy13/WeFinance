@@ -120,7 +120,7 @@ router.post("/login", async (req, res) => {
         const valid = await bcrypt.compare(password, user.password);
         if (!valid) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Netačna lozinka" });
 
-        req.session.user = { id: user.id, username: user.username };
+        req.session.user = { id: user.id, username: user.username, streak: user.streak };
         req.session.save(() => res.redirect("/"));
     } catch (err) {
         console.error(err);
@@ -283,16 +283,19 @@ async function renderGroupWithError(res, groupId, options = {}) {
         );
 
         const invites = await new Promise((resolve, reject) =>
-            connection.query(
-                `SELECT i.id AS invite_id, g.id AS group_id, g.name AS group_name, u.username AS inviter_name
-                 FROM group_invites i
-                 JOIN table_group g ON g.id = i.group_id
-                 JOIN users u ON u.id = i.inviter_id
-                 WHERE i.group_id = ?`,
-                [groupId],
-                (err, results) => err ? reject(err) : resolve(results)
-            )
-        );
+    connection.query(
+        `SELECT i.id AS invite_id, g.id AS group_id, g.name AS group_name,
+                inviter.username AS inviter_name,
+                invitee.username AS invitee_name
+         FROM group_invites i
+         JOIN table_group g ON g.id = i.group_id
+         JOIN users inviter ON inviter.id = i.inviter_id
+         JOIN users invitee ON invitee.id = i.user_id
+         WHERE i.group_id = ?`,
+        [groupId],
+        (err, results) => err ? reject(err) : resolve(results)
+    )
+);
 
         res.render("group_detail", {
     title: `WeInvest - ${group.name}`,

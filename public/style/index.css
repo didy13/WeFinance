@@ -292,7 +292,8 @@ nav {
     padding-top: 1rem;
 }
 .hero-info {
-    margin-top: 18rem;
+    padding-top: 18rem;
+    padding-bottom: 10rem;
     text-align: left;
 }
 .hero-info h1 {
@@ -319,6 +320,24 @@ nav {
 }
 .custom-button:hover {
     background-color: #3b6fe2;
+}
+.second-section {
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+    color: white;
+}
+.second-left-column p {
+    font-family: "Alex Brush", cursive;
+    letter-spacing: 0.2rem;
+    font-size: 1.75rem;
+}
+.second-left-column h2 {
+    font-size: 3rem;
+}
+.second-section .container img {
+    width: 100%;
+    border-radius: 0.75rem;
+    margin-top: 3rem;
 }
 
 /* Footer */

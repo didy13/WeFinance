@@ -41,10 +41,14 @@
           <!-- Pozivnice -->
           <h4 class="mt-4">Pozivnice</h4>
           <ul>
-            <% invites.forEach(invite => { %>
-              <li><%= invite.inviter_name %> vas je pozvao u <%= invite.group_name %></li>
-            <% }) %>
-          </ul>
+  <% invites.forEach(invite => { %>
+    <li>
+      <strong><%= invite.inviter_name %></strong> je poslao pozivnicu
+      <strong><%= invite.invitee_name %></strong> u grupu
+      <strong><%= invite.group_name %></strong>
+    </li>
+  <% }) %>
+</ul>
         </div>
       </div>
     </div>
