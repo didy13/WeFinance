@@ -1,0 +1,23 @@
+<%- include("./partials/head.ejs")%>
+
+<div class="register-page__container">
+  <div class="register-page__card">
+    <h2 class="register-page__title">Registracija</h2>
+    <form action="/register" method="POST" class="register-page__form">
+      <div class="register-page__input-group">
+        <label for="name" class="register-page__label">Ime i prezime</label>
+        <input type="text" id="name" name="name" placeholder="Unesite vaše ime" class="register-page__input" required>
+      </div>
+      <div class="register-page__input-group">
+        <label for="password" class="register-page__label">Lozinka</label>
+        <input type="password" id="password" name="password" placeholder="Unesite lozinku" class="register-page__input" required>
+      </div>
+      <div class="register-page__input-group">
+        <label for="confirmPassword" class="register-page__label">Potvrdi lozinku</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Ponovite lozinku" class="register-page__input" required>
+      </div>
+      <button type="submit" class="register-page__button">Registracija</button>
+      <p class="register-page__login-link">Već imate nalog? <a href="/login" class="register-page__link">Prijavite se</a></p>
+    </form>
+  </div>
+</div>
