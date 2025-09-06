@@ -1,171 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include("./partials/head.ejs") %>
-<body>
-<%- include("./partials/nav.ejs") %>
+
 <style>
-    /* Body */
+/* ===== Global ===== */
+* {
+  font-family: "Montserrat", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 body {
-    background: #0f1115;
-    font-family: "Montserrat", sans-serif;
-    margin: 0;
-    padding: 0;
-    color: #fff;
+  background: #0f1115;
+  color: #e0e0e0;
 }
 
-/* Container */
-.new-group-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 120px);
-    padding: 2rem;
+/* ===== Container ===== */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
 }
 
-/* Card */
-.new-group-card {
-    background: #1e1e1e;
-    border-radius: 1rem;
-    padding: 2.5rem;
-    max-width: 500px;
-    width: 100%;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* ===== Card ===== */
+.group-card {
+  background: linear-gradient(145deg, #1e1e1e, #252525);
+  padding: 3rem 2rem;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.7);
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
 }
 
-.new-group-card:hover {
-    box-shadow: 0 12px 32px rgba(0,0,0,4);
+.group-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #4e89ff;
 }
 
-/* Heading */
-.new-group-card h1 {
+/* ===== Error ===== */
+.group-error {
+  background-color: #ff4d4f;
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* ===== Form ===== */
+.group-form .form-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.group-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #bbbbbb;
+}
+
+.group-form input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #333;
+  background-color: #2a2a2a;
+  color: white;
+  font-size: 1rem;
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+.group-form input:focus {
+  outline: none;
+  border: 1px solid #4e89ff;
+  box-shadow: 0 0 10px rgba(78,137,255,0.5);
+}
+
+/* ===== Button ===== */
+.btn-create-group {
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 15px;
+  background: linear-gradient(270deg, #6a8cff, #3b6fe2, #6a8cff);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+  position: relative;
+  overflow: hidden;
+  background-size: 200% auto;
+  transition: all 0.3s ease;
+}
+
+.btn-create-group span {
+  font-size: 1.3rem;
+}
+
+.btn-create-group::after {
+  content: "";
+  position: absolute;
+  width: 120%;
+  height: 100%;
+  top: 0;
+  left: -110%;
+  background: rgba(255,255,255,0.2);
+  transform: skewX(-20deg);
+  transition: all 0.5s ease;
+}
+
+.btn-create-group:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.6);
+  background-position: left center;
+}
+
+.btn-create-group:hover::after {
+  left: 110%;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 576px) {
+  .group-card {
+    padding: 2rem 1.5rem;
+  }
+  .group-title {
     font-size: 2rem;
-    margin-bottom: 1.5rem;
-}
-
-/* Error message */
-.error-message {
-    background: #ff4d4f;
-    color: #fff;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    margin-bottom: 1.5rem;
-    font-size: 0.9rem;
-}
-
-/* Input group */
-.input-group {
-    margin-bottom: 1.5rem;
-    text-align: left;
-}
-
-.input-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-}
-
-.input-group input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border-radius: 0.75rem;
-    border: 1px solid #333;
-    background: #2a2a2a;
-    color: #fff;
+  }
+  .btn-create-group {
     font-size: 1rem;
-    transition: border 0.3s ease, box-shadow 0.3s ease;
+  }
 }
-
-.input-group input:focus {
-    border-color: #4e89ff;
-    box-shadow: 0 0 8px rgba(78, 137, 255, 0.5);
-    outline: none;
-}
-
-/* Buttons */
-.buttons-wrapper {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.btn-primary,
-.btn-secondary {
-    padding: 0.75rem 2rem;
-    border-radius: 0.75rem;
-    text-decoration: none;
-    font-weight: 500;
-    transition: background 0.3s ease, transform 0.2s ease;
-    cursor: pointer;
-}
-
-.btn-primary {
-    background: #4e89ff;
-    color: #fff;
-    border: none;
-}
-
-.btn-primary:hover {
-    background: #3b6fe2;
-    transform: translateY(-2px);
-}
-
-.btn-secondary {
-    background: #555;
-    color: #fff;
-    border: none;
-}
-
-.btn-secondary:hover {
-    background: #777;
-    transform: translateY(-2px);
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-    .new-group-card {
-        padding: 2rem 1.5rem;
-    }
-
-    .new-group-card h1 {
-        font-size: 1.75rem;
-    }
-
-    .buttons-wrapper {
-        flex-direction: column;
-    }
-
-    .btn-primary, .btn-secondary {
-        width: 100%;
-        text-align: center;
-    }
-}
-
 </style>
-<div class="new-group-container">
-    <div class="new-group-card">
-        <h1>Kreiraj novu grupu</h1>
 
-        <% if(error && error.length > 0) { %>
-            <p class="error-message"><%= error %></p>
+<body>
+  <%- include("./partials/nav.ejs") %>
+
+  <main class="create-group-page">
+    <div class="container">
+      <div class="group-card">
+        <h1 class="group-title">Kreiraj novu grupu</h1>
+
+        <% if(error) { %>
+          <div class="group-error"><%= error %></div>
         <% } %>
 
-        <form action="/newgroup" method="POST">
-            <div class="input-group">
-                <label for="name">Ime grupe</label>
-                <input type="text" id="name" name="name" placeholder="Unesite ime grupe">
-            </div>
+        <form action="/newgroup" method="POST" class="group-form">
+          <div class="form-group">
+            <label for="name">Ime grupe</label>
+            <input type="text" id="name" name="name" placeholder="Unesi ime grupe..." required>
+          </div>
 
-            <div class="buttons-wrapper">
-                <button type="submit" class="btn-primary">Kreiraj grupu</button>
-                <a href="/groups" class="btn-secondary">Odustani</a>
-            </div>
+          <button type="submit" class="btn-create-group">
+            <span>👥</span> Kreiraj grupu
+          </button>
         </form>
+      </div>
     </div>
-</div>
+  </main>
 
-<%- include("./partials/footer.ejs") %>
+  <%- include("./partials/footer.ejs") %>
 </body>
 </html>
