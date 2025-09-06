@@ -77,7 +77,7 @@ router.get("/achievement", isAuthenticated, async (req, res) => {
                 resolve(results);
             });
         });
-
+        console.log(achievements);
         res.render("achievement", {
             title: "WeInvest - Pametno upravljanje novcem za mlade",
             css: "achievement",
