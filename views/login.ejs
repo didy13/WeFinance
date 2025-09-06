@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include("./partials/head.ejs")%>
+  <%- include("./partials/head.ejs")%>
 <body>
-    <%- include("./partials/nav.ejs") %>
+  <%- include("./partials/nav.ejs") %>
     <div class="login-container">
-  <div class="login-card">
-    <h2>Login</h2>
-    <form action="/login" method="POST">
-      <div class="input-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" placeholder="Unesite vaš email" required>
+      <div class="login-card">
+        <h2>Prijavi se</h2>
+        <form action="/login" method="POST">
+          <div class="input-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Unesite vaš email" required>
+          </div>
+          <div class="input-group">
+            <label for="password">Lozinka</label>
+            <input type="password" id="password" name="password" placeholder="Unesite lozinku" required>
+          </div>
+          <button type="submit" class="btn-prijava">Prijava</button>
+          <p class="signup-link">Nemate nalog? <a href="/register">Registrujte se</a></p>
+        </form>
       </div>
-      <div class="input-group">
-        <label for="password">Lozinka</label>
-        <input type="password" id="password" name="password" placeholder="Unesite lozinku" required>
-      </div>
-      <button type="submit" class="btn-prijava">Prijava</button>
-      <p class="signup-link">Nemate nalog? <a href="/register">Registrujte se</a></p>
-    </form>
-  </div>
-</div>
-    <%- include("./partials/footer.ejs") %>
+    </div>
+  <%- include("./partials/footer.ejs") %>
 </body>
 </html>
