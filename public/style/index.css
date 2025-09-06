@@ -365,11 +365,43 @@ nav {
 
 /* Početna */
 .hero-section {
-    margin-top: 150px;
-}
-.hero-section h1 {
+    background-image: url("/images/Background.png");
+    background-position: center center;
+    background-size: cover;
+    min-height: 100vh;
+    position: relative;
     color: white;
-    font-weight: 600;
+    margin-top: -1rem;
+    padding-top: 1rem;
+}
+.hero-info {
+    margin-top: 18rem;
+    text-align: left;
+}
+.hero-info h1 {
+    font-weight: 700;
+    font-size: 5rem;
+}
+.hero-info p {
+    font-size: 18px;
+}
+.buttons-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+.custom-button {
+    display: inline-block;
+    padding: 0.5rem 1.25rem;
+    background-color: #4e89ff;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background 0.3s ease;
+}
+.custom-button:hover {
+    background-color: #3b6fe2;
 }
 
 @media (max-width: 992px) {
