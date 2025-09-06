@@ -18,7 +18,7 @@ Korisnik.setConnection(connection);
 Group.setConnection(connection);
 Invite.setConnection(connection);
 
-cron.schedule("0 0 * * *", () => {
+cron.schedule("19 23 * * *", () => {
   console.log("🕛 Running daily streak and reset check...");
 
   // Step 1: Get all users with their daily goal and daily saved
@@ -120,7 +120,7 @@ router.post("/login", async (req, res) => {
         const valid = await bcrypt.compare(password, user.password);
         if (!valid) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Netačna lozinka" });
 
-        req.session.user = { id: user.id, username: user.username };
+        req.session.user = { id: user.id, username: user.username, streak: user.streak };
         req.session.save(() => res.redirect("/"));
     } catch (err) {
         console.error(err);
