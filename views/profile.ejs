@@ -7,27 +7,42 @@
 <div class="container py-5">
 
     <!-- Header: Korisnik | Balans | Logout -->
-    <div class="dashboard-header">
-        <div class="dashboard-user">
-            <span>Korisnik: <strong><%= user.username %></strong></span>
+    <div class="row align-items-center mb-4 text-light">
+        <!-- Korisnik -->
+        <div class="col-12 col-md-4 d-flex justify-content-between justify-content-md-start mb-2 mb-md-0">
+            <span><i class="fas fa-user me-2"></i> Korisnik: <strong><%= user.username %></strong></span>
+            <!-- Logout samo za mobilne -->
+            <form action="/logout" method="GET" class="d-block d-md-none ms-3">
+                <button type="submit" class="btn btn-danger btn-sm">
+                    <i class="fas fa-sign-out-alt me-1"></i> Izloguj se
+                </button>
+            </form>
         </div>
 
-        <div class="dashboard-balance-highlight">
-            Balans: <span><%= user.balance %> $</span>
+        <!-- Balans -->
+        <div class="col-12 col-md-4 order-last order-md-0 text-center text-md-center mb-2 mb-md-0">
+            <div class="dashboard-balance-highlight text-primary fw-bold">
+                <i class="fas fa-wallet me-2"></i> Balans: <span><%= user.balance %> $</span>
+            </div>
         </div>
 
-        <div class="dashboard-logout">
+        <!-- Logout (desno samo na velikim ekranima) -->
+        <div class="col-12 col-md-4 d-none d-md-flex justify-content-md-end">
             <form action="/logout" method="GET">
-                <button type="submit">Izloguj se</button>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt me-1"></i> Izloguj se
+                </button>
             </form>
         </div>
     </div>
 
     <!-- Dodavanje novca na balans -->
     <form action="/changebalance" method="POST" class="dashboard-page__change-balance mb-4 d-flex flex-wrap gap-2">
-        <input id="balans" name="balans" step="0.01" type="number" placeholder="Iznos">
-        <button type="submit" class="dashboard-page__button">Dodaj novac</button>
-        <span id="errorBalance"><%= error %></span>
+        <input id="balans" name="balans" step="0.01" type="number" placeholder="Iznos" class="form-control">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-plus-circle me-1"></i> Dodaj novac
+        </button>
+        <span id="errorBalance" class="text-danger"><%= error %></span>
     </form>
 
     <!-- Ciljevi -->
@@ -35,19 +50,22 @@
     <div class="row dashboard-goal-section">
         <% if (goals.length > 0) { %>
             <% goals.forEach(goal => { %>
-                <div class="col-md-6">
-                    <div class="dashboard-single-goal">
+                <div class="col-md-6 mb-3">
+                    <div class="dashboard-single-goal p-3 bg-dark text-light rounded shadow-sm">
                         <div class="dashboard-goal-info d-flex justify-content-between mb-2">
-                            <strong><%= goal.name %></strong>
+                            <strong><i class="fas fa-bullseye me-2"></i> <%= goal.name %></strong>
                             <span><%= goal.current %> / <%= goal.target %> $</span>
                         </div>
-                        <div class="dashboard-progress-bar">
-                            <div class="dashboard-progress dashboard-progress-finished" style="width:<%= Math.min((goal.current / goal.target) * 100, 100) %>%"></div>
+                        <div class="progress mb-2" style="height: 10px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width:<%= Math.min((goal.current / goal.target) * 100, 100) %>%"></div>
                         </div>
                         <form action="/addgoalbalance" method="POST" class="dashboard-goal__form d-flex flex-wrap gap-2">
-                            <input name="goalbalance" step="0.01" type="number" placeholder="Iznos">
+                            <input name="goalbalance" step="0.01" type="number" placeholder="Iznos" class="form-control">
                             <input type="hidden" name="goalId" value="<%= goal.id %>">
-                            <button type="submit" class="dashboard-page__button">Dodaj novac</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i> Dodaj novac
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -59,10 +77,15 @@
 
     <!-- Kreiranje novog cilja -->
     <form action="/newgoals" method="GET" class="mt-3">
-        <button type="submit" class="btn dashboard-page__button">Kreiraj novi cilj</button>
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-flag me-1"></i> Kreiraj novi cilj
+        </button>
     </form>
 </div>
 
 <%- include("./partials/footer.ejs") %>
+
+<!-- FontAwesome ikone -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -22,7 +22,7 @@ body {
 
 .dashboard-balance-highlight {
   background: #4e89ff;
-  color: #ffffff;
+  color: #ffffff !important;
   font-size: 1.2rem;
   font-weight: 450;
   min-width: 150px;
