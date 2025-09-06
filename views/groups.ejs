@@ -5,64 +5,60 @@
     <%- include("./partials/nav.ejs") %>
 
     <main class="container groups-page">
-      <div class="row">
-        <!-- Leva strana - Grupe -->
-        <div class="col-lg-9">
-          <h1 class="groups-title">Moje grupe</h1>
 
-          <div class="groups-actions mb-4">
-            <a href="/newgroup" class="btn btn-primary">Kreiraj novu grupu</a>
-          </div>
+      <div class="groups-header">
+  <h1>Moje grupe</h1>
+  <a href="/newgroup" class="btn-new-group">
+    <span>+</span> Napravi novu grupu
+  </a>
+</div>
 
-          <div class="row g-4">
-            <% if(groups && groups.length > 0) { %>
-              <% groups.forEach(group => { %>
-                <div class="col-md-6 col-lg-4">
-                  <div class="group-card">
-                    <h2><%= group.name %></h2>
-                    <p><strong>Opis:</strong> <%= group.description %></p>
-                    <p><strong>Broj članova:</strong> <%= group.members.length %></p>
-                    <p><strong>Ciljevi:</strong> <%= group.goals.length %></p>
-                    <a href="/groups/<%= group.id %>" class="btn btn-primary w-100 mt-2">Pogledaj grupu</a>
-                  </div>
+      <div class="groups-container">
+        <!-- Leva kolona: grupe -->
+        <div class="groups-left">
+          <% if(groups && groups.length > 0) { %>
+            <% groups.forEach(group => { %>
+              <div class="group-card">
+                <h2><%= group.name %></h2>
+                <p><%= group.description %></p>
+                <div class="stats">
+                  <span>👥 <%= group.members.length %> članova</span>
+                  <span>🎯 <%= group.goals.length %> ciljeva</span>
                 </div>
-              <% }) %>
-            <% } else { %>
-              <p class="groups-empty">Trenutno nisi član nijedne grupe.</p>
-            <% } %>
-          </div>
+                <a href="/groups/<%= group.id %>" class="btn-view">Pogledaj grupu</a>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <p class="groups-empty">Trenutno nisi član nijedne grupe.</p>
+          <% } %>
         </div>
 
-        <!-- Desna strana - Pozivnice -->
-        <div class="col-lg-3">
-          <div class="invites-section">
-            <h2>Pozivnice</h2>
+        <!-- Desna kolona: sidebar -->
+        <div class="groups-sidebar">
+          <h2>Pozivnice</h2>
 
-            <% if (invites && invites.length > 0) { %>
-              <ul class="list-unstyled invites-list">
-                <% invites.forEach(invite => { %>
-                  <li class="invite-item">
-                    Pozvao te <strong><%= invite.inviter_name %></strong> u grupu 
-                    <strong><%= invite.group_name %></strong>
+          <% if(invites && invites.length > 0) { %>
+            <% invites.forEach(invite => { %>
+              <div class="invite-item">
+                Pozvao te <strong><%= invite.inviter_name %></strong> u grupu 
+                <strong><%= invite.group_name %></strong>
 
-                    <div class="invite-actions mt-2">
-                      <form action="/groups/<%= invite.group_id %>/accept" method="POST" class="d-inline">
-                        <input type="hidden" name="invite_id" value="<%= invite.invite_id %>">
-                        <button type="submit" class="btn btn-success btn-sm">Prihvati</button>
-                      </form>
+                <div class="invite-actions">
+                  <form action="/groups/<%= invite.group_id %>/accept" method="POST" class="d-inline">
+                    <input type="hidden" name="invite_id" value="<%= invite.invite_id %>">
+                    <button type="submit" class="btn btn-success btn-sm">Prihvati</button>
+                  </form>
 
-                      <form action="/groups/<%= invite.group_id %>/decline" method="POST" class="d-inline">
-                        <input type="hidden" name="invite_id" value="<%= invite.invite_id %>">
-                        <button type="submit" class="btn btn-danger btn-sm">Odbij</button>
-                      </form>
-                    </div>
-                  </li>
-                <% }) %>
-              </ul>
-            <% } else { %>
-              <p class="groups-empty">Nema novih pozivnica.</p>
-            <% } %>
-          </div>
+                  <form action="/groups/<%= invite.group_id %>/decline" method="POST" class="d-inline">
+                    <input type="hidden" name="invite_id" value="<%= invite.invite_id %>">
+                    <button type="submit" class="btn btn-danger btn-sm">Odbij</button>
+                  </form>
+                </div>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <p class="groups-empty">Nema novih pozivnica.</p>
+          <% } %>
         </div>
       </div>
     </main>
