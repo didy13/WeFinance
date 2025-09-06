@@ -7,11 +7,17 @@
     <main class="help-container container py-5">
         <h1 class="help-title text-center mb-4">Pomoć i edukacija</h1>
         <p class="help-subtitle text-center mb-5">
-            Ovde možeš da naučiš osnovne pojmove finansija i da unaprediš svoje veštine kroz interaktivne primere.
+            Dobrodošao u interaktivni kurs finansijske pismenosti. 
+            Nauči osnovne pojmove i testiraj svoje znanje kroz kvizove i mini igre.
         </p>
 
-        <!-- Sekcija sa karticama -->
-        <div class="row g-4">
+        <!-- Progress bar -->
+        <div class="progress mb-5">
+            <div id="progress-bar" class="progress-bar" style="width: 0%;">0%</div>
+        </div>
+
+        <!-- Edukativne kartice -->
+        <section class="row g-4">
             <div class="col-md-4">
                 <div class="help-card">
                     <h3>📊 Budžet</h3>
@@ -22,6 +28,10 @@
                         - 50% osnovne potrebe,  
                         - 30% želje,  
                         - 20% štednja.</p>
+                        <p><b>Probaj našu simulaciju:</b></p>
+                        <input type="number" id="income" placeholder="Unesi mesečni prihod">
+                        <button onclick="simulateBudget()">Izračunaj raspodelu</button>
+                        <p id="budget-result"></p>
                     </div>
                 </div>
             </div>
@@ -32,8 +42,10 @@
                     <p>Postavi ciljeve i uči kako mali koraci dovode do velikih rezultata.</p>
                     <button class="btn-help" onclick="toggleInfo('saving')">Saznaj više</button>
                     <div id="saving" class="help-info">
-                        <p>Ako svaki dan uštediš 200 RSD, za godinu dana imaćeš 73.000 RSD!</p>
-                        <p><b>Tip:</b> Probaj naše izazove štednje.</p>
+                        <p>Koliko možeš da uštediš za 6 meseci?</p>
+                        <input type="number" id="daily-saving" placeholder="Koliko dnevno možeš da uštediš?">
+                        <button onclick="savingChallenge()">Izračunaj</button>
+                        <p id="saving-result"></p>
                     </div>
                 </div>
             </div>
@@ -44,21 +56,33 @@
                     <p>Otkrij osnovne principe investiranja i kako smanjiti rizik.</p>
                     <button class="btn-help" onclick="toggleInfo('investing')">Saznaj više</button>
                     <div id="investing" class="help-info">
-                        <p>Diverzifikacija je ključ! Ne ulaži sve na jedno mesto.</p>
+                        <p>Izaberi gde bi investirao:</p>
+                        <button onclick="invest('crypto')">💹 Kripto</button>
+                        <button onclick="invest('stocks')">📊 Akcije</button>
+                        <button onclick="invest('bonds')">🏦 Obveznice</button>
+                        <p id="invest-result"></p>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Quiz -->
+        <!-- Kviz sa 10 pitanja -->
         <section class="quiz-section mt-5">
-            <h2 class="text-center mb-4">🎯 Mini kviz</h2>
-            <p class="text-center">Proveri svoje znanje o štednji!</p>
+            <h2 class="text-center mb-4">🎯 Veliki kviz finansija</h2>
             <div class="quiz-card">
-                <p>Šta znači pravilo 50/30/20 u budžetu?</p>
-                <button onclick="checkAnswer(this, true)">50% potrebe, 30% želje, 20% štednja</button>
-                <button onclick="checkAnswer(this, false)">50% zabava, 30% štednja, 20% računi</button>
+                <p id="quiz-question">Pitanje će se pojaviti ovde</p>
+                <div id="quiz-options"></div>
+                <button onclick="nextQuestion()" id="next-btn" style="display:none;">Sledeće</button>
                 <p id="quiz-result"></p>
+            </div>
+        </section>
+
+        <!-- Video tutorijal -->
+        <section class="video-section mt-5">
+            <h2 class="text-center mb-3">🎥 Video lekcija</h2>
+            <div class="video-container text-center">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/m6x1iDXp2ns" 
+                frameborder="0" allowfullscreen></iframe>
             </div>
         </section>
     </main>
@@ -66,21 +90,147 @@
     <%- include("./partials/footer.ejs") %>
 
     <script>
+        // Progress bar update
+        function updateProgress(value) {
+            const bar = document.getElementById("progress-bar");
+            bar.style.width = value + "%";
+            bar.innerHTML = value + "%";
+        }
+
+        // Toggle card info
         function toggleInfo(id) {
             const el = document.getElementById(id);
             el.style.display = (el.style.display === "block") ? "none" : "block";
         }
 
-        function checkAnswer(btn, correct) {
-            const result = document.getElementById("quiz-result");
-            if (correct) {
-                result.innerHTML = "✅ Tačno! Ovo je osnova dobrog budžetiranja.";
-                result.style.color = "lightgreen";
+        // Simulacija budžeta
+        function simulateBudget() {
+            const income = document.getElementById("income").value;
+            if (!income) return;
+            const needs = income * 0.5;
+            const wants = income * 0.3;
+            const savings = income * 0.2;
+            document.getElementById("budget-result").innerHTML = 
+                `📊 Raspodela: ${needs} RSD potrebe, ${wants} RSD želje, ${savings} RSD štednja.`;
+            updateProgress(20);
+        }
+
+        // Štednja izazov
+        function savingChallenge() {
+            const daily = document.getElementById("daily-saving").value;
+            if (!daily) return;
+            const total = daily * 30 * 6;
+            document.getElementById("saving-result").innerHTML = 
+                `💰 Za 6 meseci možeš uštedeti ${total} RSD!`;
+            updateProgress(40);
+        }
+
+        // Investiranje
+        function invest(choice) {
+            let message = "";
+            if (choice === "crypto") {
+                message = "⚠️ Kripto je rizičan, možeš mnogo dobiti, ali i izgubiti.";
+            } else if (choice === "stocks") {
+                message = "📊 Akcije rastu sporo, ali dugoročno daju dobar povrat.";
             } else {
-                result.innerHTML = "❌ Netačno! Pokušaj ponovo.";
-                result.style.color = "red";
+                message = "🏦 Obveznice su najstabilnije, ali sa manjim profitom.";
+            }
+            document.getElementById("invest-result").innerHTML = message;
+            updateProgress(60);
+        }
+
+        // Kviz pitanja
+        const quizData = [
+            { q: "Pravilo 50/30/20 znači:", 
+              options: ["50% potrebe, 30% želje, 20% štednja", "50% zabava, 30% računi, 20% štednja"], 
+              correct: 0 },
+            { q: "Štednja od 100 RSD dnevno za godinu dana iznosi:", 
+              options: ["36.500 RSD", "12.000 RSD"], 
+              correct: 0 },
+            { q: "Diverzifikacija znači:", 
+              options: ["Ulaganje u više različitih stvari", "Ulaganje samo u kripto"], 
+              correct: 0 },
+            { q: "Kreditna kartica je isto što i debitna?", 
+              options: ["Tačno", "Netačno"], 
+              correct: 1 },
+            { q: "Inflacija smanjuje kupovnu moć novca?", 
+              options: ["Da", "Ne"], 
+              correct: 0 },
+            { q: "Najsigurnije ulaganje je:", 
+              options: ["Obveznice", "Kripto"], 
+              correct: 0 },
+            { q: "Koliko procenata štednje preporučuju finansijski eksperti?", 
+              options: ["20%", "5%"], 
+              correct: 0 },
+            { q: "Fondovi su:", 
+              options: ["Zajednička ulaganja više ljudi", "Novčanici u banci"], 
+              correct: 0 },
+            { q: "Koja je valuta EU?", 
+              options: ["Evro", "Dolar"], 
+              correct: 0 },
+            { q: "Bitcoin je nastao:", 
+              options: ["2009", "2020"], 
+              correct: 0 }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const q = quizData[currentQuestion];
+            document.getElementById("quiz-question").innerText = q.q;
+            const optionsDiv = document.getElementById("quiz-options");
+            optionsDiv.innerHTML = "";
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement("button");
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(i);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(i) {
+            const q = quizData[currentQuestion];
+            if (i === q.correct) {
+                score++;
+                document.getElementById("quiz-result").innerText = "✅ Tačno!";
+            } else {
+                document.getElementById("quiz-result").innerText = "❌ Netačno!";
+            }
+            document.getElementById("next-btn").style.display = "block";
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+                document.getElementById("quiz-result").innerText = "";
+                document.getElementById("next-btn").style.display = "none";
+            } else {
+                document.getElementById("quiz-question").innerText = 
+                    `Kviz završen! Osvojio si ${score} od ${quizData.length} poena.`;
+                document.getElementById("quiz-options").innerHTML = "";
+                document.getElementById("next-btn").style.display = "none";
+                updateProgress(100);
             }
         }
+        function checkAnswer(i) {
+    const q = quizData[currentQuestion];
+    const resultEl = document.getElementById("quiz-result");
+    if (i === q.correct) {
+        score++;
+        resultEl.innerText = "✅ Tačno!";
+        resultEl.style.color = "#4caf50"; // Zelena
+        resultEl.style.textShadow = "0 0 8px rgba(76, 175, 80, 0.8)";
+    } else {
+        resultEl.innerText = "❌ Netačno!";
+        resultEl.style.color = "#ff4d4f"; // Crvena
+        resultEl.style.textShadow = "0 0 8px rgba(255, 77, 79, 0.8)";
+    }
+    document.getElementById("next-btn").style.display = "block";
+}
+        // Inicijalno učitavanje kviza
+        loadQuestion();
     </script>
 </body>
 </html>

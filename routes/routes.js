@@ -69,7 +69,13 @@ router.get("/", isAuthenticated, (req, res) => {
         user: req.session.user
     });
 });
-
+router.get("/achievement", isAuthenticated, (req, res) => {
+    res.render("achievement", {
+        title: "WeInvest - Pametno upravljanje novcem za mlade",
+        css: "achievement",
+        user: req.session.user
+    });
+});
 router.get("/help", isAuthenticated, (req, res) => {
     res.render("help", {
         title: "WeInvest - Pomoć & Edukacija",
