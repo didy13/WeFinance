@@ -11,6 +11,10 @@ const { updateAllStreaks } = require("../public/js/streakManager");
 
 
 const Group = require("../models/Group");
+
+// Set connection
+Korisnik.setConnection(connection);
+
 const Invite = require("../models/Invites");
 
 // Set connection
