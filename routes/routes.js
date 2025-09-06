@@ -7,19 +7,21 @@ const connection = require("../controller/config");
 const Korisnik = require("../models/Korisnik");
 const registerValidation = require("../public/js/registerValidation");
 const cron = require("node-cron");
-const { checkDailyStreak, updateAllStreaks } = require("../public/js/streakManager");
+const { updateAllStreaks } = require("../public/js/streakManager");
 
 
 
 Korisnik.setConnection(connection);
 
 // Runs every day at midnight
+
+
+// Run every day at midnight
 cron.schedule("0 0 * * *", () => {
-    const userId = 1; // or loop through all users
-    checkDailyStreak(userId);
-    updateAllStreaks();
-    console.log("Daily streak check completed for user", userId);
-  });
+  console.log("🕛 Running daily streak check for all users...");
+  updateAllStreaks();
+});
+
 
 // SESSION setup
 router.use(session({
