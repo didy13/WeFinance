@@ -88,7 +88,7 @@ router.post("/register", registerValidation, async (req, res) => {
         // Provera da li postoji korisnik
         const checkQuery = "SELECT * FROM users WHERE username = ?";
         const existingUsers = await new Promise((resolve, reject) => {
-            connection.query(checkQuery, [email, username], (err, results) => {
+            connection.query(checkQuery, [username], (err, results) => {
                 if (err) return reject(err);
                 resolve(results);
             });
@@ -125,5 +125,38 @@ router.post("/register", registerValidation, async (req, res) => {
         });
     }
 });
+router.put("/:id/goal", (req, res) => {
+    const username = req.params.username;
+    const { savings_goal } = req.body;
+  
+    const query = "UPDATE goals SET current = ? WHERE username = ?";
+    db.query(query, [username], (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ message: "Savings goal updated successfully" });
+    });
+  });
+  
+  // Update balance
+  router.put("/:id/balance", (req, res) => {
+    const userId = req.params.id;
+    const { balance } = req.body;
+  
+    const query = "UPDATE users SET balance = ? WHERE id = ?";
+    db.query(query, [balance, userId], (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ message: "Balance updated successfully" });
+    });
+  });
+  
+  // Get user info
+  router.get("/:id", (req, res) => {
+    const userId = req.params.id;
+  
+    const query = "SELECT id, username, balance, savings_goal FROM users WHERE id = ?";
+    db.query(query, [userId], (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json(results[0]);
+    });
+  });
 
 module.exports = router;
