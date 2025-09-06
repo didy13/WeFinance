@@ -322,8 +322,8 @@ nav {
     background-color: #3b6fe2;
 }
 .second-section {
-    margin-top: 4rem;
-    margin-bottom: 4rem;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
     color: white;
 }
 .second-left-column p {
@@ -333,11 +333,36 @@ nav {
 }
 .second-left-column h2 {
     font-size: 3rem;
+    font-weight: 600;
 }
 .second-section .container img {
     width: 100%;
     border-radius: 0.75rem;
     margin-top: 3rem;
+}
+.third-section {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+    color: white;
+    background-color: #1e1e1e;
+}
+.third-left-column p {
+    font-family: "Alex Brush", cursive;
+    letter-spacing: 0.2rem;
+    font-size: 1.75rem;
+}
+.third-left-column h2 {
+    font-size: 3rem;
+    font-weight: 600;
+}
+.third-cards {
+    margin-top: 3rem;
+}
+.third-card {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 1rem;
 }
 
 /* Footer */
