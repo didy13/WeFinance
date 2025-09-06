@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include("./partials/head.ejs")%>
+
+    <body>
+        <%- include("./partials/nav.ejs") %>
+            <div class="dashboard-page__container">
+                <div class="dashboard-page__card">
+                    <h2 class="dashboard-page__title">
+                        Dobrodošli, m1dzz1
+                    </h2>
+
+                    <div class="dashboard-page__balance">
+                        <span class="dashboard-page__label">Trenutni balans:</span>
+                        <span class="dashboard-page__amount">$248</span>
+                    </div>
+
+                    <div class="dashboard-page__goal">
+                        <span class="dashboard-page__label">Sledeći cilj:</span>
+
+                        <span class="dashboard-page__goal-name">
+                            $10
+                        </span>
+                        <span class="dashboard-page__goal-name">Nemate postavljen cilj</span>
+                    </div>
+
+                    <form action="/goals/new" method="GET" class="dashboard-page__form">
+                        <button type="submit" class="dashboard-page__button">Kreiraj novi cilj</button>
+                    </form>
+                </div>
+            </div>
+
+            <%- include("./partials/footer.ejs") %>
+    </body>
+
+</html>
