@@ -8,22 +8,6 @@
 
       <h2>Registracija</h2>
 
-      <% if (typeof error !== "undefined" && error) { %>
-        <div class="register-error">
-          <%= error %>
-        </div>
-      <% } %>
-
-      <% if (typeof errors !== "undefined" && errors.length > 0) { %>
-        <div class="register-error-list">
-          <ul>
-            <% errors.forEach(err => { %>
-              <li><%= err.msg %></li>
-            <% }) %>
-          </ul>
-        </div>
-      <% } %>
-
       <form action="/register" method="POST">
         <div class="register-input-group">
           <label for="username">Korisničko ime</label>
@@ -37,6 +21,16 @@
           <label for="confirmPassword">Potvrdi lozinku</label>
           <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Ponovite lozinku" required>
         </div>
+
+      <% if (typeof errors !== "undefined" && errors.length > 0) { %>
+        <div class="register-error-list">
+          <ul>
+            <% errors.forEach(err => { %>
+              <li><%= err.msg %></li>
+            <% }) %>
+          </ul>
+        </div>
+      <% } %>
         <button type="submit" class="btn-register">Registracija</button>
         <p class="login-link">Već imate nalog? <a href="/login">Prijavite se</a></p>
       </form>

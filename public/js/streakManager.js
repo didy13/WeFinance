@@ -1,4 +1,4 @@
-const connection = require("../controller/config"); // your MySQL connection
+const connection = require("../../controller/config"); // your MySQL connection
 
 /**
  * Check goals for a single user and update streak.
