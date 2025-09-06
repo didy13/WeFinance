@@ -18,7 +18,7 @@ Korisnik.setConnection(connection);
 Group.setConnection(connection);
 Invite.setConnection(connection);
 
-cron.schedule("19 23 * * *", () => {
+cron.schedule("0 0 * * *", () => {
   console.log("🕛 Running daily streak and reset check...");
 
   // Step 1: Get all users with their daily goal and daily saved
