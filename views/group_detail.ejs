@@ -4,54 +4,78 @@
 <body>
 <%- include("./partials/nav.ejs") %>
 
-<div class="container" style="padding:40px; min-height:calc(100vh - 120px); background:#121212; color:#fff;">
-    <h1><%= group.name %></h1>
-    <p><strong>Opis:</strong> <%= group.description || "Nema opisa" %></p>
+<div class="container" style="padding:40px; min-height:calc(100vh - 120px); background:#121212; color:#fff; font-family:sans-serif;">
+
+    <!-- Naziv i opis grupe -->
+    <div style="margin-bottom:30px;">
+        <h1 style="font-size:2.2em; margin-bottom:5px;"><%= group.name %></h1>
+        <p><strong>Opis:</strong> <%= group.description || "Nema opisa" %></p>
+    </div>
 
     <!-- Članovi grupe -->
-    <h2>Članovi</h2>
-    <ul>
-        <% members.forEach(member => { %>
-            <li><%= member.username %></li>
-        <% }) %>
-    </ul>
+    <div style="margin-bottom:30px;">
+        <h2>Članovi</h2>
+        <ul style="list-style:none; padding-left:0;">
+            <% members.forEach(member => { %>
+                <li style="padding:5px 0; border-bottom:1px solid #333;"><%= member.username %></li>
+            <% }) %>
+        </ul>
 
-    <!-- Dodavanje novog člana -->
-    <h3>Dodaj člana (invite)</h3>
-    <form action="/groups/<%= group.id %>/add-member" method="POST">
-        <input type="text" name="username" placeholder="Username korisnika" required>
-        <button type="submit">Pošalji pozivnicu</button>
-    </form>
-<% if (error) { %>
-    <div class="alert alert-danger"><%= error %></div>
-<% } %>
+        <!-- Dodavanje novog člana -->
+        <h3 style="margin-top:20px;">Dodaj člana (invite)</h3>
+        <form action="/groups/<%= group.id %>/add-member" method="POST" style="display:flex; gap:10px; flex-wrap:wrap;">
+            <input type="text" name="username" placeholder="Username korisnika" required style="padding:5px; flex:1; min-width:200px;">
+            <button type="submit" style="padding:5px 15px; background:#1E90FF; border:none; color:#fff; cursor:pointer;">Pošalji pozivnicu</button>
+        </form>
+        <% if (error) { %>
+            <div class="alert alert-danger" style="margin-top:10px; color:#FFA500; background:#222; padding:10px; border-radius:5px;"><%= error %></div>
+        <% } %>
+    </div>
 
-    <h2>Ciljevi grupe</h2>
-<ul>
-    <% if (goals.length === 0) { %>
-        <li>Nema ciljeva u grupi</li>
-    <% } else { %>
-        <% goals.forEach(goal => { %>
-            <li>
-                
-                <strong><%= goal.goal_name %></strong>: <%= goal.current %> / <%= goal.target %>
-                <form action="/groups/<%= group.id %>/add-money/<%= goal.id %>" method="POST" style="display:inline-block;">
-                    <input type="number" name="amount" placeholder="Iznos" min="0" required>
-                    <button type="submit">Dodaj</button>
-                </form>
-            </li>
-            <hr style="border-color:#444;">
-        <% }) %>
-    <% } %>
-</ul>
+    <!-- Ciljevi grupe -->
+    <div style="margin-bottom:30px;">
+        <h2>Ciljevi grupe</h2>
+        <ul style="list-style:none; padding-left:0;">
+            <% if (goals.length === 0) { %>
+                <li>Nema ciljeva u grupi</li>
+            <% } else { %>
+                <% goals.forEach(goal => { %>
+                    <li style="margin-bottom:15px; padding:10px; border:1px solid #333; border-radius:8px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                            <div style="font-weight:bold; font-size:1.1em;"><%= goal.goal_name %></div>
+                            <div><%= goal.current %> / <%= goal.target %></div>
+                        </div>
+
+                        <!-- Dodavanje novca -->
+                        <form action="/groups/<%= group.id %>/add-money/<%= goal.id %>" method="POST" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+                            <input type="number" name="amount" placeholder="Iznos" min="0" required style="padding:5px; flex:1; min-width:150px;">
+                            <% if (error && amountToAdd && goal.id == amountToAdd.goalId) { %>
+                                <input type="hidden" name="confirm" value="1">
+                                <button type="submit" style="padding:5px 15px; background:#FFA500; border:none; color:#000; cursor:pointer;">Potvrdi i dodaj</button>
+                            <% } else { %>
+                                <button type="submit" style="padding:5px 15px; background:#32CD32; border:none; color:#fff; cursor:pointer;">Dodaj</button>
+                            <% } %>
+                        </form>
+
+                        <% if (error && (!amountToAdd || goal.id != amountToAdd.goalId)) { %>
+                            <div style="margin-top:5px; color:#FFA500;"><%= error %></div>
+                        <% } %>
+                    </li>
+                <% }) %>
+            <% } %>
+        </ul>
+    </div>
 
     <!-- Dodavanje novog cilja -->
-    <h3>Dodaj cilj</h3>
-    <form action="/groups/<%= group.id %>/add-goal" method="POST">
-        <input type="text" name="name" placeholder="Naziv cilja" required>
-        <input type="number" name="target" placeholder="Target iznos" min="0" required>
-        <button type="submit">Dodaj cilj</button>
-    </form>
+    <div style="margin-bottom:30px;">
+        <h3>Dodaj cilj</h3>
+        <form action="/groups/<%= group.id %>/add-goal" method="POST" style="display:flex; gap:10px; flex-wrap:wrap;">
+            <input type="text" name="name" placeholder="Naziv cilja" required style="padding:5px; flex:2; min-width:150px;">
+            <input type="number" name="target" placeholder="Target iznos" min="0" required style="padding:5px; flex:1; min-width:100px;">
+            <button type="submit" style="padding:5px 15px; background:#1E90FF; border:none; color:#fff; cursor:pointer;">Dodaj cilj</button>
+        </form>
+    </div>
+
 </div>
 
 <%- include("./partials/footer.ejs") %>
