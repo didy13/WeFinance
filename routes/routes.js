@@ -70,7 +70,7 @@ router.get("/profile", isAuthenticated, async (req, res) => {
 
         const error = '';
 
-        
+
         res.render("profile", { title: "WeInvest - Moj profil", user, goals, css: 'profile', error });
     } catch (err) {
         console.error(err);
@@ -237,7 +237,7 @@ router.post("/groups/:groupId/add-member", isAuthenticated, async (req, res) => 
 
 async function renderGroupWithError(res, groupId, options = {}) {
     try {
-        const [group] = await new Promise((resolve, reject) => 
+        const [group] = await new Promise((resolve, reject) =>
             connection.query("SELECT * FROM table_group WHERE id = ?", [groupId], (err, results) => err ? reject(err) : resolve(results))
         );
         if (!group) return res.status(404).send("Grupa nije pronađena");
@@ -329,9 +329,9 @@ router.post("/groups/:groupId/add-money/:goalId", isAuthenticated, async (req, r
         const maxWarn = user.balance * 0.7;
 
         if (amount > maxWarn && !confirm) {
-            return renderGroupWithError(res, groupId, { 
+            return renderGroupWithError(res, groupId, {
                 errorAddMoney: `Pažnja! Ovo je više od 70% vašeg balansa (${user.balance}€). Potvrdite ako želite da nastavite.`,
-                amountToAdd: { goalId: parseInt(goalId), amount } 
+                amountToAdd: { goalId: parseInt(goalId), amount }
             });
         }
 
@@ -465,26 +465,26 @@ router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
       WHERE u.id = ? AND g.id = ?
     `;
 
-      if (amount > userBalance) {
+    if (amount > userBalance) {
         // not enough money in user balance
-        return res.render("profile", {user, goals, error: "Nemate dovoljno novca", title: "WeInvest - Profile", css: 'profile'}); 
-      }
-  
-      const newGoalCurrent = Math.min(goalCurrent + amount, goalTarget);
-      const newUserBalance = userBalance - amount;
-  
-      // Step 2: update both user balance and goal current
-      const updateQuery = `
+        return res.render("profile", { user, goals, error: "Nemate dovoljno novca", title: "WeInvest - Profile", css: 'profile' });
+    }
+
+    const newGoalCurrent = Math.min(goalCurrent + amount, goalTarget);
+    const newUserBalance = userBalance - amount;
+
+    // Step 2: update both user balance and goal current
+    const updateQuery = `
         UPDATE users u
         JOIN goals g ON g.user_id = u.id
         SET g.current = ?, u.balance = ?
         WHERE u.id = ? AND g.id = ?
       `;
-        connection.query(updateQuery, [newGoalCurrent, newUserBalance, userId, goalId], (err2, result) => {
-            if (err2) return res.status(500).send("DB update error: " + err2.message);
-            res.redirect("/profile");
-        });
+    connection.query(updateQuery, [newGoalCurrent, newUserBalance, userId, goalId], (err2, result) => {
+        if (err2) return res.status(500).send("DB update error: " + err2.message);
+        res.redirect("/profile");
     });
+});
 ;
 
 module.exports = router;
