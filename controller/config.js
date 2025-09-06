@@ -1,7 +1,5 @@
 const mysql = require("mysql2");
 const dotenv = require("dotenv");
-const fs = require("fs");
-const pg = require("pg");
 dotenv.config()
 
   let connection = mysql.createConnection({
