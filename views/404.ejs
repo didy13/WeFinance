@@ -1,9 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include("./partials/head.ejs")%>
-<body>
-    <%- include("./partials/nav.ejs") %>
-    
-    <%- include("./partials/footer.ejs") %>
-</body>
+<%- include("./partials/head.ejs") %>
+
+    <body>
+        <%- include("./partials/nav.ejs") %>
+
+            <div class="page-error404-container">
+                <div class="page-error404-content">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAE9UlEQVR4nO2a3W/bVBjG/V9wA9dwxS0Scz7aNE5iN2maryZZmjTtwrYujQoTTB3rwhBjaici1n20NKChCbVLSiga7bpWXZeUttuKGDDEQGi72FYKggk2LlG1Fx1vSe04iRPHSZzMr/Rc9Bz3+Ly/8+Y8tnwwTA455JBDjsrHoUX1geMriv+OryggeEEDvjhByxsj7nTFCS3WyDFwiXgpsoo/PnENB6TImgJ6EtoMBF9c+6hnovk5rFHj3SXVT+nk0zq0qGYAoCGcwRoxDs43Gz/MSh4Jte2ZbmEC2PJO6V/GGi2OppQPspNP672kklUF3jhxuaaTNZH+V8yWwIbNGXxsd4egXPV+0JEzcaZCX21viEjON/xl35eWMwjm9h7QN7UDgVOgxcl/tTvIad2ruhfzJm9z7hMlcSSHbx8MLytZyZ783EWL2Ta8ooCuqe0N0XuWAkdnnzgQ3CGwOYOgV7XREJ6AoP4mFG0vcACYLYENsW6KtP9TI3u1rypg/PVR+Kh/DE6sscG8OdfEqgL3YY9o80Aym7szAJ4qzgFgE6nskXbu3Q2RVQUrydMf90LUF6d1+pO9rD6OLU7oweHvFbUKmAC0OPWIA8Ce9U+GZms2taI1EGtiJTiS0sD4nnMZAOOvnYORVEtBW7QP6gXfn9RYORCyr+EFQAi8uaPbQFscM7kzkYOZ5NMajQwUtsUYAaSZFDyPmgE4Mqdmr/4CBVH/JAdA1H8eRi61FrRFZ0RXXwC6wwTH5sbCQ9zkn2rs8BCvLZq8hvoAoNOQMJTKsr2EM2/yaZ2Ku7NsUQldDACeKAE6VR0ACI1qctoeH4BibLE9ZJA2AFMbCZFVPK/t8YnPFr2fEWAgSOkCGOCxPT5VwharBsBRpO3xSWxbrBqAI8XaHp9EtsWqAOgu0fb4JKYtVhyATqDtVcsWKw4glG17FZQQW6w4gOFl9tteJYWqwJdVBTIAvMYAfG8RVYGAku9jfEdAybe6SOm+DRISkQzAXQMArc1mmF++AbNXrufsd7R1wvnpBfj+zh+0Yl8ugscRKGtMSQGInp2CnzcfwuLVmzmT//bXDbqfKdTmMHUKGlNSAPr73oZbv/0DP977C/yeXk4/WnmUSGImSSeMlJhN0m0TiXlBY0oGgJVyw/qtu3QyR4+dzHkNKnnUz1xtVBWo7bvbvwsaUxIAdIpWSMxcoSc6Pfc1/Xeu69IlX0x7sWNWDcA7MVXGl8OTalbf+8dO0RP95pd7YDN64GJyHWaW1ssCUOyYheYlKoDw5PYrb3hi+0Y+9264efdPerL7+wdLTjRXeylj5ptX1X4Ci2s/cHZ1ppirViyAUsas+R5wYWGt4GRnL18vahO8cXtT0Jg1B0CUsNmhhx7aBmeTdOJIX1xM0W3IIoWMWVcAPI5A3gehnbaexgEws7Set0xR+aOHHuT7SGjl+ZLnG1NyAAiJqGwApEb45/Fay9Ai4PO4TcQDElKTzcU+IEHsoB5yAJituzZrPdFKKfuIjBanYhwARqNHb23AKrB1BEHHOCRF4OQDvUr/PJbvpJjFErjfCD8HdC4IrXw6eXQuCK183uSrEcVsYFgjB/GsA7DnKVcZAF7nAOzOIGV39Yl60jStdssu0KsZu7jStEUZOgYxKYXdFbpfqd2cbWFPpFMatzAphb2CdlYXm6X9WQcghxxyyCEHVp/xP+CapfAM0267AAAAAElFTkSuQmCC"
+                        alt="external-404-no-code-flaticons-flat-flat-icons" class="page-error404-image">
+                    <h1 class="page-error404-title">Ups... stranica nije pronađena</h1>
+                    <p class="page-error404-text">
+                        Izgleda da ova stranica ne postoji. Možda si pogrešno ukucao adresu? Ili je nešto nestalo...
+                    </p>
+                    <a href="/" class="page-error404-home-link">Vrati se na početnu stranicu</a>
+                </div>
+            </div>
+
+            <%- include("./partials/footer.ejs") %>
+    </body>
+
 </html>
