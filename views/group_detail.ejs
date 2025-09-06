@@ -27,8 +27,8 @@
             <input type="text" name="username" placeholder="Username korisnika" required style="padding:5px; flex:1; min-width:200px;">
             <button type="submit" style="padding:5px 15px; background:#1E90FF; border:none; color:#fff; cursor:pointer;">Pošalji pozivnicu</button>
         </form>
-        <% if (error) { %>
-            <div class="alert alert-danger" style="margin-top:10px; color:#FFA500; background:#222; padding:10px; border-radius:5px;"><%= error %></div>
+        <% if (errorAddMember) { %>
+            <div class="alert alert-danger" style="margin-top:10px; color:#FFA500; background:#222; padding:10px; border-radius:5px;"><%= errorAddMember %></div>
         <% } %>
     </div>
 
@@ -48,8 +48,12 @@
 
                         <!-- Dodavanje novca -->
                         <form action="/groups/<%= group.id %>/add-money/<%= goal.id %>" method="POST" style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
-                            <input type="number" name="amount" placeholder="Iznos" min="0" required style="padding:5px; flex:1; min-width:150px;">
-                            <% if (error && amountToAdd && goal.id == amountToAdd.goalId) { %>
+                            <input type="number" name="amount" placeholder="Iznos" min="0" required 
+                                   style="padding:5px; flex:1; min-width:150px;"
+                                   value="<%= (amountToAdd && amountToAdd.goalId == goal.id) ? amountToAdd.value : '' %>">
+                            
+                            <% if (amountToAdd && amountToAdd.goalId == goal.id && errorAddMoney) { %>
+                                <!-- Dugme za potvrdu ako je >70% balansa -->
                                 <input type="hidden" name="confirm" value="1">
                                 <button type="submit" style="padding:5px 15px; background:#FFA500; border:none; color:#000; cursor:pointer;">Potvrdi i dodaj</button>
                             <% } else { %>
@@ -57,8 +61,8 @@
                             <% } %>
                         </form>
 
-                        <% if (error && (!amountToAdd || goal.id != amountToAdd.goalId)) { %>
-                            <div style="margin-top:5px; color:#FFA500;"><%= error %></div>
+                        <% if (errorAddMoney && amountToAdd && goal.id == amountToAdd.goalId) { %>
+                            <div style="margin-top:5px; color:#FFA500; font-weight:bold;"><%= errorAddMoney %></div>
                         <% } %>
                     </li>
                 <% }) %>
@@ -74,6 +78,9 @@
             <input type="number" name="target" placeholder="Target iznos" min="0" required style="padding:5px; flex:1; min-width:100px;">
             <button type="submit" style="padding:5px 15px; background:#1E90FF; border:none; color:#fff; cursor:pointer;">Dodaj cilj</button>
         </form>
+        <% if (errorAddGoal) { %>
+            <div style="margin-top:5px; color:#FFA500;"><%= errorAddGoal %></div>
+        <% } %>
     </div>
 
 </div>
