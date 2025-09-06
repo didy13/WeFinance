@@ -3,11 +3,11 @@ const session = require("express-session");
 const bcrypt = require("bcrypt");
 const { validationResult } = require("express-validator");
 const router = express.Router();
-const connection = require("../controller/config");
+const connection = require("../controller/config"); 
 const Korisnik = require("../models/Korisnik");
 const registerValidation = require("../public/js/registerValidation");
 const cron = require("node-cron");
-const { checkDailyStreak, updateAllStreaks } = require("./streakManager");
+const { checkDailyStreak, updateAllStreaks } = require("../public/js/streakManager");
 
 
 

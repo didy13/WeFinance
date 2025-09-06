@@ -3,11 +3,9 @@ let connection;
 class Goal {
     constructor(name, type, target_amount, created_by, group_id = null) {
         this.name = name;
-        this.type = type; // 'individual' ili 'group'
         this.target_amount = target_amount;
         this.current_amount = 0;
         this.created_by = created_by;
-        this.group_id = group_id;
     }
 
     static setConnection(conn) {
@@ -15,8 +13,8 @@ class Goal {
     }
 
     save() {
-        const query = 'INSERT INTO goals (name, type, target_amount, current_amount, created_by, group_id) VALUES (?, ?, ?, ?, ?, ?)';
-        const values = [this.name, this.type, this.target_amount, this.current_amount, this.created_by, this.group_id];
+        const query = 'INSERT INTO goals (name, target, current, user_id) VALUES (?, ?, ?, ?)';
+        const values = [this.name, this.target_amount, this.current_amount, this.created_by];
         return new Promise((resolve, reject) => {
             connection.query(query, values, (err, results) => {
                 if (err) return reject(err);
