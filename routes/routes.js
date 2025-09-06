@@ -120,7 +120,7 @@ router.post("/login", async (req, res) => {
         const valid = await bcrypt.compare(password, user.password);
         if (!valid) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Netačna lozinka" });
 
-        req.session.user = { id: user.id, username: user.username };
+        req.session.user = { id: user.id, username: user.username, streak: user.streak };
         req.session.save(() => res.redirect("/"));
     } catch (err) {
         console.error(err);
