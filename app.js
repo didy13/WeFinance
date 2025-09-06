@@ -1,18 +1,33 @@
 const express = require("express");
-const app = express();
+const session = require("express-session");
 const path = require("path");
-const routes = require("./routes/routes");
 const dotenv = require("dotenv");
 dotenv.config();
 
-// EJS & public
+const authRoutes = require("./routes/routes"); // ovo je tvoj routes fajl
+
+const app = express();
+
+// EJS i public
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 
+// Session setup OVDE (ne u routeru!)
+app.use(session({
+    secret: process.env.SESSION_SECRET || "defaultsecret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        secure: false,
+        sameSite: "lax"
+    }
+}));
+
 // Routes
-app.use(routes);
+app.use("/", authRoutes); // mountujemo router na root
 
 // 404 fallback
 app.use((req, res) => {

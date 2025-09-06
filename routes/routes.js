@@ -1,26 +1,12 @@
 const express = require("express");
-const session = require("express-session");
-require("dotenv").config();
 const router = express.Router();
 const connection = require("../controller/config");
 const bcrypt = require("bcrypt");
 const Korisnik = require("../models/Korisnik");
-const registerValidation = require("../public/js/registerValidation");
+const registerValidation = require("../public/script/registerValidation");
 const { validationResult } = require("express-validator");
 
 Korisnik.setConnection(connection);
-
-// SESSION setup (ako nije već u server.js)
-router.use(session({
-    secret: process.env.SESSION_SECRET || "defaultsecret",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 dana
-        secure: false,
-        sameSite: "lax"
-    }
-}));
 
 // Middleware za proveru da li je user ulogovan
 const isAuthenticated = (req, res, next) => {
