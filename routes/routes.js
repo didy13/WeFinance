@@ -6,11 +6,31 @@ const router = express.Router();
 const connection = require("../controller/config"); 
 const Korisnik = require("../models/Korisnik");
 const registerValidation = require("../public/js/registerValidation");
+<<<<<<< HEAD
+const cron = require("node-cron");
+const { updateAllStreaks } = require("../public/js/streakManager");
+
+
+=======
 const Group = require("../models/Group");
+>>>>>>> c0c5ab26aeabe47907a642ead28cd445f5c5413c
 
 // Set connection
 Korisnik.setConnection(connection);
 
+<<<<<<< HEAD
+// Runs every day at midnight
+
+
+// Run every day at midnight
+cron.schedule("0 0 * * *", () => {
+  console.log("🕛 Running daily streak check for all users...");
+  updateAllStreaks();
+});
+
+
+=======
+>>>>>>> c0c5ab26aeabe47907a642ead28cd445f5c5413c
 // SESSION setup
 router.use(session({
     secret: process.env.SESSION_SECRET || "defaultsecret",

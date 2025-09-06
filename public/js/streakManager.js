@@ -1,17 +1,9 @@
-const connection = require("../../controller/config"); // your MySQL connection
+const connection = require("../controller/config"); // your MySQL connection
 
 /**
- * Checks if user's goals are met and updates streak,
- * then resets the daily progress for the next day.
+ * Check goals for a single user and update streak.
+ * @param {number} userId
  */
-
-const updateAllStreaks = () => {
-    db.query("SELECT id FROM users", (err, results) => {
-      if (err) return console.error(err);
-      results.forEach(row => checkDailyStreak(row.id));
-    });
-  };
-  
 const checkDailyStreak = (userId) => {
   const now = new Date();
 
@@ -28,20 +20,19 @@ const checkDailyStreak = (userId) => {
     if (!results.length) return;
 
     let { streak, last_goal_update } = results[0];
-    const goals = results.map(r => ({ id: r.goal_id, current: r.current, target: r.target }));
+    const goals = results.map(r => ({ current: r.current, target: r.target }));
 
     const lastUpdate = last_goal_update ? new Date(last_goal_update) : null;
     const diffInMs = lastUpdate ? now - lastUpdate : null;
     const diffInDays = diffInMs ? diffInMs / (1000 * 60 * 60 * 24) : null;
 
-    // Check if all goals were met today
+    // Check if all goals are satisfied
     const allGoalsMet = goals.every(g => g.current >= g.target);
 
-    // Update streak
     if (lastUpdate && diffInDays >= 1 && !allGoalsMet) {
-      streak = 0; // Missed a day → reset streak
+      streak = 0; // missed a day → reset streak
     } else if (allGoalsMet) {
-      streak = (streak || 0) + 1; // Goal met → increment streak
+      streak = (streak || 0) + 1; // all goals met → increment streak
     }
 
     // Update user's streak and last_goal_update
@@ -63,8 +54,22 @@ const checkDailyStreak = (userId) => {
     `;
     connection.query(resetGoalsQuery, [userId], (err) => {
       if (err) return console.error(err);
-      console.log(`User ${userId}'s daily goals reset for the next day`);
+      console.log(`User ${userId}'s goals reset for the next day`);
     });
   });
 };
 
+/**
+ * Loop through all users and update streaks (for cron job)
+ */
+const updateAllStreaks = () => {
+  connection.query("SELECT id FROM users", (err, results) => {
+    if (err) return console.error(err);
+    results.forEach(row => checkDailyStreak(row.id));
+  });
+};
+
+module.exports = {
+  checkDailyStreak,
+  updateAllStreaks
+};
