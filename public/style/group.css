@@ -1,0 +1,181 @@
+/* General page styles */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #121212;
+  color: #e0e0e0;
+}
+
+* {
+  font-family: "Montserrat", serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+body {
+  background: #121212;
+}
+
+nav {
+  background-color: #1e1e1e;
+  padding: 0.75rem !important;
+  position: absolute;
+  margin-top: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;
+  z-index: 1000;
+  border-radius: 0.75rem;
+}
+
+.nav-logo img {
+  width: 12.5rem;
+  height: auto;
+}
+
+.nav-link-style {
+  color: white;
+}
+
+.nav-link-style:hover {
+  color: rgb(200, 200, 200);
+}
+
+.navbar-links-wrapper ul {
+  margin-left: auto;
+}
+
+.navbar-toggler {
+  border-color: white;
+}
+
+.navbar-toggler-icon {
+  filter: invert(1);
+}
+
+.groups-page {
+  padding: 40px;
+  min-height: calc(100vh - 120px);
+  /* nav + footer */
+}
+
+.groups-title {
+  color: #ffffff;
+  margin-bottom: 24px;
+}
+
+.groups-actions {
+  margin-bottom: 30px;
+}
+
+/* Button styles */
+.btn-primary,
+.btn-success,
+.btn-danger {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  border: none;
+}
+
+.btn-primary {
+  background: #4e89ff;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #3b6fe2;
+  transform: translateY(-2px);
+}
+
+.btn-success {
+  background: #4caf50;
+  color: #fff;
+}
+
+.btn-success:hover {
+  background: #3d8b40;
+  transform: translateY(-2px);
+}
+
+.btn-danger {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+}
+
+.full-width {
+  width: 100%;
+  text-align: center;
+}
+
+/* Groups grid */
+.groups-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.group-card {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.group-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.8);
+}
+
+.group-card h2 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: #ffffff;
+}
+
+.groups-empty {
+  color: #bbb;
+}
+
+/* Invites */
+.invites-section {
+  margin-top: 60px;
+}
+
+.invites-section h2 {
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.invites-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.invite-item {
+  margin-bottom: 15px;
+  padding: 15px;
+  background: #1e1e1e;
+  border-radius: 10px;
+  color: #ccc;
+}
+
+.invite-actions {
+  margin-top: 10px;
+}
+
+.invite-actions form {
+  display: inline-block;
+  margin-right: 10px;
+}
