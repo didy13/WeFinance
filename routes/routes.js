@@ -77,11 +77,8 @@ router.get("/profile", isAuthenticated, async (req, res) => {
 
         const error = '';
 
-<<<<<<< HEAD
-        res.render("profile", { title: "WeInvest - Profile", user, goals,css: "profile", error });
-=======
-        res.render("profile", { title: "WeInvest - Moj profil", user, goals, css: index, error });
->>>>>>> 7619acbea03313cce999ed460079fdd68bef7757
+        
+        res.render("profile", { title: "WeInvest - Moj profil", user, goals, css: 'profile', error });
     } catch (err) {
         console.error(err);
         res.status(500).send("Greška pri učitavanju profila");
