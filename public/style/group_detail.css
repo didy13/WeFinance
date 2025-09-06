@@ -1,6 +1,6 @@
 /* ===== Body & Fonts ===== */
 body {
-  background: #0f1115; /* tamna pozadina */
+  background: #0f1115;
   color: #e5e5e5;
   font-family: "Montserrat", sans-serif;
   line-height: 1.5;
@@ -13,21 +13,26 @@ h1, h2, h3, h5 {
 }
 
 /* ===== Card styles ===== */
-.card {
+.card, .goal-card {
   border-radius: 12px;
   background: #1f1f25;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.card-body {
+.card:hover, .goal-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.6);
+}
+
+.card-body, .goal-card .goal-header {
   padding: 20px;
 }
 
 /* ===== Lista članova ===== */
 .list-group-item {
   border-radius: 8px;
-  margin-bottom: 6px; /* razmak između članova */
+  margin-bottom: 6px;
   padding: 10px 15px;
   background: #2a2a33;
   color: #e5e5e5;
@@ -35,14 +40,10 @@ h1, h2, h3, h5 {
   transition: background 0.2s;
 }
 
-.list-group-item:hover {
-  background: #3b3b4a;
-}
-
 /* ===== Form controls ===== */
 .form-control {
   background: #1f1f25;
-  color: #e5e5e5; /* boja unetog teksta */
+  color: #e5e5e5;
   border: 1px solid #444;
   border-radius: 6px;
   transition: all 0.2s ease-in-out;
@@ -55,10 +56,8 @@ h1, h2, h3, h5 {
   box-shadow: none;
 }
 
-/* Placeholder */
 .form-control::placeholder {
-  color: #aaa; /* svetlo siva za vidljivost */
-  opacity: 1;
+  color: #aaa;
 }
 
 /* ===== Buttons ===== */
@@ -68,62 +67,63 @@ h1, h2, h3, h5 {
   transition: all 0.2s ease-in-out;
 }
 
-/* Primary */
-.btn-primary {
-  background: #4e89ff;
-  border: none;
-  color: #fff;
-}
+.btn-primary { background: #4e89ff; border:none; color:#fff;}
+.btn-primary:hover { background: #3b6fe2; }
+.btn-success { background: #4e89ff; border:none; color:#fff; }
+.btn-success:hover { background: #3b6fe2; }
+.btn-warning { background: #f0ad4e; border:none; color:#fff; }
+.btn-warning:hover { background: #ec971f; }
 
-.btn-primary:hover {
-  background: #3b6fe2;
-}
-
-/* Success */
-.btn-success {
-  background: #4e89ff;
-  border: none;
-  color: #fff;
-}
-
-.btn-success:hover {
-  background: #3b6fe2;
-}
-
-
-
-/* ===== Misc ===== */
-input::placeholder {
-  color: #aaa;
-}
-
-.btn, .form-control {
-  transition: all 0.2s ease-in-out;
-}
-/* Scrollable container za ciljeve */
+/* ===== Goals Scrollable ===== */
 .goals-scroll {
-  max-height: 500px; /* visina scrollable zone */
+  max-height: 500px;
   overflow-y: auto;
-  padding-right: 5px; /* da scrollbar ne preklapa sadržaj */
+  padding-right: 5px;
 }
 
-/* Stilizovanje scrollbara za Webkit pretraživače (Chrome, Edge, Safari) */
-.goals-scroll::-webkit-scrollbar {
-  width: 8px; /* širina scrollbar-a */
+.goals-scroll::-webkit-scrollbar { width: 8px; }
+.goals-scroll::-webkit-scrollbar-track { background: #1f1f25; border-radius:4px; }
+.goals-scroll::-webkit-scrollbar-thumb { background-color: #4e89ff; border-radius:4px; border:2px solid #1f1f25; }
+.goals-scroll::-webkit-scrollbar-thumb:hover { background-color:#3b6fe2; }
+
+/* ===== Goal Cards ===== */
+.goal-card {
+  padding: 12px 15px;
+  background: #2a2a33;
+  border-radius: 8px;
+  margin-bottom: 10px;
 }
 
-.goals-scroll::-webkit-scrollbar-track {
-  background: #1f1f25; /* pozadina trake */
-  border-radius: 4px;
+.goal-card.completed {
+  background: #1a1f1a;
+  border-left: 5px solid #4CAF50;
 }
 
-.goals-scroll::-webkit-scrollbar-thumb {
-  background-color: #4e89ff; /* boja klizača */
-  border-radius: 4px;
-  border: 2px solid #1f1f25; /* razmak oko klizača */
-  transition: background 0.2s;
+.goal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
 }
 
-.goals-scroll::-webkit-scrollbar-thumb:hover {
-  background-color: #3b6fe2; /* hover efekat */
+.progress {
+  height: 18px;
+  background-color: #333;
+  border-radius: 9px;
+  overflow: hidden;
 }
+
+.progress-bar {
+  background-color: #4e89ff;
+  height: 100%;
+  transition: width 0.3s ease-in-out;
+}
+
+.progress-bar.bg-success { background-color: #4CAF50; }
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .goal-card { flex-direction: column; }
+  .goal-header { flex-direction: column; align-items: flex-start; gap: 5px; }
+}
+
