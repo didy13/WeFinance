@@ -363,6 +363,15 @@ nav {
   background-color: #3b6fe2;
 }
 
+/* Početna */
+.hero-section {
+    margin-top: 150px;
+}
+.hero-section h1 {
+    color: white;
+    font-weight: 600;
+}
+
 @media (max-width: 992px) {
     .navbar-nav.position-absolute {
         position: static !important;

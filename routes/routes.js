@@ -3,7 +3,7 @@ const session = require("express-session");
 const bcrypt = require("bcrypt");
 const { validationResult } = require("express-validator");
 const router = express.Router();
-const connection = require("../controller/config"); 
+const connection = require("../controller/config");
 const Korisnik = require("../models/Korisnik");
 const registerValidation = require("../public/js/registerValidation");
 const cron = require("node-cron");
@@ -30,7 +30,7 @@ router.use(session({
     secret: process.env.SESSION_SECRET || "defaultsecret",
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 1000*60*60*24*7, secure: false, sameSite: "lax" }
+    cookie: { maxAge: 1000 * 60 * 60 * 24 * 7, secure: false, sameSite: "lax" }
 }));
 
 // --- Middleware for authentication ---
@@ -41,18 +41,18 @@ const isAuthenticated = (req, res, next) => {
 
 // --- DASHBOARD ---
 router.get("/", isAuthenticated, (req, res) => {
-    res.render("index", { 
-        title: "WeInvest - Pametno upravljanje novcem za mlade", 
+    res.render("index", {
+        title: "WeInvest - Pametno upravljanje novcem za mlade",
         css: index,
-        user: req.session.user 
+        user: req.session.user
     });
 });
 
 router.get("/help", isAuthenticated, (req, res) => {
-    res.render("help", { 
-        title: "WeInvest - Pametno upravljanje novcem za mlade", 
+    res.render("help", {
+        title: "WeInvest - Pomoć & Edukacija",
         css: index,
-        user: req.session.user 
+        user: req.session.user
     });
 });
 
@@ -75,9 +75,13 @@ router.get("/profile", isAuthenticated, async (req, res) => {
             });
         });
 
-       const error='';
+        const error = '';
 
+<<<<<<< HEAD
         res.render("profile", { title: "WeInvest - Profile", user, goals,css: "profile", error });
+=======
+        res.render("profile", { title: "WeInvest - Moj profil", user, goals, css: index, error });
+>>>>>>> 7619acbea03313cce999ed460079fdd68bef7757
     } catch (err) {
         console.error(err);
         res.status(500).send("Greška pri učitavanju profila");
@@ -87,19 +91,19 @@ router.get("/profile", isAuthenticated, async (req, res) => {
 // --- LOGIN ---
 router.get("/login", (req, res) => {
     if (req.session.user) return res.redirect("/");
-    res.render("login", { title: "WeInvest - Prijava",css: index, user: "", error: "" });
+    res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "" });
 });
 
 router.post("/login", async (req, res) => {
     const { username, password } = req.body;
-    if (!username || !password) return res.render("login", { title:"WeInvest - Prijava", css:index, user:"", error:"Username i password su obavezni" });
+    if (!username || !password) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Username i password su obavezni" });
 
     try {
         const user = await Korisnik.findByUsername(username);
-        if (!user) return res.render("login", { title:"WeInvest - Prijava",css:index, user:"", error:"Nepostojeći korisnik" });
+        if (!user) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Nepostojeći korisnik" });
 
         const valid = await bcrypt.compare(password, user.password);
-        if (!valid) return res.render("login", { title:"WeInvest - Prijava",css:index, user:"", error:"Netačan password" });
+        if (!valid) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Netačan password" });
 
         req.session.user = { id: user.id, username: user.username };
         req.session.save(() => res.redirect("/"));
@@ -121,17 +125,17 @@ router.get("/logout", (req, res) => {
 // --- REGISTER ---
 router.get("/register", (req, res) => {
     if (req.session.user) return res.redirect("/");
-    res.render("register", { title:"WeInvest - Registracija", user:"",css: index, error:"", errors: [] });
+    res.render("register", { title: "WeInvest - Registracija", user: "", css: index, error: "", errors: [] });
 });
 
 router.post("/register", registerValidation, async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.render("register", { title:"WeInvest - Registracija", user:"", error:errors.array()[0].msg, errors: errors.array() });
+    if (!errors.isEmpty()) return res.render("register", { title: "WeInvest - Registracija", user: "", error: errors.array()[0].msg, errors: errors.array() });
 
     const { username, password } = req.body;
     try {
         const existing = await Korisnik.findByUsername(username);
-        if (existing) return res.render("register", { title:"WeInvest - Registracija", user:"", error:"Username već postoji", errors: [] });
+        if (existing) return res.render("register", { title: "WeInvest - Registracija", user: "", error: "Username već postoji", errors: [] });
 
         const hashed = await bcrypt.hash(password, 10);
         const newUser = new Korisnik(username, hashed);
@@ -141,7 +145,7 @@ router.post("/register", registerValidation, async (req, res) => {
         req.session.save(() => res.redirect("/"));
     } catch (err) {
         console.error(err);
-        res.status(500).render("register", { title:"WeInvest - Registracija", user:"", error:"Greška, pokušajte ponovo", errors: [] });
+        res.status(500).render("register", { title: "WeInvest - Registracija", user: "", error: "Greška, pokušajte ponovo", errors: [] });
     }
 });
 
@@ -169,28 +173,28 @@ router.get("/groups", isAuthenticated, (req, res) => {
         new Promise((resolve, reject) => connection.query(groupsQuery, [userId], (err, results) => err ? reject(err) : resolve(results))),
         new Promise((resolve, reject) => connection.query(invitesQuery, [userId], (err, results) => err ? reject(err) : resolve(results)))
     ])
-    .then(([groups, invites]) => {
-        const formattedGroups = groups.map(g => ({
-            ...g,
-            members: Array(g.members_count).fill("Član"),
-            goals: Array(g.goals_count).fill("Cilj")
-        }));
-        res.render("groups", { title: "WeInvest - Grupe", user: req.session.user,css: group, groups: formattedGroups, invites });
-    })
-    .catch(err => {
-        console.error(err);
-        res.status(500).send("Greška pri učitavanju grupa ili invite-a");
-    });
+        .then(([groups, invites]) => {
+            const formattedGroups = groups.map(g => ({
+                ...g,
+                members: Array(g.members_count).fill("Član"),
+                goals: Array(g.goals_count).fill("Cilj")
+            }));
+            res.render("groups", { title: "WeInvest - Grupe", user: req.session.user, css: group, groups: formattedGroups, invites });
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).send("Greška pri učitavanju grupa ili invite-a");
+        });
 });
 
 // --- NEW GROUP ---
 router.get("/newgroup", isAuthenticated, (req, res) => {
-    res.render("new_group", { title: "WeInvest - Kreiraj novu grupu",css: index, user: req.session.user, error: "" });
+    res.render("new_group", { title: "WeInvest - Kreiranje nove grupe", css: index, user: req.session.user, error: "" });
 });
 
 router.post("/newgroup", isAuthenticated, async (req, res) => {
     const { name } = req.body;
-    if (!name || name.trim() === "") return res.render("new_group", { title: "WeInvest - Kreiraj novu grupu", user: req.session.user, error: "Ime grupe je obavezno" });
+    if (!name || name.trim() === "") return res.render("new_group", { title: "WeInvest - Kreiranje nove grupe", user: req.session.user, error: "Ime grupe je obavezno!" });
 
     try {
         const group = new Group(name.trim());
@@ -406,34 +410,34 @@ router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
 });
 
 // Render the "New Goal" form
-  router.get("/newgoals", isAuthenticated, (req, res) => {
-     res.render("newgoal", { title:"WeInvest - Kreiraj novi goal", user: req.session.user,css: index, error:"", errors: [] });
+router.get("/newgoals", isAuthenticated, (req, res) => {
+    res.render("newgoal", { title: "WeInvest - Kreiraj novi goal", user: req.session.user, css: index, error: "", errors: [] });
 });
-  
-  // Handle form submission to create a new goal
-  router.post("/creategoal", isAuthenticated, (req, res) => {
+
+// Handle form submission to create a new goal
+router.post("/creategoal", isAuthenticated, (req, res) => {
     console.log(req.body);
     const { name, target } = req.body;
 
     if (!name || !target) {
-      return res.render("newgoal", {
-        title: "WeInvest - Kreiraj novi goal",
-        user: req.session.user,
-        error: "Morate popuniti oba polja!",
-        errors: []
-      });
+        return res.render("newgoal", {
+            title: "WeInvest - Kreiraj novi goal",
+            user: req.session.user,
+            error: "Morate popuniti oba polja!",
+            errors: []
+        });
     }
-  
+
     const query = "INSERT INTO goals (name, target, user_id) VALUES (?, ?, ?)";
     connection.query(query, [name, target, req.session.user.id], (err, result) => {
-      if (err) return res.status(500).send("Error creating goal: " + err.message);
-  
-      res.redirect("/profile");
+        if (err) return res.status(500).send("Error creating goal: " + err.message);
+
+        res.redirect("/profile");
     });
-  });
+});
 
 
-  router.post("/changebalance", isAuthenticated, async (req, res) => {
+router.post("/changebalance", isAuthenticated, async (req, res) => {
     let { balans } = req.body;
     const goals = await new Promise((resolve, reject) => {
         connection.query("SELECT id, name, current, target FROM goals WHERE user_id = ?", [req.session.user.id], (err, results) => {
@@ -448,27 +452,27 @@ router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
         });
     });
     // Check if input is empty
-    if(isNaN(balans) || !balans){
-        return res.render("profile", {title: 'WeInvest - Profile', goals, error: 'Morate popuniti balans!', user, css: 'profile'});
+    if (isNaN(balans) || !balans) {
+        return res.render("profile", { title: 'WeInvest - Moj profil', goals, error: 'Morate popuniti balans!', user, css: 'profile' });
     }
-  
-    const balance = parseFloat(balans);
-  
+
+    const balance = parseFloat(balans) + parseFloat(user.balance);
+
     const query = "UPDATE users SET balance = ? WHERE id = ?";
     connection.query(query, [balance, req.session.user.id], (err, result) => {
-      if (err) return res.status(500).send("Error updating balance: " + err.message);
-  
-      res.redirect("/profile");
+        if (err) return res.status(500).send("Error updating balance: " + err.message);
+
+        res.redirect("/profile");
     });
-  });
-  
-  router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
+});
+
+router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
     const { goalbalance, goalId } = req.body; // goalId comes from the input/button
     const userId = req.session.user.id;
-  
+
     const amount = parseFloat(goalbalance);
     if (isNaN(amount) || amount <= 0) {
-      return res.redirect("/profile"); // invalid input, just go back
+        return res.redirect("/profile"); // invalid input, just go back
     }
     const goals = await new Promise((resolve, reject) => {
         connection.query("SELECT id, name, current, target FROM goals WHERE user_id = ?", [req.session.user.id], (err, results) => {
@@ -489,14 +493,6 @@ router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
       INNER JOIN goals g ON u.id = g.user_id
       WHERE u.id = ? AND g.id = ?
     `;
-  
-    connection.query(query, [userId, goalId], (err, results) => {
-      if (err) return res.status(500).send("DB error: " + err.message);
-      if (results.length === 0) return res.redirect("/profile"); // no goal found
-  
-      const userBalance = parseFloat(results[0].balance);
-      const goalCurrent = parseFloat(results[0].current);
-      const goalTarget = parseFloat(results[0].target);
 
       if (amount > userBalance) {
         // not enough money in user balance
@@ -513,15 +509,11 @@ router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
         SET g.current = ?, u.balance = ?
         WHERE u.id = ? AND g.id = ?
       `;
-      connection.query(updateQuery, [newGoalCurrent, newUserBalance, userId, goalId], (err2, result) => {
-        if (err2) return res.status(500).send("DB update error: " + err2.message);
-        res.redirect("/profile"); // back to profile after update
-      });
+        connection.query(updateQuery, [newGoalCurrent, newUserBalance, userId, goalId], (err2, result) => {
+            if (err2) return res.status(500).send("DB update error: " + err2.message);
+            res.redirect("/profile"); // back to profile after update
+        });
     });
-  });
-  
-  
-  
+;
 
-// --- EXPORT ROUTER ---
 module.exports = router;
