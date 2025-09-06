@@ -53,13 +53,15 @@
     <div class="col-lg-6 mb-4">
       <div class="card bg-dark text-light h-100">
         <div class="card-body">
+
           <!-- Aktivni ciljevi -->
           <h2 class="card-title">Aktivni ciljevi</h2>
-          <% const activeGoals = goals.filter(g => !g.completed); %>
+          <% const activeGoals = Array.isArray(goals) ? goals.filter(g => !g.completed) : []; %>
           <% if (activeGoals.length === 0) { %>
             <p>Nema aktivnih ciljeva</p>
           <% } else { %>
             <% activeGoals.forEach(goal => { %>
+              <% let amountValue = (amountToAdd && amountToAdd.goalId == goal.id) ? amountToAdd.amount : ''; %>
               <div class="card mb-3 bg-secondary">
                 <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
                   <strong class="mb-1"><%= goal.goal_name %></strong>
@@ -67,10 +69,9 @@
 
                   <!-- Dodavanje novca -->
                   <form action="/groups/<%= group.id %>/add-money/<%= goal.id %>" method="POST" class="d-flex gap-2 flex-wrap mt-2 w-100">
-                    <input type="number" name="amount" placeholder="Iznos" min="0" required class="form-control flex-grow-1" style="min-width: 100px;"
-                      value="<%= (amountToAdd && amountToAdd.goalId == goal.id) ? amountToAdd.amount : '' %>">
+                    <input type="number" name="amount" placeholder="Iznos" min="0" required class="form-control flex-grow-1" style="min-width: 100px;" value="<%= amountValue %>">
                     
-                    <% if (errorAddMoney && amountToAdd && goal.id == amountToAdd.goalId) { %>
+                    <% if (errorAddMoney && typeof errorAddMoney === 'object' && amountToAdd && goal.id == amountToAdd.goalId) { %>
                       <input type="hidden" name="confirm" value="1">
                       <button type="submit" class="btn btn-warning">Potvrdi i dodaj</button>
                     <% } else { %>
@@ -78,7 +79,7 @@
                     <% } %>
                   </form>
 
-                  <% if (errorAddMoney && (!amountToAdd || goal.id != amountToAdd.goalId)) { %>
+                  <% if (errorAddMoney && typeof errorAddMoney === 'object' && (!amountToAdd || goal.id != amountToAdd.goalId)) { %>
                     <div class="text-warning mt-1"><%= errorAddMoney.message %></div>
                   <% } %>
                 </div>
@@ -88,7 +89,7 @@
 
           <!-- Completed goals -->
           <h2 class="card-title mt-4">Završeni ciljevi</h2>
-          <% const completedGoals = goals.filter(g => g.completed); %>
+          <% const completedGoals = Array.isArray(goals) ? goals.filter(g => g.completed) : []; %>
           <% if (completedGoals.length === 0) { %>
             <p>Nema završених ciljeva</p>
           <% } else { %>
@@ -114,7 +115,6 @@
       </div>
     </div>
   </div>
-
 </div>
 
 <%- include("./partials/footer.ejs") %>

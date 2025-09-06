@@ -445,24 +445,16 @@ router.post("/creategoal", isAuthenticated, (req, res) => {
 router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
     const { goalbalance, goalId } = req.body;
     const userId = req.session.user.id;
-
     const amount = parseFloat(goalbalance);
+
     if (isNaN(amount) || amount <= 0) return res.redirect("/profile");
 
     try {
-        const goals = await new Promise((resolve, reject) =>
-            connection.query("SELECT id, name, current, target FROM goals WHERE user_id = ?", [userId], (err, results) => err ? reject(err) : resolve(results))
-        );
-
-        const [user] = await new Promise((resolve, reject) =>
-            connection.query("SELECT id, username, balance, streak FROM users WHERE id = ?", [userId], (err, results) => err ? reject(err) : resolve(results))
-        );
-
         const [goalData] = await new Promise((resolve, reject) =>
             connection.query(
                 `SELECT u.balance AS userBalance, g.current AS goalCurrent, g.target AS goalTarget
                  FROM users u
-                 INNER JOIN goals g ON u.id = g.user_id
+                 JOIN goals g ON u.id = g.user_id
                  WHERE u.id = ? AND g.id = ?`,
                 [userId, goalId],
                 (err, results) => err ? reject(err) : resolve(results)
@@ -474,26 +466,59 @@ router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
         const { userBalance, goalCurrent, goalTarget } = goalData;
 
         if (amount > userBalance) {
-            return res.render("profile", { user, goals, error: "Nemate dovoljno novca!", title: "WeInvest - Moj profil", css: "profile" });
+            const [user] = await new Promise((resolve, reject) =>
+                connection.query("SELECT id, username, balance FROM users WHERE id = ?", [userId], (err, results) => err ? reject(err) : resolve(results))
+            );
+            const goals = await new Promise((resolve, reject) =>
+                connection.query("SELECT id, name, current, target FROM goals WHERE user_id = ?", [userId], (err, results) => err ? reject(err) : resolve(results))
+            );
+            return res.render("profile", { user, goals, error: "Not enough balance!", title: "Profile", css: "profile" });
         }
 
         const newGoalCurrent = Math.min(goalCurrent + amount, goalTarget);
         const newUserBalance = userBalance - amount;
 
-        const updateQuery = `
-            UPDATE users u
-            JOIN goals g ON g.user_id = u.id
-            SET g.current = ?, u.balance = ?
-            WHERE u.id = ? AND g.id = ?
-        `;
-        connection.query(updateQuery, [newGoalCurrent, newUserBalance, userId, goalId], (err2) => {
-            if (err2) return res.status(500).send("DB update error: " + err2.message);
-            res.redirect("/profile");
-        });
+        await new Promise((resolve, reject) =>
+            connection.query(
+                `UPDATE users u
+                 JOIN goals g ON g.user_id = u.id
+                 SET g.current = ?, u.balance = ?
+                 WHERE u.id = ? AND g.id = ?`,
+                [newGoalCurrent, newUserBalance, userId, goalId],
+                (err) => err ? reject(err) : resolve()
+            )
+        );
+
+        res.redirect("/profile");
     } catch (err) {
         console.error(err);
-        res.status(500).send("Greška pri dodavanju na cilj");
+        res.status(500).send("Error adding money to goal");
     }
 });
+router.post("/changebalance", isAuthenticated, async (req, res) => {
+    const userId = req.session.user.id;
+    let { balans } = req.body;
+    balans = parseFloat(balans);
 
+    if (isNaN(balans) || balans <= 0) {
+        // vrati profil sa greškom
+        const [user] = await new Promise((resolve, reject) =>
+            connection.query("SELECT id, username, balance, streak FROM users WHERE id = ?", [userId], (err, results) => err ? reject(err) : resolve(results))
+        );
+        const goals = await new Promise((resolve, reject) =>
+            connection.query("SELECT id, name, current, target FROM goals WHERE user_id = ?", [userId], (err, results) => err ? reject(err) : resolve(results))
+        );
+        return res.render("profile", { user, goals, error: "Iznos mora biti veći od 0", title: "WeInvest - Moj profil", css: "profile" });
+    }
+
+    try {
+        await new Promise((resolve, reject) => {
+            connection.query("UPDATE users SET balance = balance + ? WHERE id = ?", [balans, userId], (err) => err ? reject(err) : resolve());
+        });
+        res.redirect("/profile");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Greška pri dodavanju novca na balans");
+    }
+});
 module.exports = router;
