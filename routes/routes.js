@@ -11,10 +11,12 @@ const { updateAllStreaks } = require("../public/js/streakManager");
 
 
 const Group = require("../models/Group");
+const Invite = require("../models/Invites");
 
 // Set connection
 Korisnik.setConnection(connection);
-
+Group.setConnection(connection);
+Invite.setConnection(connection);
 // Runs every day at midnight
 
 
@@ -157,21 +159,43 @@ router.get("/groups", isAuthenticated, (req, res) => {
         WHERE i.user_id = ?
     `;
 
-    connection.query(groupsQuery, [userId], (err, groups) => {
-        if (err) return res.status(500).send("Greška pri učitavanju grupa");
+    // Koristimo Promise.all da dobijemo obe stvari paralelno
+    const queryGroups = new Promise((resolve, reject) => {
+        connection.query(groupsQuery, [userId], (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
 
-        connection.query(invitesQuery, [userId], (err, invites) => {
-            if (err) return res.status(500).send("Greška pri učitavanju pozivnica");
+    const queryInvites = new Promise((resolve, reject) => {
+        connection.query(invitesQuery, [userId], (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
+
+    Promise.all([queryGroups, queryInvites])
+        .then(([groups, invites]) => {
+            // Za svaki group dodajemo members i goals ako želiš
+            const formattedGroups = groups.map(g => ({
+                ...g,
+                members: Array(g.members_count).fill("Član"), // ili ako imaš stvarne korisnike, možeš promeniti
+                goals: Array(g.goals_count).fill("Cilj")     // samo da bi frontend radio
+            }));
 
             res.render("groups", {
                 title: "WeInvest - Grupe",
                 user: req.session.user,
-                groups,
+                groups: formattedGroups,
                 invites
             });
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).send("Greška pri učitavanju grupa ili invite-a");
         });
-    });
 });
+
 
 router.post("/groups/new", isAuthenticated, async (req, res) => {
     const { name } = req.body;
@@ -186,38 +210,42 @@ router.post("/groups/new", isAuthenticated, async (req, res) => {
     }
 });
 
-router.post("/groups/invite/:inviteId/accept", isAuthenticated, (req, res) => {
-    const userId = req.session.user.id;
+router.post("/:inviteId/accept", isAuthenticated, async (req, res) => {
     const inviteId = req.params.inviteId;
+    const userId = req.session.user.id;
 
-    connection.query("SELECT * FROM group_invites WHERE id = ? AND user_id = ?", [inviteId, userId], (err, results) => {
-        if (err) return res.status(500).send("Greška");
-        if (results.length === 0) return res.status(404).send("Invite ne postoji");
-
-        const groupId = results[0].group_id;
+    try {
+        // Dohvati invite
+        const invites = await Invite.getUserInvites(userId);
+        const invite = invites.find(i => i.invite_id == inviteId);
+        if (!invite) return res.status(404).send("Invite nije pronađen");
 
         // Dodaj korisnika u grupu
-        connection.query("INSERT INTO group_members (group_id, user_id) VALUES (?, ?)", [groupId, userId], (err) => {
-            if (err) return res.status(500).send("Greška pri dodavanju u grupu");
+        connection.query("INSERT INTO group_members (group_id, user_id) VALUES (?, ?)", [invite.group_id, userId]);
 
-            // Obriši invite
-            connection.query("DELETE FROM group_invites WHERE id = ?", [inviteId], (err) => {
-                if (err) console.error(err);
-                res.redirect("/groups");
-            });
-        });
-    });
+        // Obriši invite
+        await Invite.delete(inviteId);
+
+        res.redirect("/groups");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Greška pri prihvatanju invite-a");
+    }
 });
 
-// --- POST: odbij invite ---
-router.post("/groups/invite/:inviteId/decline", isAuthenticated, (req, res) => {
-    const userId = req.session.user.id;
+// --- POST /groups/:inviteId/decline ---
+router.post("/:inviteId/decline", isAuthenticated, async (req, res) => {
     const inviteId = req.params.inviteId;
+    const userId = req.session.user.id;
 
-    connection.query("DELETE FROM group_invites WHERE id = ? AND user_id = ?", [inviteId, userId], (err) => {
-        if (err) return res.status(500).send("Greška pri odbijanju invite-a");
+    try {
+        // Obriši invite
+        await Invite.delete(inviteId);
         res.redirect("/groups");
-    });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Greška pri odbijanju invite-a");
+    }
 });
 
 module.exports = router;
