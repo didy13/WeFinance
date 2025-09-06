@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./partials/head.ejs") %>
+  <body>
+    <%- include("./partials/nav.ejs") %>
+
+    <div class="container py-5">
+      <h1 class="mb-4 text-white">Achievements</h1>
+
+      <div class="row">
+        <% 
+          const types = ["bronze", "silver", "gold", "diamond"];
+          const icons = {
+            bronze: "https://static.thenounproject.com/png/achievement-icon-585663-512.png", // Bronze icon
+            silver: "https://static.thenounproject.com/png/achievement-icon-396458-512.png", // Silver icon
+            gold: "https://static.thenounproject.com/png/achievement-icon-1122999-512.png", // Gold icon
+            diamond: "https://static.thenounproject.com/png/achievement-icon-2421576-512.png" // Diamond icon
+          };
+          // Random achievements
+          const achievements = [];
+          for(let i=1; i<=12; i++){
+            const type = types[Math.floor(Math.random()*types.length)];
+            achievements.push({
+              name: `Achievement ${i}`,
+              description: `Opis za achievement ${i}`,
+              type
+            });
+          }
+        %>
+
+        <% achievements.forEach(ach => { %>
+          <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card achievement-card text-center h-100 p-3">
+              <div class="achievement-icon mb-2">
+                <img src="<%= icons[ach.type] %>" alt="<%= ach.type %> icon" class="img-fluid" />
+              </div>
+              <h5 class="achievement-name mb-1"><%= ach.name %></h5>
+              <p class="achievement-desc mb-0"><%= ach.description %></p>
+              <span class="achievement-type mt-2 badge <%= ach.type %>"><%= ach.type.toUpperCase() %></span>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <%- include("./partials/footer.ejs") %>
+  </body>
+</html>
