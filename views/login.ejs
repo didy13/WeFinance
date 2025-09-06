@@ -1,25 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-  <%- include("./partials/head.ejs")%>
-<body>
-  <%- include("./partials/nav.ejs") %>
-    <div class="login-container">
-      <div class="login-card">
-        <h2>Prijava</h2>
-        <form action="/login" method="POST">
-          <div class="login-input-group">
-            <label for="username">Korisničko ime</label>
-            <input type="text" id="username" name="username" placeholder="Unesite korisničko ime" required>
-          </div>
-          <div class="login-input-group">
-            <label for="password">Lozinka</label>
-            <input type="password" id="password" name="password" placeholder="Unesite lozinku" required>
-          </div>
-          <button type="submit" class="btn-login">Prijava</button>
-          <p class="signup-link">Nemate nalog? <a href="/register">Registrujte se</a></p>
-        </form>
-      </div>
-    </div>
-  <%- include("./partials/footer.ejs") %>
-</body>
+<%- include("./partials/head.ejs")%>
+
+    <body>
+        <%- include("./partials/nav.ejs") %>
+            <div class="login-container">
+                <div class="login-card">
+                    <h2>Prijava</h2>
+                    <form action="/login" method="POST">
+                        <div class="login-input-group">
+                            <label for="username">Korisničko ime</label>
+                            <input type="text" id="username" name="username" placeholder="Unesite korisničko ime"
+                                required>
+                        </div>
+                        <div class="login-input-group">
+                            <label for="password">Lozinka</label>
+                            <input type="password" id="password" name="password" placeholder="Unesite lozinku" required>
+                        </div>
+                        <% if (typeof errors !=="undefined" && errors.length> 0) { %>
+                            <div class="login-error-list">
+                                <ul>
+                                    <% errors.forEach(err=> { %>
+                                        <li>
+                                            <%= err.msg %>
+                                        </li>
+                                        <% }) %>
+                                </ul>
+                            </div>
+                            <% } %>
+                                <button type="submit" class="btn-login">Prijava</button>
+                                <p class="signup-link">Nemate nalog? <a href="/register">Registrujte se</a></p>
+                    </form>
+                </div>
+            </div>
+            <%- include("./partials/footer.ejs") %>
+    </body>
+
 </html>
