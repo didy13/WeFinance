@@ -6,8 +6,20 @@ const router = express.Router();
 const connection = require("../controller/config");
 const Korisnik = require("../models/Korisnik");
 const registerValidation = require("../public/js/registerValidation");
+const cron = require("node-cron");
+const { checkDailyStreak, updateAllStreaks } = require("./streakManager");
+
+
 
 Korisnik.setConnection(connection);
+
+// Runs every day at midnight
+cron.schedule("0 0 * * *", () => {
+    const userId = 1; // or loop through all users
+    checkDailyStreak(userId);
+    updateAllStreaks();
+    console.log("Daily streak check completed for user", userId);
+  });
 
 // SESSION setup
 router.use(session({
@@ -137,7 +149,7 @@ router.put("/:id/goal", (req, res) => {
     const username = req.params.username;
     const { balance } = req.body;
   
-    const query = "UPDATE goals SET balance = ? WHERE id = ?";
+    const query = "UPDATE goals SET balance = ? WHERE (SELECT id FROM users WHERE username = ?)";
     db.query(query, [balance, userId], (err, result) => {
       if (err) return res.status(500).json({ error: err.message });
       res.json({ message: "Balance updated successfully" });

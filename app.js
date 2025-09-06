@@ -2,6 +2,7 @@ const express = require("express");
 const session = require("express-session");
 const path = require("path");
 const dotenv = require("dotenv");
+
 dotenv.config();
 
 const authRoutes = require("./routes/routes"); // ovo je tvoj routes fajl
@@ -13,6 +14,8 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
+
+
 
 // Session setup OVDE (ne u routeru!)
 app.use(session({
