@@ -2,47 +2,53 @@
 <html lang="en">
 <%- include("./partials/head.ejs") %>
 
-    <body>
-        <%- include("./partials/nav.ejs") %>
+<body>
+    <%- include("./partials/nav.ejs") %>
 
-            <div class="dashboard-page__container">
+    <div class="dashboard-page__container">
 
-                <!-- HEADER: Balans levo, Korisničko ime desno -->
-                <div class="dashboard-page__header">
-                    <div class="dashboard-page__balance">
-                        <span class="dashboard-page__label">Balans:</span>
-                        <span class="dashboard-page__amount">$248</span>
-                    </div>
-                    <div class="dashboard-page__username">
-                        <span>m1dzz1</span>
-                    </div>
-                </div>
-
-                <!-- GOAL SECTION -->
-                <div class="dashboard-page__goal-section">
-                    <span class="dashboard-page__goal-label">Sledeći cilj:</span>
-
-                    <!-- Progress info: na jednoj liniji -->
-                    <div class="dashboard-page__goal-progress-info">
-                        <span class="dashboard-page__current">$10</span>
-                        <span class="dashboard-page__separator">/</span>
-                        <span class="dashboard-page__goal-total">$200</span>
-                    </div>
-
-                    <!-- Progress bar -->
-                    <div class="dashboard-page__progress-bar">
-                        <div class="dashboard-page__progress" style="width: 5%;"></div> <!-- $10/$200 = 5% -->
-                    </div>
-                </div>
-
-                <!-- Dugme za kreiranje novog cilja -->
-                <form action="/goals/new" method="GET" class="dashboard-page__form">
-                    <button type="submit" class="dashboard-page__button">Kreiraj novi cilj</button>
-                </form>
-
+        <!-- HEADER: Balans levo, Korisničko ime desno -->
+        <div class="dashboard-page__header">
+            <div class="dashboard-page__balance">
+                <span class="dashboard-page__label">Balans:</span>
+                <span class="dashboard-page__amount"><%= user.balance %> $</span>
             </div>
+            <div class="dashboard-page__username">
+                <span><%= user.username %></span>
+            </div>
+        </div>
 
-            <%- include("./partials/footer.ejs") %>
-    </body>
+        <!-- GOALS SECTION -->
+        <div class="dashboard-page__goal-section">
+            <span class="dashboard-page__goal-label">Tvoji ciljevi:</span>
 
+            <% if (goals.length > 0) { %>
+                <% goals.forEach(goal => { %>
+                    <div class="dashboard-page__single-goal">
+                        <span class="dashboard-page__goal-name"><%= goal.name %></span>
+                        <div class="dashboard-page__goal-progress-info">
+                            <span class="dashboard-page__current">$<%= goal.current %></span>
+                            <span class="dashboard-page__separator">/</span>
+                            <span class="dashboard-page__goal-total">$<%= goal.target %></span>
+                        </div>
+                        <div class="dashboard-page__progress-bar">
+                            <div class="dashboard-page__progress" style="width: <%= Math.min((goal.current / goal.target) * 100, 100) %>%;">
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p>Nemaš nijedan cilj trenutno.</p>
+            <% } %>
+
+            <!-- Dugme za kreiranje novog cilja -->
+            <form action="/goals/new" method="GET" class="dashboard-page__form">
+                <button type="submit" class="dashboard-page__button">Kreiraj novi cilj</button>
+            </form>
+        </div>
+
+    </div>
+
+    <%- include("./partials/footer.ejs") %>
+</body>
 </html>
