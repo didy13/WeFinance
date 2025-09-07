@@ -112,13 +112,18 @@ async function loadAndRenderProfile(req, res, errorMessage = "") {
       );
     });
 
-    const goals = await new Promise((resolve, reject) => {
+    // Pokupi sve ciljeve korisnika
+    const allGoals = await new Promise((resolve, reject) => {
       connection.query(
-        "SELECT id, name, current, target FROM goals WHERE user_id = ?",
+        "SELECT id, name, current, target, completed FROM goals WHERE user_id = ?",
         [userId],
         (err, results) => err ? reject(err) : resolve(results)
       );
     });
+
+    // Odmah ih podeli
+    const completedGoals = allGoals.filter(g => g.completed === 1);
+    const activeGoals = allGoals.filter(g => !g.completed || g.completed === 0);
 
     const expenses = await new Promise((resolve, reject) => {
       connection.query(
@@ -128,10 +133,10 @@ async function loadAndRenderProfile(req, res, errorMessage = "") {
       );
     });
 
-    // Markiraj završene ciljeve
+    // Markiraj završene ciljeve (ako current == target)
     await new Promise((resolve, reject) => {
       connection.query(
-        "UPDATE goals AS g INNER JOIN users AS u ON g.user_id = u.id SET completed = 1 WHERE g.current = g.target AND u.id = ?",
+        "UPDATE goals SET completed = 1 WHERE current = target AND user_id = ?",
         [userId],
         (err) => err ? reject(err) : resolve()
       );
@@ -139,7 +144,7 @@ async function loadAndRenderProfile(req, res, errorMessage = "") {
 
     const showTutorial = !user.tutorial;
 
-    // osveži sesiju da uvek ima showTutorial
+    // update sesije
     req.session.user = {
       ...req.session.user,
       username: user.username,
@@ -154,7 +159,8 @@ async function loadAndRenderProfile(req, res, errorMessage = "") {
     res.render("profile", {
       title: "WeInvest - Moj profil",
       user,
-      goals,
+      goals: activeGoals,       // <--- šalješ samo aktivne
+      completedGoals,           // <--- i posebno završene
       expenses,
       css: "profile",
       error: errorMessage,
