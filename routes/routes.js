@@ -158,7 +158,7 @@ async function loadAndRenderProfile(req, res, errorMessage = "") {
     };
 
     res.render("profile", {
-      title: "WeInvest - Moj profil",
+      title: "WeFinance - Moj profil",
       user,
       goals: activeGoals,       // <--- šalješ samo aktivne
       completedGoals,           // <--- i posebno završene
@@ -176,7 +176,7 @@ async function loadAndRenderProfile(req, res, errorMessage = "") {
 // ====================== ROUTES ======================
 router.get("/", isAuthenticated, (req, res) => {
   res.render("index", {
-    title: "WeInvest - Pametno upravljanje novcem za mlade",
+    title: "WeFinance - Pametno upravljanje novcem za mlade",
     css: index,
     user: req.session.user
   });
@@ -206,7 +206,7 @@ router.get("/achievement", isAuthenticated, async (req, res) => {
     });
 
     res.render("achievement", {
-      title: "WeInvest - Pametno upravljanje novcem za mlade",
+      title: "WeFinance - Pametno upravljanje novcem za mlade",
       css: "achievement",
       user: req.session.user,
       achievements: achievements,
@@ -220,7 +220,7 @@ router.get("/achievement", isAuthenticated, async (req, res) => {
 
 router.get("/help", isAuthenticated, async (req, res) => {
   res.render("help", {
-    title: "WeInvest - Pomoć & Edukacija",
+    title: "WeFinance - Pomoć & Edukacija",
     css: "help",
     user: req.session.user
   });
@@ -232,7 +232,7 @@ router.get("/profile", isAuthenticated, async (req, res) => {
 
 router.get("/login", (req, res) => {
   if (req.session.user) return res.redirect("/");
-  res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "", errors: {} });
+  res.render("login", { title: "WeFinance - Prijava", css: index, user: "", error: "", errors: {} });
 });
 
 router.post("/finish-tutorial", isAuthenticated, (req, res) => {
@@ -260,7 +260,7 @@ router.post("/finish-tutorial", isAuthenticated, (req, res) => {
 });
 
 // Dodavanje rashoda
-router.post("/add", isAuthenticated, (req, res) => {
+router.post("/expenses", isAuthenticated, (req, res) => {
   const { name, amount } = req.body;
   const userId = req.session.user?.id;
 
@@ -286,7 +286,7 @@ router.post("/login", loginValidation, async (req, res) => {
   if (!errors.isEmpty()) {
     const mappedErrors = errors.mapped(); // { username: {msg: ...}, password: {msg: ...} }
     return res.render("login", {
-      title: "WeInvest - Prijava",
+      title: "WeFinance - Prijava",
       css: index,
       user: req.body,
       errors: mappedErrors
@@ -299,7 +299,7 @@ router.post("/login", loginValidation, async (req, res) => {
     const user = await Korisnik.findByUsername(username);
     if (!user) {
       return res.render("login", {
-        title: "WeInvest - Prijava",
+        title: "WeFinance - Prijava",
         css: index,
         user: req.body,
         errors: { username: { msg: "Nepostojeće korisničko ime" } }
@@ -309,7 +309,7 @@ router.post("/login", loginValidation, async (req, res) => {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
       return res.render("login", {
-        title: "WeInvest - Prijava",
+        title: "WeFinance - Prijava",
         css: index,
         user: req.body,
         errors: { password: { msg: "Netačna lozinka" } }
@@ -326,7 +326,7 @@ router.post("/login", loginValidation, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).render("login", {
-      title: "WeInvest - Prijava",
+      title: "WeFinance - Prijava",
       css: index,
       user: req.body,
       errors: { general: { msg: "Greška na serveru, pokušajte ponovo" } }
@@ -343,7 +343,7 @@ router.get("/logout", (req, res) => {
 
 router.get("/register", (req, res) => {
   if (req.session.user) return res.redirect("/");
-  res.render("register", { title: "WeInvest - Registracija", user: "", css: index, error: "", errors: [] });
+  res.render("register", { title: "WeFinance - Registracija", user: "", css: index, error: "", errors: [] });
 });
 
 router.post("/register", registerValidation, async (req, res) => {
@@ -352,7 +352,7 @@ router.post("/register", registerValidation, async (req, res) => {
   if (!errors.isEmpty()) {
     const mappedErrors = errors.mapped(); // { username: { msg: "..." }, password: {...}, confirmPassword: {...} }
     return res.render("register", {
-      title: "WeInvest - Registracija",
+      title: "WeFinance - Registracija",
       user: req.body, // da inputi ostanu popunjeni
       css: index,
       error: "",
@@ -366,7 +366,7 @@ router.post("/register", registerValidation, async (req, res) => {
     const existing = await Korisnik.findByUsername(username);
     if (existing) {
       return res.render("register", {
-        title: "WeInvest - Registracija",
+        title: "WeFinance - Registracija",
         user: req.body,
         css: index,
         error: "",
@@ -391,7 +391,7 @@ router.post("/register", registerValidation, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).render("register", {
-      title: "WeInvest - Registracija",
+      title: "WeFinance - Registracija",
       user: req.body,
       css: index,
       error: "",
@@ -453,7 +453,7 @@ router.get("/groups", async (req, res) => {
       user: req.session.user,
       groups,
       invites,
-      title: "WeInvest - Grupe",
+      title: "WeFinance - Grupe",
       css: group
     });
   } catch (err) {
@@ -461,6 +461,29 @@ router.get("/groups", async (req, res) => {
     res.status(500).send("Greška na serveru");
   }
 });
+
+router.get("/newgroup", isAuthenticated, (req, res) => {
+    res.render("new_group", { title: "WeInvest - Kreiranje nove grupe", css: index, user: req.session.user, error: "" });
+  });
+  
+  router.post("/newgroup", isAuthenticated, async (req, res) => {
+    const { name } = req.body;
+    if (!name || name.trim() === "") return res.render("new_group", { title: "WeInvest - Kreiranje nove grupe", user: req.session.user, error: "Ime grupe je obavezno" });
+  
+    try {
+      const group = new Group(name.trim());
+      const groupId = await group.save();
+  
+      await new Promise((resolve, reject) => {
+        connection.query("INSERT INTO group_members (group_id, user_id) VALUES (?, ?)", [groupId, req.session.user.id], (err) => err ? reject(err) : resolve());
+      });
+  
+      res.redirect("/groups");
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Greška pri kreiranju grupe");
+    }
+  });
 
 router.get("/groups/:groupId", isAuthenticated, async (req, res) => {
   const groupId = req.params.groupId;
@@ -538,7 +561,7 @@ async function renderGroupWithError(res, groupId, options = {}) {
     );
 
     res.render("group_detail", {
-      title: `WeInvest - ${group.name}`,
+      title: `WeFinance - ${group.name}`,
       user: res.req.session.user,
       group,
       members,
@@ -704,14 +727,14 @@ router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
 });
 
 router.get("/newgoals", isAuthenticated, (req, res) => {
-  res.render("newgoal", { title: "WeInvest - Novi cilj štednje", user: req.session.user, css: index, error: "", errors: [] });
+  res.render("newgoal", { title: "WeFinance - Novi cilj štednje", user: req.session.user, css: index, error: "", errors: [] });
 });
 
 router.post("/creategoal", isAuthenticated, (req, res) => {
   const { name, target } = req.body;
   const userId = req.session.user.id;
 
-  if (!name || !target) return res.render("newgoal", { title: "WeInvest - Kreiraj novi goal", user: req.session.user, css: index, error: "Popunite sva polja", errors: [] });
+  if (!name || !target) return res.render("newgoal", { title: "WeFinance - Kreiraj novi goal", user: req.session.user, css: index, error: "Popunite sva polja", errors: [] });
 
   connection.query("INSERT INTO goals (user_id, name, current, target) VALUES (?, ?, 0, ?)", [userId, name, target], (err) => {
     if (err) return res.status(500).send("Greška: " + err.message);
