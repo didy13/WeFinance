@@ -8,7 +8,7 @@
       <div class="dashboard-container container-fluid py-5">
         <div class="row">
           <!-- Leva kolona -->
-          <div class="col-lg-3 mb-4">
+          <div class="col-lg-3 mb-4 leva_kolona">
             <div class="dashboard-card p-3 mb-3">
               <div class="dashboard-user mb-3">
                 <i class="fas fa-user me-2"></i>
@@ -44,9 +44,9 @@
             </div>
           </div>
 
-          <div class="col-lg-5">
-            <div class="dashboard-single-goal p-3 bg-dark text-light rounded shadow-sm mb-3">
-              <div class="dashboard-goal-info d-flex justify-content-between mb-2">
+          <div class="col-lg-5 ">
+            <div class="dashboard-single-goal p-3 bg-dark text-light rounded shadow-sm mb-3 dnevni_cilj">
+              <div class="dashboard-goal-info d-flex justify-content-between mb-2 ">
                 <strong><i class="fas fa-bullseye me-2"></i> Dnevni cilj</strong>
                 <span>
                   <%= user.daily_saved %> / <%= user.daily_goal %> $
@@ -60,7 +60,7 @@
                 class="dashboard-page__change-balance d-flex flex-wrap gap-2">
                 <input id="dailyGoal" name="dailyGoal" step="0.01" type="number" placeholder="Iznos"
                   class="form-control">
-                  <p id="recommendedSavings" class="text-muted small"></p>
+                <p id="recommendedSavings" class="text-muted small"></p>
                 <button type="submit" class="btn-create-goal">
                   <i class="fas fa-plus-circle me-1"></i> Promeni dnevni cilj
                 </button>
@@ -68,7 +68,7 @@
             </div>
 
             <h2 class="mb-3">Tvoji ciljevi:</h2>
-            <div class="row">
+            <div class="row tvoji_ciljevi">
               <% if (goals.length> 0) { %>
                 <% goals.forEach(goal=> { %>
                   <div class="col-md-12 mb-3">
@@ -100,7 +100,7 @@
                       <% } %>
             </div>
 
-            <form action="/newgoals" method="GET" class="mt-3">
+            <form action="/newgoals" method="GET" class="mt-3 novi_cilj">
               <button type="submit" class="btn-create-goal">
                 <i class="fas fa-flag me-1"></i> Kreiraj novi cilj
               </button>
@@ -109,7 +109,7 @@
 
           <!-- Desna kolona (Mesecni rashodi) -->
           <div class="col-lg-4">
-            <div class="dashboard-card p-3 mb-3">
+            <div class="dashboard-card p-3 mb-3 prihodi">
               <h3 class="mb-3">Mesečni prihod</h3>
               <form id="monthlyIncomeForm" class="mb-3">
                 <input id="monthlyIncome" type="number" step="0.01" placeholder="Unesi svoj prosečni mesečni prihod"
@@ -118,10 +118,10 @@
                   <i class="fas fa-calculator me-1"></i> Potvrdi
                 </button>
               </form>
-              
+
             </div>
 
-            <div class="dashboard-card p-3 mb-3">
+            <div class="dashboard-card p-3 mb-3 rashodi">
               <h3 class="mb-3">Mesecni rashodi</h3>
               <ul class="list-group mb-3">
                 <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -144,6 +144,17 @@
           </div>
         </div>
       </div>
+      <!-- Tutorial Overlay -->
+      <div id="tutorialOverlay" class="tutorial-overlay d-none">
+        <div id="tutorialStep" class="tutorial-step">
+          <p id="tutorialText"></p>
+          <span id="tutorialCounter"></span>
+          <div class="tutorial-buttons mt-2">
+            <button id="prevStep" class="btn-create-goal">Prethodni</button>
+            <button id="nextStep" class="btn-create-goal">Sledeći</button>
+          </div>
+        </div>
+      </div>
 
       <%- include("./partials/footer.ejs") %>
         <script>
@@ -162,6 +173,132 @@
             }
           });
         </script>
+        <script>
+          const steps = [
+            {
+              element: '.leva_kolona',
+              text: 'Ovo je tvoj korisnički panel, ovde vidiš svoje ime, balans kao i opciju dodavanja balansa.',
+            },
+            {
+              element: '.dnevni_cilj',
+              text: 'Ovo je dnevni cilj koji morate ustedeti, kao i tralalaala.',
+            },
+            {
+              element: '.tvoji_ciljevi',
+              text: 'Ovde možeš videti polje gde ce se nalaziti svi tvoji ciljevi.',
+            },
+            {
+              element: '.novi_cilj',
+              text: 'Ovo je dugme koje pravi novi cilj.',
+            },
+            {
+              element: '.prihodi',
+              text: 'Ovde možeš izracunati koliko ti mi predlazemo da stedis na dnevnom nivou na osnovu mesecne zarade.',
+            },
+            {
+              element: '.rashodi',
+              text: 'Ovde možeš videti svoje rashode (Gde sve ide tvoj novac osim u stednju)',
+            }
+          ];
+
+          let currentStep = 0;
+          const overlay = document.getElementById('tutorialOverlay');
+          const tutorialText = document.getElementById('tutorialText');
+          const tutorialCounter = document.getElementById('tutorialCounter');
+          const prevBtn = document.getElementById('prevStep');
+          const nextBtn = document.getElementById('nextStep');
+
+          function showStep(stepIndex) {
+            if (stepIndex < 0 || stepIndex >= steps.length) return;
+
+            currentStep = stepIndex;
+            const step = steps[stepIndex];
+            const el = document.querySelector(step.element);
+
+            // Tekst i brojač
+            tutorialText.textContent = step.text;
+            tutorialCounter.textContent = `Korak ${currentStep + 1} od ${steps.length}`;
+            overlay.classList.remove('d-none');
+
+            // Scroll do elementa
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Highlight
+            document.querySelectorAll('.tutorial-highlight').forEach(e => e.classList.remove('tutorial-highlight'));
+            el.classList.add('tutorial-highlight');
+
+            // ✨ Pozicioniranje popup-a
+            const tutorialBox = document.querySelector('.tutorial-step');
+
+            // Proveravamo da li je mobilni ekran
+            const isMobile = window.innerWidth <= 768;
+
+            if (isMobile) {
+              // Na mobilnom, ne diramo top/left jer CSS to rešava
+              tutorialBox.style.top = 'auto';
+              tutorialBox.style.left = '50%';
+              tutorialBox.style.bottom = '10px';
+              tutorialBox.style.transform = 'translateX(-50%)';
+            } else {
+              // Desktop ponašanje
+              if (currentStep === 2) {
+                tutorialBox.style.top = '20%';
+                tutorialBox.style.left = '50%';
+                tutorialBox.style.transform = 'translate(-50%, 0)';
+              } else {
+                tutorialBox.style.top = '50%';
+                tutorialBox.style.left = '50%';
+                tutorialBox.style.transform = 'translate(-50%, -50%)';
+              }
+            }
+
+            // Dugmad
+            if (currentStep === 0) {
+              prevBtn.style.display = 'none';
+            } else {
+              prevBtn.style.display = 'inline-flex';
+            }
+
+            if (currentStep === steps.length - 1) {
+              nextBtn.style.display = 'none';
+              if (!document.getElementById('finishStep')) {
+                const finishBtn = document.createElement('button');
+                finishBtn.id = 'finishStep';
+                finishBtn.className = 'btn-create-goal';
+                finishBtn.textContent = 'Završi';
+                finishBtn.style.marginLeft = '5px';
+                finishBtn.addEventListener('click', () => {
+                  overlay.classList.add('d-none');
+                  el.classList.remove('tutorial-highlight');
+                });
+                nextBtn.parentNode.appendChild(finishBtn);
+              } else {
+                document.getElementById('finishStep').style.display = 'inline-flex';
+              }
+            } else {
+              nextBtn.style.display = 'inline-flex';
+              if (document.getElementById('finishStep')) {
+                document.getElementById('finishStep').style.display = 'none';
+              }
+            }
+          }
+
+          // Dugmad
+          nextBtn.addEventListener('click', () => {
+            if (currentStep < steps.length - 1) showStep(currentStep + 1);
+            else overlay.classList.add('d-none'); // kraj tutorijala
+          });
+
+          prevBtn.addEventListener('click', () => {
+            if (currentStep > 0) showStep(currentStep - 1);
+          });
+
+          // Start tutorijala
+          window.addEventListener('load', () => {
+            showStep(0);
+          });
+        </script>
+
         <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   </body>
 
