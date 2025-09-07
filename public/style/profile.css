@@ -171,3 +171,34 @@ body {
 .btn-create-goal:hover::after {
   left: 120%;
 }
+.dashboard-card ul.list-group {
+  background: #1f1f25; /* Tamna pozadina kartice */
+  border-radius: 12px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.dashboard-card ul.list-group li.list-group-item {
+  background: #2a2a2a; /* Tamnija pozadina stavki */
+  color: #e5e5e5;
+  border: none;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: default;
+}
+
+.dashboard-card ul.list-group li.list-group-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+}
+
+/* Dugme za dodavanje novog rashoda */
+.dashboard-card .btn-create-goal {
+  margin-top: 10px;
+}

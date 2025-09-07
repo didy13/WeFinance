@@ -4,24 +4,21 @@
 <body>
 <%- include("./partials/nav.ejs") %>
 
-<div class="dashboard-container container py-5">
+<div class="dashboard-container container-fluid py-5">
   <div class="row">
     <!-- Leva kolona -->
-    <div class="col-lg-4 mb-4">
+    <div class="col-lg-3 mb-4">
       <div class="dashboard-card p-3 mb-3">
-        <!-- Korisnik -->
         <div class="dashboard-user mb-3">
           <i class="fas fa-user me-2"></i>
           <span>Korisnik: <strong><%= user.username %></strong></span>
         </div>
 
-        <!-- Balans -->
         <div class="dashboard-balance-highlight mb-3">
           <i class="fas fa-wallet me-2"></i>
           Balans: <span><%= user.balance %> $</span>
         </div>
 
-        <!-- Logout -->
         <form action="/logout" method="GET" class="dashboard-logout">
           <button type="submit">
             <i class="fas fa-sign-out-alt me-1"></i> Izloguj se
@@ -30,7 +27,6 @@
         <div id="errorBalance" class="text-danger text-center mt-2"><%= error %></div>
       </div>
 
-      <!-- Dodavanje novca -->
       <div class="dashboard-card p-3">
         <form action="/changebalance" method="POST" class="dashboard-page__change-balance d-flex flex-wrap gap-2">
           <input id="balans" name="balans" step="0.01" type="number" placeholder="Iznos" class="form-control">
@@ -41,9 +37,8 @@
       </div>
     </div>
 
-    <!-- Desna kolona -->
-    <div class="col-lg-8">
-      <!-- Dnevni cilj -->
+    <!-- Srednja kolona (dnevni cilj + ciljevi) -->
+    <div class="col-lg-5">
       <div class="dashboard-single-goal p-3 bg-dark text-light rounded shadow-sm mb-3">
         <div class="dashboard-goal-info d-flex justify-content-between mb-2">
           <strong><i class="fas fa-bullseye me-2"></i> Dnevni cilj</strong>
@@ -61,12 +56,11 @@
         </form>
       </div>
 
-      <!-- Ostali ciljevi -->
       <h2 class="mb-3">Tvoji ciljevi:</h2>
       <div class="row">
         <% if (goals.length > 0) { %>
           <% goals.forEach(goal => { %>
-            <div class="col-md-6 mb-3">
+            <div class="col-md-12 mb-3">
               <div class="dashboard-single-goal p-3 bg-dark text-light rounded shadow-sm">
                 <div class="dashboard-goal-info d-flex justify-content-between mb-2">
                   <strong><i class="fas fa-bullseye me-2"></i> <%= goal.name %></strong>
@@ -91,12 +85,35 @@
         <% } %>
       </div>
 
-      <!-- Kreiranje novog cilja -->
       <form action="/newgoals" method="GET" class="mt-3">
         <button type="submit" class="btn-create-goal">
           <i class="fas fa-flag me-1"></i> Kreiraj novi cilj
         </button>
       </form>
+    </div>
+
+    <!-- Desna kolona (Mesecni rashodi) -->
+    <div class="col-lg-4">
+      <div class="dashboard-card p-3 mb-3">
+        <h3 class="mb-3">Mesecni rashodi</h3>
+        <ul class="list-group mb-3">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Stanarina <span>300 $</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Gorivo <span>100 $</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Hrana <span>250 $</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Odeca <span>80 $</span>
+          </li>
+        </ul>
+        <button class="btn-create-goal w-100">
+          <i class="fas fa-plus-circle me-1"></i> Dodaj novi rashod
+        </button>
+      </div>
     </div>
   </div>
 </div>
