@@ -400,63 +400,65 @@ router.post("/register", registerValidation, async (req, res) => {
   }
 });
 
-router.get("/groups", isAuthenticated, (req, res) => {
+router.get("/groups", async (req, res) => {
+  if (!req.session.user) {
+    return res.redirect("/login");
+  }
+
   const userId = req.session.user.id;
 
-  const groupsQuery = `
-    SELECT g.*,
-       (SELECT COUNT(*) FROM group_members gm WHERE gm.group_id = g.id) AS members_count,
-       (SELECT COUNT(*) FROM group_goals gg WHERE gg.group_id = g.id) AS goals_count
-FROM table_group g
-WHERE g.id IN (SELECT group_id FROM group_members WHERE user_id = 1);
-  `;
-
-  const invitesQuery = `
-    SELECT i.id AS invite_id, g.id AS group_id, g.name AS group_name, u.username AS inviter_name
-    FROM group_invites i
-    JOIN table_group g ON g.id = i.group_id
-    JOIN users u ON u.id = i.inviter_id
-    WHERE i.user_id = ?
-  `;
-
-  Promise.all([
-    new Promise((resolve, reject) => connection.query(groupsQuery, [userId], (err, results) => err ? reject(err) : resolve(results))),
-    new Promise((resolve, reject) => connection.query(invitesQuery, [userId], (err, results) => err ? reject(err) : resolve(results)))
-  ])
-    .then(([groups, invites]) => {
-      const formattedGroups = groups.map(g => ({
-        ...g,
-        members: Array(g.members_count).fill("Član"),
-        goals: Array(g.goals_count).fill("Cilj")
-      }));
-      res.render("groups", { title: "WeInvest - Grupe", user: req.session.user, css: group, groups: formattedGroups, invites });
-    })
-    .catch(err => {
-      console.error(err);
-      res.status(500).send("Greška pri učitavanju grupa ili invite-a");
-    });
-});
-
-router.get("/newgroup", isAuthenticated, (req, res) => {
-  res.render("new_group", { title: "WeInvest - Kreiranje nove grupe", css: index, user: req.session.user, error: "" });
-});
-
-router.post("/newgroup", isAuthenticated, async (req, res) => {
-  const { name } = req.body;
-  if (!name || name.trim() === "") return res.render("new_group", { title: "WeInvest - Kreiranje nove grupe", user: req.session.user, error: "Ime grupe je obavezno" });
-
   try {
-    const group = new Group(name.trim());
-    const groupId = await group.save();
+    // ---- Sve grupe gde je user član ----
+    const groupsQuery = `
+      SELECT g.*,
+             (SELECT COUNT(*) FROM group_members gm WHERE gm.group_id = g.id) AS members_count,
+             (SELECT COUNT(*) FROM group_goals gg WHERE gg.group_id = g.id) AS goals_count
+      FROM table_group g
+      WHERE g.id IN (
+          SELECT group_id 
+          FROM group_members 
+          WHERE user_id = ?
+      );
+    `;
 
-    await new Promise((resolve, reject) => {
-      connection.query("INSERT INTO group_members (group_id, user_id) VALUES (?, ?)", [groupId, req.session.user.id], (err) => err ? reject(err) : resolve());
+    let groups = await new Promise((resolve, reject) =>
+      connection.query(groupsQuery, [userId], (err, results) =>
+        err ? reject(err) : resolve(results)
+      )
+    );
+
+    // Dodaj "fake arrays" za members i goals
+    groups = groups.map(group => {
+      group.members = Array(group.members_count).fill({});
+      group.goals = Array(group.goals_count).fill({});
+      return group;
     });
 
-    res.redirect("/groups");
+    // ---- Pozivnice koje je user dobio ----
+    const invitesQuery = `
+      SELECT gi.*, g.name AS group_name, u.username AS inviter_name
+      FROM group_invites gi
+      JOIN table_group g ON gi.group_id = g.id
+      JOIN users u ON gi.inviter_id = u.id
+      WHERE gi.user_id = ?;
+    `;
+
+    const invites = await new Promise((resolve, reject) =>
+      connection.query(invitesQuery, [userId], (err, results) =>
+        err ? reject(err) : resolve(results)
+      )
+    );
+
+    res.render("groups", {
+      user: req.session.user,
+      groups,
+      invites,
+      title: "WeInvest - Grupe",
+      css: group
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Greška pri kreiranju grupe");
+    res.status(500).send("Greška na serveru");
   }
 });
 
