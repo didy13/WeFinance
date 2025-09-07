@@ -9,6 +9,7 @@ const registerValidation = require("../public/js/registerValidation");
 const cron = require("node-cron");
 const Group = require("../models/Group");
 const Invite = require("../models/Invites");
+const { showThrottleMessage } = require("ethers");
 
 var index = "index";
 var group = "group";
@@ -127,33 +128,55 @@ router.get("/help", isAuthenticated, async (req, res) => {
 router.get("/profile", isAuthenticated, async (req, res) => {
     const userId = req.session.user.id;
     try {
+        // 1. Dobavi korisnika iz baze, uključujući polje tutorial
         const [user] = await new Promise((resolve, reject) => {
-            connection.query("SELECT id, username, balance, streak, daily_goal, daily_saved FROM users WHERE id = ?", [userId], (err, results) => {
-                if (err) return reject(err);
-                resolve(results);
-            });
+            connection.query(
+                "SELECT id, username, balance, streak, daily_goal, daily_saved, tutorial FROM users WHERE id = ?",
+                [userId],
+                (err, results) => err ? reject(err) : resolve(results)
+            );
         });
 
+        // 2. Dobavi ciljeve i rashode
         const goals = await new Promise((resolve, reject) => {
-            connection.query("SELECT id, name, current, target FROM goals WHERE user_id = ?", [userId], (err, results) => {
-                if (err) return reject(err);
-                resolve(results);
-            });
+            connection.query(
+                "SELECT id, name, current, target FROM goals WHERE user_id = ?",
+                [userId],
+                (err, results) => err ? reject(err) : resolve(results)
+            );
         });
-        const updateGoals = await new Promise((resolve, reject) => {
-            connection.query("UPDATE goals as g INNER JOIN users as u ON u.id = g.user_id SET completed = 1 WHERE g.current = g.target and u.id = ?", [userId], (err, results) => {
-                if (err) return reject(err);
-                resolve(results);
-            });
-        });
-        const expenses = await new Promise((resolve, reject) => {
-             connection.query('SELECT * FROM expenses WHERE user_id = ?', [userId], (err, expenses) => {
-                if (err) return reject(err);
-                resolve(expenses);
-            })});
-        const error = '';
 
-        res.render("profile", { title: "WeInvest - Moj profil", user, goals, css: "profile", error, expenses });
+        const expenses = await new Promise((resolve, reject) => {
+            connection.query(
+                "SELECT * FROM expenses WHERE user_id = ?",
+                [userId],
+                (err, results) => err ? reject(err) : resolve(results)
+            );
+        });
+
+        // 3. Opcionalno update ciljeva ako su završeni
+        await new Promise((resolve, reject) => {
+            connection.query(
+                "UPDATE goals AS g INNER JOIN users AS u ON g.user_id = u.id SET completed = 1 WHERE g.current = g.target AND u.id = ?",
+                [userId],
+                (err) => err ? reject(err) : resolve()
+            );
+        });
+
+        // 4. Pošalji tačnu vrednost tutorijala u EJS
+        const showTutorial = !user.tutorial; // true ako korisnik NIJE završio tutorijal
+
+        // 5. Renderuj profil sa showTutorial
+        res.render("profile", {
+            title: "WeInvest - Moj profil",
+            user,
+            goals,
+            expenses,
+            css: "profile",
+            error: "",
+            showTutorial
+        });
+
     } catch (err) {
         console.error(err);
         res.status(500).send("Greška pri učitavanju profila");
@@ -163,6 +186,29 @@ router.get("/profile", isAuthenticated, async (req, res) => {
 router.get("/login", (req, res) => {
     if (req.session.user) return res.redirect("/");
     res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "" });
+});
+router.post("/finish-tutorial", isAuthenticated, (req, res) => {
+  const userId = req.session.user?.id; // ili req.session.userId ako tako čuvaš
+
+  if (!userId) {
+    return res.status(401).send("Niste prijavljeni.");
+  }
+
+  const query = "UPDATE users SET tutorial = TRUE WHERE id = ?";
+  connection.query(query, [userId], (err, result) => {
+    if (err) {
+      console.error("Greška prilikom update tutorijala:", err);
+      return res.status(500).send("Greška servera.");
+    }
+
+    if (result.affectedRows > 0) {
+      return res.json({ success: true, message: "Tutorijal završen!" });
+      // ili ako hoćeš redirect na profil:
+      // return res.redirect("/profile");
+    } else {
+      return res.status(400).json({ success: false, message: "Korisnik nije pronađen."});
+    }
+  });
 });
 
 router.post('/add', (req, res) => {
