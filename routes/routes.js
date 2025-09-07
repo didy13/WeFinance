@@ -146,10 +146,14 @@ router.get("/profile", isAuthenticated, async (req, res) => {
                 resolve(results);
             });
         });
-        
+        const expenses = await new Promise((resolve, reject) => {
+             connection.query('SELECT * FROM expenses WHERE user_id = ?', [userId], (err, expenses) => {
+                if (err) return reject(err);
+                resolve(expenses);
+            })});
         const error = '';
 
-        res.render("profile", { title: "WeInvest - Moj profil", user, goals, css: "profile", error });
+        res.render("profile", { title: "WeInvest - Moj profil", user, goals, css: "profile", error, expenses });
     } catch (err) {
         console.error(err);
         res.status(500).send("Greška pri učitavanju profila");
@@ -159,6 +163,21 @@ router.get("/profile", isAuthenticated, async (req, res) => {
 router.get("/login", (req, res) => {
     if (req.session.user) return res.redirect("/");
     res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "" });
+});
+
+router.post('/add', (req, res) => {
+    const { name, amount } = req.body;
+    const userId = req.session.user?.id; // proverava da li postoji user u sesiji
+
+    if (!userId) {
+        return res.redirect('/login'); // ili prikaži grešku
+    }
+
+    const query = 'INSERT INTO expenses (user_id, name, amount) VALUES (?, ?, ?)';
+    connection.query(query, [userId, name, amount], (err, result) => {
+        if (err) throw err;
+        res.redirect('/profile'); // refreshuje stranicu i prikazuje novi rashod
+    });
 });
 
 router.post("/login", async (req, res) => {

@@ -236,3 +236,73 @@ body {
   outline: none;
   box-shadow: 0 0 8px rgba(78, 137, 255, 0.5);
 }
+/* Desna kolona: Mesecni rashodi */
+.dashboard-card ul.list-group {
+  background: #1f1f25;
+  border-radius: 12px;
+  padding: 10px;
+  margin: 0 0 15px 0;
+  list-style: none;
+}
+
+.dashboard-card ul.list-group li.list-group-item {
+  background: #2a2a2a;
+  color: #e5e5e5;
+  border: none;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-card .d-flex.gap-2 input {
+  background: #2a2a2a;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  flex: 1; /* inputi zauzimaju prostor */
+}
+
+.dashboard-card .d-flex.gap-2 input:focus {
+  outline: none;
+  border-color: #4e89ff;
+  box-shadow: 0 0 5px rgba(78,137,255,0.5);
+}
+
+.dashboard-card .d-flex.gap-2 button {
+  flex: 0 0 auto;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border-radius: 8px;
+}
+.new-expense input,
+.new-expense button {
+  width: 100%;
+  display: block;
+}
+
+.new-expense input {
+  background: #2a2a2a;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 1rem;
+}
+
+.new-expense input:focus {
+  outline: none;
+  border-color: #4e89ff;
+  box-shadow: 0 0 5px rgba(78,137,255,0.5);
+}
+
+.new-expense button {
+  margin-top: 5px;
+  padding: 10px 0;
+  font-size: 1rem;
+  border-radius: 8px;
+}
