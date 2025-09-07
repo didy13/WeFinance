@@ -1,107 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include("./partials/head.ejs") %>
-<body>
-<%- include("./partials/nav.ejs") %>
 
-<div class="dashboard-container container py-5">
-  <div class="row">
-    <!-- Leva kolona -->
-    <div class="col-lg-4 mb-4">
-      <div class="dashboard-card p-3 mb-3">
-        <!-- Korisnik -->
-        <div class="dashboard-user mb-3">
-          <i class="fas fa-user me-2"></i>
-          <span>Korisnik: <strong><%= user.username %></strong></span>
-        </div>
+  <body>
+    <%- include("./partials/nav.ejs") %>
 
-        <!-- Balans -->
-        <div class="dashboard-balance-highlight mb-3">
-          <i class="fas fa-wallet me-2"></i>
-          Balans: <span><%= user.balance %> $</span>
-        </div>
+      <div class="dashboard-container container-fluid py-5">
+        <div class="row">
+          <!-- Leva kolona -->
+          <div class="col-lg-3 mb-4">
+            <div class="dashboard-card p-3 mb-3">
+              <div class="dashboard-user mb-3">
+                <i class="fas fa-user me-2"></i>
+                <span>Korisnik: <strong>
+                    <%= user.username %>
+                  </strong></span>
+              </div>
 
-        <!-- Logout -->
-        <form action="/logout" method="GET" class="dashboard-logout">
-          <button type="submit">
-            <i class="fas fa-sign-out-alt me-1"></i> Izloguj se
-          </button>
-        </form>
-        <div id="errorBalance" class="text-danger text-center mt-2"><%= error %></div>
-      </div>
+              <div class="dashboard-balance-highlight mb-3">
+                <i class="fas fa-wallet me-2"></i>
+                Balans: <span>
+                  <%= user.balance %> $
+                </span>
+              </div>
 
-      <!-- Dodavanje novca -->
-      <div class="dashboard-card p-3">
-        <form action="/changebalance" method="POST" class="dashboard-page__change-balance d-flex flex-wrap gap-2">
-          <input id="balans" name="balans" step="0.01" type="number" placeholder="Iznos" class="form-control">
-          <button type="submit" class="btn-create-goal">
-            <i class="fas fa-plus-circle me-1"></i> Dodaj novac
-          </button>
-        </form>
-      </div>
-    </div>
-
-    <!-- Desna kolona -->
-    <div class="col-lg-8">
-      <!-- Dnevni cilj -->
-      <div class="dashboard-single-goal p-3 bg-dark text-light rounded shadow-sm mb-3">
-        <div class="dashboard-goal-info d-flex justify-content-between mb-2">
-          <strong><i class="fas fa-bullseye me-2"></i> Dnevni cilj</strong>
-          <span><%= user.daily_saved %> / <%= user.daily_goal %> $</span>
-        </div>
-        <div class="progress mb-2" style="height: 10px;">
-          <div class="progress-bar bg-success" role="progressbar" 
-               style="width:<%= Math.min((user.daily_saved / user.daily_goal) * 100, 100) %>%"></div>
-        </div>
-        <form action="/changedailygoal" method="POST" class="dashboard-page__change-balance d-flex flex-wrap gap-2">
-          <input id="dailyGoal" name="dailyGoal" step="0.01" type="number" placeholder="Iznos" class="form-control">
-          <button type="submit" class="btn-create-goal">
-            <i class="fas fa-plus-circle me-1"></i> Promeni dnevni cilj
-          </button>
-        </form>
-      </div>
-
-      <!-- Ostali ciljevi -->
-      <h2 class="mb-3">Tvoji ciljevi:</h2>
-      <div class="row">
-        <% if (goals.length > 0) { %>
-          <% goals.forEach(goal => { %>
-            <div class="col-md-6 mb-3">
-              <div class="dashboard-single-goal p-3 bg-dark text-light rounded shadow-sm">
-                <div class="dashboard-goal-info d-flex justify-content-between mb-2">
-                  <strong><i class="fas fa-bullseye me-2"></i> <%= goal.name %></strong>
-                  <span><%= goal.current %> / <%= goal.target %> $</span>
-                </div>
-                <div class="progress mb-2" style="height: 10px;">
-                  <div class="progress-bar bg-success" role="progressbar" 
-                       style="width:<%= Math.min((goal.current / goal.target) * 100, 100) %>%"></div>
-                </div>
-                <form action="/addgoalbalance" method="POST" class="dashboard-goal__form d-flex flex-wrap gap-2">
-                  <input name="goalbalance" step="0.01" type="number" placeholder="Iznos" class="form-control">
-                  <input type="hidden" name="goalId" value="<%= goal.id %>">
-                  <button type="submit" class="btn-create-goal">
-                    <i class="fas fa-plus me-1"></i> Dodaj novac
-                  </button>
-                </form>
+              <form action="/logout" method="GET" class="dashboard-logout">
+                <button type="submit">
+                  <i class="fas fa-sign-out-alt me-1"></i> Izloguj se
+                </button>
+              </form>
+              <div id="errorBalance" class="text-danger text-center mt-2">
+                <%= error %>
               </div>
             </div>
-          <% }) %>
-        <% } else { %>
-          <p>Nemaš nijedan cilj trenutno.</p>
-        <% } %>
+
+            <div class="dashboard-card p-3">
+              <form action="/changebalance" method="POST" class="dashboard-page__change-balance d-flex flex-wrap gap-2">
+                <input id="balans" name="balans" step="0.01" type="number" placeholder="Iznos" class="form-control">
+                <button type="submit" class="btn-create-goal">
+                  <i class="fas fa-plus-circle me-1"></i> Dodaj novac
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="col-lg-5">
+            <div class="dashboard-single-goal p-3 bg-dark text-light rounded shadow-sm mb-3">
+              <div class="dashboard-goal-info d-flex justify-content-between mb-2">
+                <strong><i class="fas fa-bullseye me-2"></i> Dnevni cilj</strong>
+                <span>
+                  <%= user.daily_saved %> / <%= user.daily_goal %> $
+                </span>
+              </div>
+              <div class="progress mb-2" style="height: 10px;">
+                <div class="progress-bar bg-success" role="progressbar"
+                  style="width:<%= Math.min((user.daily_saved / user.daily_goal) * 100, 100) %>%"></div>
+              </div>
+              <form action="/changedailygoal" method="POST"
+                class="dashboard-page__change-balance d-flex flex-wrap gap-2">
+                <input id="dailyGoal" name="dailyGoal" step="0.01" type="number" placeholder="Iznos"
+                  class="form-control">
+                  <p id="recommendedSavings" class="text-muted small"></p>
+                <button type="submit" class="btn-create-goal">
+                  <i class="fas fa-plus-circle me-1"></i> Promeni dnevni cilj
+                </button>
+              </form>
+            </div>
+
+            <h2 class="mb-3">Tvoji ciljevi:</h2>
+            <div class="row">
+              <% if (goals.length> 0) { %>
+                <% goals.forEach(goal=> { %>
+                  <div class="col-md-12 mb-3">
+                    <div class="dashboard-single-goal p-3 bg-dark text-light rounded shadow-sm">
+                      <div class="dashboard-goal-info d-flex justify-content-between mb-2">
+                        <strong><i class="fas fa-bullseye me-2"></i>
+                          <%= goal.name %>
+                        </strong>
+                        <span>
+                          <%= goal.current %> / <%= goal.target %> $
+                        </span>
+                      </div>
+                      <div class="progress mb-2" style="height: 10px;">
+                        <div class="progress-bar bg-success" role="progressbar"
+                          style="width:<%= Math.min((goal.current / goal.target) * 100, 100) %>%"></div>
+                      </div>
+                      <form action="/addgoalbalance" method="POST" class="dashboard-goal__form d-flex flex-wrap gap-2">
+                        <input name="goalbalance" step="0.01" type="number" placeholder="Iznos" class="form-control">
+                        <input type="hidden" name="goalId" value="<%= goal.id %>">
+                        <button type="submit" class="btn-create-goal">
+                          <i class="fas fa-plus me-1"></i> Dodaj novac
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                  <% }) %>
+                    <% } else { %>
+                      <p>Nemaš nijedan cilj trenutno.</p>
+                      <% } %>
+            </div>
+
+            <form action="/newgoals" method="GET" class="mt-3">
+              <button type="submit" class="btn-create-goal">
+                <i class="fas fa-flag me-1"></i> Kreiraj novi cilj
+              </button>
+            </form>
+          </div>
+
+          <!-- Desna kolona (Mesecni rashodi) -->
+          <div class="col-lg-4">
+            <div class="dashboard-card p-3 mb-3">
+              <h3 class="mb-3">Mesečni prihod</h3>
+              <form id="monthlyIncomeForm" class="mb-3">
+                <input id="monthlyIncome" type="number" step="0.01" placeholder="Unesi svoj prosečni mesečni prihod"
+                  class="form-control mb-2">
+                <button type="submit" class="btn-create-goal">
+                  <i class="fas fa-calculator me-1"></i> Potvrdi
+                </button>
+              </form>
+              
+            </div>
+
+            <div class="dashboard-card p-3 mb-3">
+              <h3 class="mb-3">Mesecni rashodi</h3>
+              <ul class="list-group mb-3">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Stanarina <span>300 $</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Gorivo <span>100 $</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Hrana <span>250 $</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Odeca <span>80 $</span>
+                </li>
+              </ul>
+              <button class="btn-create-goal w-100">
+                <i class="fas fa-plus-circle me-1"></i> Dodaj novi rashod
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Kreiranje novog cilja -->
-      <form action="/newgoals" method="GET" class="mt-3">
-        <button type="submit" class="btn-create-goal">
-          <i class="fas fa-flag me-1"></i> Kreiraj novi cilj
-        </button>
-      </form>
-    </div>
-  </div>
-</div>
+      <%- include("./partials/footer.ejs") %>
+        <script>
+          const form = document.getElementById('monthlyIncomeForm');
+          const incomeInput = document.getElementById('monthlyIncome');
+          const recommended = document.getElementById('recommendedSavings');
 
-<%- include("./partials/footer.ejs") %>
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-</body>
+          form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const income = parseFloat(incomeInput.value);
+            if (!isNaN(income) && income > 0) {
+              const dailySavings = (income * 0.005).toFixed(2);
+              recommended.textContent = `Preporučeni iznos za dnevnu štednju: ${dailySavings} $`;
+            } else {
+              recommended.textContent = '';
+            }
+          });
+        </script>
+        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  </body>
+
 </html>
