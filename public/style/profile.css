@@ -293,7 +293,7 @@ input::placeholder{
   transition: box-shadow 0.3s ease;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .tutorial-step {
     top: auto !important;
     bottom: 0px !important;
