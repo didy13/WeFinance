@@ -253,7 +253,7 @@ input::placeholder{
 }
 
 .dashboard-card ul.list-group li.list-group-item {
-  background: #2a2a2a;
+  background: #2a2a2a;;
   color: #e5e5e5;
   border: none;
   padding: 8px 12px;
@@ -271,9 +271,8 @@ input::placeholder{
   border-radius: 8px;
   padding: 6px 10px;
   font-size: 0.9rem;
-  flex: 1; /* inputi zauzimaju prostor */
+  flex: 1; 
 }
-
 .dashboard-card .d-flex.gap-2 input:focus {
   outline: none;
   border-color: #4e89ff;
@@ -293,8 +292,8 @@ input::placeholder{
 }
 
 .new-expense input {
-  background: #2a2a2a;
-  color: #fff;
+  background: #2a2a2a !important;
+  color: #797979 !important;
   border: 1px solid #444;
   border-radius: 8px;
   padding: 8px 12px;
