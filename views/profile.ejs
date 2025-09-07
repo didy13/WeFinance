@@ -157,11 +157,16 @@
               <h3 class="mb-3">Mesecni rashodi</h3>
               <ul id="expensesList" class="list-group mb-3">
                 <% if (expenses.length> 0) { %>
-                  <% expenses.forEach(exp=> { %>
+                  <% expenses.forEach(exp=> { console.log(exp); %>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                      <%= exp.name %> <span>
+                      <%=  exp.name %> <span>
                           <%= exp.amount %> $
                         </span>
+                        <form action="/removeexpense" method="POST">
+                            <input name="expId" value=<%= exp.id %> type="number" hidden>
+                            <button class="custom-button" type="submit"> X </button>
+                        </form>
+                        
                     </li>
                     <% }) %>
                       <% } else { %>
@@ -325,6 +330,7 @@
                 </script>
 
                 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+                
   </body>
 
 </html>

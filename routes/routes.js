@@ -20,7 +20,7 @@ Group.setConnection(connection);
 Invite.setConnection(connection);
 
 // ====================== CRON ======================
-cron.schedule("35 2 * * *", () => {
+cron.schedule("0 0 * * *", () => {
   console.log("🕛 Running daily streak and reset check...");
 
   const query = "SELECT id, streak, daily_goal, daily_saved FROM users";
@@ -128,7 +128,7 @@ async function loadAndRenderProfile(req, res, errorMessage = "") {
 
     const expenses = await new Promise((resolve, reject) => {
       connection.query(
-        "SELECT * FROM expenses WHERE user_id = ?",
+        "SELECT id, name, amount FROM expenses WHERE user_id = ?",
         [userId],
         (err, results) => err ? reject(err) : resolve(results)
       );
@@ -727,36 +727,49 @@ router.post("/groups/:groupId/add-money/:goalId", isAuthenticated, async (req, r
 });
 
 router.post("/groups/:groupId/accept", isAuthenticated, (req, res) => {
-  const userId = req.session.user.id;
-  const { invite_id } = req.body;
-  const { groupId } = req.params;
-
-  const addMemberQuery = `INSERT INTO group_members (group_id, user_id) VALUES (?, ?)`;
-  const achievementQuery = `UPDATE user_achievements SET current = 1 WHERE achievement_id = 3 and user_id = ?`;
-  const deleteInviteQuery = `DELETE FROM group_invites WHERE id = ?`;
-
-  connection.query(addMemberQuery, [groupId, userId], (err) => {
-    if (err) return res.status(500).send("Greška pri dodavanju člana");
-    connection.query(achievementQuery, [userId], (err) => {
-      if (err) return res.status(500).send("Greška pri dodavanju dostignuca");
+    const userId = req.session.user.id;
+    const { invite_id } = req.body;
+    const { groupId } = req.params;
+  
+    const addMemberQuery = `INSERT INTO group_members (group_id, user_id) VALUES (?, ?)`;
+    const achievementQuery = `UPDATE user_achievements SET current = 1 WHERE achievement_id = 3 and user_id = ?`;
+    const deleteInviteQuery = `DELETE FROM group_invites WHERE id = ?`;
+  
+    connection.query(addMemberQuery, [groupId, userId], (err) => {
+      if (err) return res.status(500).send("Greška pri dodavanju člana");
+  
       connection.query(deleteInviteQuery, [invite_id], (err2) => {
         if (err2) return res.status(500).send("Greška pri brisanju pozivnice");
-        res.redirect("/groups");
+  
+        connection.query(achievementQuery, [userId], (err3) => {
+          if (err3) return res.status(500).send("Greška pri dodavanju dostignuća");
+  
+          // ✅ Only one redirect here
+          res.redirect("/groups");
+        });
       });
     });
   });
-});
 
-router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
-  const { invite_id } = req.body;
 
-  const deleteInviteQuery = `DELETE FROM group_invites WHERE id = ?`;
-
-  connection.query(deleteInviteQuery, [invite_id], (err) => {
-    if (err) return res.status(500).send("Greška pri brisanju pozivnice");
-    res.redirect("/groups");
-  });
-});
+      router.post("/groups/:groupId/decline", isAuthenticated, (req, res) => {
+        console.log("DECLINE ROUTE REACHED");
+        console.log("BODY:", req.body);
+      
+        const { invite_id } = req.body;
+        console.log("Invite ID:", invite_id);
+      
+        const deleteInviteQuery = `DELETE FROM group_invites WHERE id = ?`;
+      
+        connection.query(deleteInviteQuery, [invite_id], (err) => {
+          if (err) {
+            console.error("SQL ERROR:", err);
+            return res.status(500).send("Greška pri brisanju pozivnice");
+          }
+          res.redirect("/groups");
+        });
+      });
+      
 
 router.get("/newgoals", isAuthenticated, (req, res) => {
   res.render("newgoal", { title: "WeFinance - Novi cilj štednje", user: req.session.user, css: index, error: "", errors: [] });
@@ -877,6 +890,27 @@ router.post("/changebalance", isAuthenticated, async (req, res) => {
     res.status(500).send("Greška pri dodavanju novca na balans");
   }
 });
+
+router.post("/removeexpense", isAuthenticated, (req, res) => {
+    const userId = req.session.user.id;
+    const { expId } = req.body;
+
+    console.log(expId);
+  
+    connection.query(
+      "DELETE FROM expenses WHERE id = ? AND user_id = ?",
+      [expId, userId],
+      (err, result) => {
+        if (err) {
+          console.error("Greška pri brisanju rashoda:", err);
+          return res.status(500).send("Greška pri brisanju rashoda!");
+        }
+  
+        res.redirect("/profile");
+      }
+    );
+  });
+  
 
 router.post("/changedailygoal", isAuthenticated, async (req, res) => {
   const userId = req.session.user.id;

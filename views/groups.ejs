@@ -45,12 +45,12 @@
 
                 <div class="invite-actions">
                   <form action="/groups/<%= invite.group_id %>/accept" method="POST" class="d-inline">
-                    <input type="hidden" name="invite_id" value="<%= invite.invite_id %>">
+                    <input type="hidden" name="invite_id" value=<%= invite.id %>>
                     <button type="submit" class="btn btn-success btn-sm">Prihvati</button>
                   </form>
 
                   <form action="/groups/<%= invite.group_id %>/decline" method="POST" class="d-inline">
-                    <input type="hidden" name="invite_id" value="<%= invite.invite_id %>">
+                    <input type="hidden" name="invite_id" value=<%= invite.id %>>
                     <button type="submit" class="btn btn-danger btn-sm">Odbij</button>
                   </form>
                 </div>
