@@ -263,10 +263,41 @@ router.post("/finish-tutorial", isAuthenticated, (req, res) => {
 router.post("/expenses", isAuthenticated, (req, res) => {
   const { name, amount } = req.body;
   const userId = req.session.user?.id;
+  const resultsQuery = `
+    SELECT u.balance
+    FROM users u
+    WHERE u.id = ?
+  `;
 
   if (!userId) {
     return res.redirect("/login");
   }
+    connection.query(resultsQuery, [userId], (err, results) => {
+        if (err) return loadAndRenderProfile(req, res, "Greška baze.");
+        if (results.length === 0) return res.redirect("/profile");
+    
+        const userBalance = parseFloat(results[0].balance);
+    
+        // korisnik nema dovoljno novca
+        if (amount > userBalance) {
+          return loadAndRenderProfile(req, res, `Nemate dovoljno novca. Balans: ${userBalance}`);
+        }
+        
+    
+        // ako je uneo više nego što je potrebno → skrati na preostali iznos
+        
+    
+        const newBalance = userBalance - amount;
+        const balanceQuery = "UPDATE users SET balance = ? WHERE id = ?";
+        connection.query(balanceQuery, [newBalance, userId], (err) => {
+          if (err) {
+            console.error(err);
+            // nakon greške opet učitaj profil sa porukom
+            return loadAndRenderProfile(req, res, "Greška pri dodavanju rashoda.");
+          }
+          });
+        // Ako je cilj dostignut nakon ove transakcije
+        
 
   const query = "INSERT INTO expenses (user_id, name, amount) VALUES (?, ?, ?)";
   connection.query(query, [userId, name, amount], (err) => {
@@ -278,6 +309,7 @@ router.post("/expenses", isAuthenticated, (req, res) => {
     // uspeh → vrati na profil (koji će opet učitati expenses)
     res.redirect("/profile");
   });
+});
 });
 
 router.post("/login", loginValidation, async (req, res) => {
