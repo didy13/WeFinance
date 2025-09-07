@@ -189,12 +189,12 @@ router.get("/register", (req, res) => {
 
 router.post("/register", registerValidation, async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.render("register", { title: "WeInvest - Registracija", user: "", error: errors.array()[0].msg, errors: errors.array() });
+    if (!errors.isEmpty()) return res.render("register", { title: "WeInvest - Registracija", user: "", css:index, error: errors.array()[0].msg, errors: errors.array() });
 
     const { username, password } = req.body;
     try {
         const existing = await Korisnik.findByUsername(username);
-        if (existing) return res.render("register", { title: "WeInvest - Registracija", user: "", error: "Korisničko ime već postoji", errors: [] });
+        if (existing) return res.render("register", { title: "WeInvest - Registracija", user: "", css:index,error: "Korisničko ime već postoji", errors: [] });
 
         const hashed = await bcrypt.hash(password, 10);
         const newUser = new Korisnik(username, hashed);
@@ -212,7 +212,7 @@ router.post("/register", registerValidation, async (req, res) => {
         req.session.save(() => res.redirect("/"));
     } catch (err) {
         console.error(err);
-        res.status(500).render("register", { title: "WeInvest - Registracija", user: "", error: "Greška, pokušajte ponovo", errors: [] });
+        res.status(500).render("register", { title: "WeInvest - Registracija", user: "", css:index,error: "Greška, pokušajte ponovo", errors: [] });
     }
 });
 
