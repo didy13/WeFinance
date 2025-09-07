@@ -335,11 +335,11 @@ router.get("/groups", isAuthenticated, (req, res) => {
   const userId = req.session.user.id;
 
   const groupsQuery = `
-    SELECT g., 
-           (SELECT COUNT() FROM group_members gm WHERE gm.group_id = g.id) AS members_count,
-           (SELECT COUNT() FROM group_goals gg WHERE gg.group_id = g.id) AS goals_count
-    FROM table_group g
-    WHERE g.id IN (SELECT group_id FROM group_members WHERE user_id = ?)
+    SELECT g.*,
+       (SELECT COUNT(*) FROM group_members gm WHERE gm.group_id = g.id) AS members_count,
+       (SELECT COUNT(*) FROM group_goals gg WHERE gg.group_id = g.id) AS goals_count
+FROM table_group g
+WHERE g.id IN (SELECT group_id FROM group_members WHERE user_id = 1);
   `;
 
   const invitesQuery = `
