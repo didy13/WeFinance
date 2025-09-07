@@ -140,7 +140,13 @@ router.get("/profile", isAuthenticated, async (req, res) => {
                 resolve(results);
             });
         });
-
+        const updateGoals = await new Promise((resolve, reject) => {
+            connection.query("UPDATE goals as g INNER JOIN users as u ON u.id = g.user_id SET completed = 1 WHERE g.current = g.target and u.id = ?", [userId], (err, results) => {
+                if (err) return reject(err);
+                resolve(results);
+            });
+        });
+        
         const error = '';
 
         res.render("profile", { title: "WeInvest - Moj profil", user, goals, css: "profile", error });
@@ -582,6 +588,27 @@ router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
       }
     if (amount + goalCurrent > goalTarget) {
         return res.render("profile", { user, goals, error: "Ukupan novac premasuje cilj!", title: "WeInvest - Moj profil", css: 'profile' });
+    }
+    if (amount + goalCurrent == goalTarget){
+        const query = `
+                UPDATE goals as g
+                INNER JOIN users as u ON u.id = g.user_id
+                SET completed = 1
+                WHERE g.id = ? and u.id = ?
+            `;
+            connection.query(query, [goalId, userId], (err) => {
+                if (err) return res.status(500).send("DB error: " + err.message);
+                
+            });
+            const achQuery = `
+                UPDATE user_achievements
+                SET current = 1
+                WHERE achievement_id = 4 and user_id = ?
+            `;
+            connection.query(achQuery, [userId], (err) => {
+                if (err) return res.status(500).send("DB error: " + err.message);
+                
+            });
     }
 
     const newGoalCurrent = Math.min(goalCurrent + amount, goalTarget);
