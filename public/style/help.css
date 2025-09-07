@@ -3,9 +3,15 @@
 }
 
 .help-title {
-    font-size: 2.5rem;
+    font-size: 3rem;
     font-weight: 700;
-    color: #4e89ff;
+    color: white;
+}
+
+@media (max-width: 576px) {
+  .help-title {
+    font-size: 2.5rem !important;
+  }
 }
 
 .help-subtitle {

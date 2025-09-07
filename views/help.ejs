@@ -163,134 +163,150 @@
 
     <%- include("./partials/footer.ejs") %>
 
-    <script>
-        // Progress bar update
-        function updateProgress(value) {
-            const bar = document.getElementById("progress-bar");
-            bar.style.width = value + "%";
-            bar.innerHTML = value + "%";
+<script>
+    // Progress bar update
+    function updateProgress(value) {
+        const bar = document.getElementById("progress-bar");
+        bar.style.width = value + "%";
+        bar.innerHTML = value + "%";
+    }
+
+    // Toggle card info
+    function toggleInfo(id) {
+        const el = document.getElementById(id);
+        el.style.display = (el.style.display === "block") ? "none" : "block";
+    }
+
+    // Simulacija budžeta
+    function simulateBudget() {
+        const income = document.getElementById("income").value;
+        if (!income) return;
+        const needs = income * 0.5;
+        const wants = income * 0.3;
+        const savings = income * 0.2;
+        document.getElementById("budget-result").innerHTML = 
+            `📊 Raspodela: ${needs} RSD potrebe, ${wants} RSD želje, ${savings} RSD štednja.`;
+        updateProgress(20);
+    }
+
+    // Štednja izazov
+    function savingChallenge() {
+        const daily = document.getElementById("daily-saving").value;
+        if (!daily) return;
+        const total = daily * 30 * 6;
+        document.getElementById("saving-result").innerHTML = 
+            `💰 Za 6 meseci možeš uštedeti ${total} RSD!`;
+        updateProgress(40);
+    }
+
+    // Investiranje
+    function invest(choice) {
+        let message = "";
+        if (choice === "crypto") {
+            message = "⚠️ Kripto je rizičan, možeš mnogo dobiti, ali i izgubiti.";
+        } else if (choice === "stocks") {
+            message = "📊 Akcije rastu sporo, ali dugoročno daju dobar povrat.";
+        } else {
+            message = "🏦 Obveznice su najstabilnije, ali sa manjim profitom.";
+        }
+        document.getElementById("invest-result").innerHTML = message;
+        updateProgress(60);
+    }
+
+    // Kviz pitanja
+    const quizData = [
+        { q: "Pravilo 50/30/20 znači:", 
+          options: ["50% potrebe, 30% želje, 20% štednja", "50% zabava, 30% računi, 20% štednja"], 
+          correct: 0 },
+        { q: "Štednja od 100 RSD dnevno za godinu dana iznosi:", 
+          options: ["36.500 RSD", "12.000 RSD"], 
+          correct: 0 },
+        { q: "Diverzifikacija znači:", 
+          options: ["Ulaganje u više različitih stvari", "Ulaganje samo u kripto"], 
+          correct: 0 },
+        { q: "Kreditna kartica je isto što i debitna?", 
+          options: ["Tačno", "Netačno"], 
+          correct: 1 },
+        { q: "Inflacija smanjuje kupovnu moć novca?", 
+          options: ["Da", "Ne"], 
+          correct: 0 },
+        { q: "Najsigurnije ulaganje je:", 
+          options: ["Obveznice", "Kripto"], 
+          correct: 0 },
+        { q: "Koliko procenata štednje preporučuju finansijski eksperti?", 
+          options: ["20%", "5%"], 
+          correct: 0 },
+        { q: "Fondovi su:", 
+          options: ["Zajednička ulaganja više ljudi", "Novčanici u banci"], 
+          correct: 0 },
+        { q: "Koja je valuta EU?", 
+          options: ["Evro", "Dolar"], 
+          correct: 0 },
+        { q: "Bitcoin je nastao:", 
+          options: ["2009", "2020"], 
+          correct: 0 }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function loadQuestion() {
+        const q = quizData[currentQuestion];
+        document.getElementById("quiz-question").innerText = q.q;
+        const optionsDiv = document.getElementById("quiz-options");
+        optionsDiv.innerHTML = "";
+        q.options.forEach((opt, i) => {
+            const btn = document.createElement("button");
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(i);
+            btn.disabled = false; // reset
+            btn.style.opacity = "1";
+            btn.style.cursor = "pointer";
+            optionsDiv.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(i) {
+        const q = quizData[currentQuestion];
+        const optionsDiv = document.getElementById("quiz-options");
+
+        // Provera odgovora
+        if (i === q.correct) {
+            score++;
+            document.getElementById("quiz-result").innerText = "✅ Tačno!";
+        } else {
+            document.getElementById("quiz-result").innerText = "❌ Netačno!";
         }
 
-        // Toggle card info
-        function toggleInfo(id) {
-            const el = document.getElementById(id);
-            el.style.display = (el.style.display === "block") ? "none" : "block";
+        // ❌ Disable svih opcija da korisnik ne može da menja odgovor
+        const buttons = optionsDiv.querySelectorAll("button");
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            btn.style.opacity = "0.6";
+            btn.style.cursor = "not-allowed";
+        });
+
+        // ✅ Prikažemo dugme "Sledeće"
+        document.getElementById("next-btn").style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion < quizData.length) {
+            loadQuestion();
+            document.getElementById("quiz-result").innerText = "";
+            document.getElementById("next-btn").style.display = "none";
+        } else {
+            document.getElementById("quiz-question").innerText = 
+                `Kviz završen! Osvojio si ${score} od ${quizData.length} poena.`;
+            document.getElementById("quiz-options").innerHTML = "";
+            document.getElementById("next-btn").style.display = "none";
+            updateProgress(100);
         }
-
-        // Simulacija budžeta
-        function simulateBudget() {
-            const income = document.getElementById("income").value;
-            if (!income) return;
-            const needs = income * 0.5;
-            const wants = income * 0.3;
-            const savings = income * 0.2;
-            document.getElementById("budget-result").innerHTML = 
-                `📊 Raspodela: ${needs} RSD potrebe, ${wants} RSD želje, ${savings} RSD štednja.`;
-            updateProgress(20);
-        }
-
-        // Štednja izazov
-        function savingChallenge() {
-            const daily = document.getElementById("daily-saving").value;
-            if (!daily) return;
-            const total = daily * 30 * 6;
-            document.getElementById("saving-result").innerHTML = 
-                `💰 Za 6 meseci možeš uštedeti ${total} RSD!`;
-            updateProgress(40);
-        }
-
-        // Investiranje
-        function invest(choice) {
-            let message = "";
-            if (choice === "crypto") {
-                message = "⚠️ Kripto je rizičan, možeš mnogo dobiti, ali i izgubiti.";
-            } else if (choice === "stocks") {
-                message = "📊 Akcije rastu sporo, ali dugoročno daju dobar povrat.";
-            } else {
-                message = "🏦 Obveznice su najstabilnije, ali sa manjim profitom.";
-            }
-            document.getElementById("invest-result").innerHTML = message;
-            updateProgress(60);
-        }
-
-        // Kviz pitanja
-        const quizData = [
-            { q: "Pravilo 50/30/20 znači:", 
-              options: ["50% potrebe, 30% želje, 20% štednja", "50% zabava, 30% računi, 20% štednja"], 
-              correct: 0 },
-            { q: "Štednja od 100 RSD dnevno za godinu dana iznosi:", 
-              options: ["36.500 RSD", "12.000 RSD"], 
-              correct: 0 },
-            { q: "Diverzifikacija znači:", 
-              options: ["Ulaganje u više različitih stvari", "Ulaganje samo u kripto"], 
-              correct: 0 },
-            { q: "Kreditna kartica je isto što i debitna?", 
-              options: ["Tačno", "Netačno"], 
-              correct: 1 },
-            { q: "Inflacija smanjuje kupovnu moć novca?", 
-              options: ["Da", "Ne"], 
-              correct: 0 },
-            { q: "Najsigurnije ulaganje je:", 
-              options: ["Obveznice", "Kripto"], 
-              correct: 0 },
-            { q: "Koliko procenata štednje preporučuju finansijski eksperti?", 
-              options: ["20%", "5%"], 
-              correct: 0 },
-            { q: "Fondovi su:", 
-              options: ["Zajednička ulaganja više ljudi", "Novčanici u banci"], 
-              correct: 0 },
-            { q: "Koja je valuta EU?", 
-              options: ["Evro", "Dolar"], 
-              correct: 0 },
-            { q: "Bitcoin je nastao:", 
-              options: ["2009", "2020"], 
-              correct: 0 }
-        ];
-
-        let currentQuestion = 0;
-        let score = 0;
-
-        function loadQuestion() {
-            const q = quizData[currentQuestion];
-            document.getElementById("quiz-question").innerText = q.q;
-            const optionsDiv = document.getElementById("quiz-options");
-            optionsDiv.innerHTML = "";
-            q.options.forEach((opt, i) => {
-                const btn = document.createElement("button");
-                btn.innerText = opt;
-                btn.onclick = () => checkAnswer(i);
-                optionsDiv.appendChild(btn);
-            });
-        }
-
-        function checkAnswer(i) {
-            const q = quizData[currentQuestion];
-            if (i === q.correct) {
-                score++;
-                document.getElementById("quiz-result").innerText = "✅ Tačno!";
-            } else {
-                document.getElementById("quiz-result").innerText = "❌ Netačno!";
-            }
-            document.getElementById("next-btn").style.display = "block";
-        }
-
-        function nextQuestion() {
-            currentQuestion++;
-            if (currentQuestion < quizData.length) {
-                loadQuestion();
-                document.getElementById("quiz-result").innerText = "";
-                document.getElementById("next-btn").style.display = "none";
-            } else {
-                document.getElementById("quiz-question").innerText = 
-                    `Kviz završen! Osvojio si ${score} od ${quizData.length} poena.`;
-                document.getElementById("quiz-options").innerHTML = "";
-                document.getElementById("next-btn").style.display = "none";
-                updateProgress(100);
-            }
-        }
-        
-        // Inicijalno učitavanje kviza
-        loadQuestion();
-    </script>
+    }
+    
+    // Inicijalno učitavanje kviza
+    loadQuestion();
+</script>
 </body>
 </html>
