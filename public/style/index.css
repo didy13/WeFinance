@@ -602,7 +602,6 @@ footer img {
         font-size: 1rem;
     }
     .buttons-wrapper {
-        flex-direction: row;
         gap: 1rem;
         margin-top: 1.5rem;
         align-items: center;
@@ -613,8 +612,13 @@ footer img {
     .second-section {
         text-align: center;
     }
-    .buttons-wrapper .custom-button {
+    .second-button-1 {
         margin-left: auto;
+    }
+    .second-button-2 {
         margin-right: auto;
+    }
+    .second-left-column h2, .third-section h2 {
+        font-size: 2rem;
     }
 }
