@@ -5,37 +5,56 @@
     <%- include("./partials/nav.ejs") %>
 
     <div class="container py-5">
-      <h1 class="mb-4">Achievements</h1>
+      <h1 class="mb-4 text-white">Achievements</h1>
 
-      <div class="achievements-grid">
-        <% achievements.forEach(ach => { %>
-          <div class="achievement-card">
-            <div class="achievement-icon mb-3">
-              <i class="fas fa-medal <%= ach.type || 'bronze' %>"></i>
+      <% if (achievements && achievements.length > 0) { %>
+        <div class="achievements-grid">
+          <% achievements.forEach(ach => { %>
+            <div class="achievement-card text-center p-3">
+              
+              <div class="achievement-icon mb-2 <%= ach.types %>">
+                <% if(ach.types === 'bronza'){ %>
+                  <i class="fas fa-medal fa-3x"></i>
+                <% } else if(ach.types === 'srebro'){ %>
+                  <i class="fas fa-award fa-3x"></i>
+                <% } else if(ach.types === 'zlato'){ %>
+                  <i class="fas fa-trophy fa-3x"></i>
+                <% } else if(ach.types === 'dijamant'){ %>
+                  <i class="fas fa-gem fa-3x"></i>
+                <% } else { %>
+                  <i class="fas fa-medal fa-3x"></i>
+                <% } %>
+              </div>
+
+              <div class="progress mb-2">
+                <div class="progress-bar" role="progressbar" data-progress="<%= Math.min((ach.current / ach.target) * 100, 100) %>"></div>
+              </div>
+
+              <h5 class="achievement-name mb-1"><%= ach.name %></h5>
+              <p class="achievement-desc mb-0"><%= ach.description %></p>
+              <span class="achievement-progress"><%= ach.current + '/' + ach.target %></span>
+              <span class="achievement-type mt-2 badge <%= ach.types %>"><%= (ach.types || 'bronze').toUpperCase() %></span>
             </div>
-
-            <h5 class="achievement-name"><%= ach.name %></h5>
-            <p class="achievement-desc"><%= ach.description %></p>
-
-            <div class="progress mb-2">
-              <div class="progress-bar" role="progressbar" 
-                   style="--progress-width:<%= Math.min((ach.current / ach.target) * 100, 100) %>%;"></div>
-            </div>
-
-            <span class="achievement-progress"><%= ach.current + '/' + ach.target %></span>
-            <span class="badge <%= ach.type || 'bronze' %>">
-              <%= (ach.type || 'bronze').toUpperCase() %>
-            </span>
-          </div>
-        <% }) %>
-      </div>
-
-      <% if (!achievements || achievements.length === 0) { %>
-        <div class="groups-empty">
+          <% }) %>
+        </div>
+      <% } else { %>
+        <div class="groups-empty mt-4">
           No achievements yet. Keep going!
         </div>
       <% } %>
     </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const bars = document.querySelectorAll(".progress-bar");
+        bars.forEach(bar => {
+          const progress = bar.getAttribute("data-progress");
+          setTimeout(() => {
+            bar.style.width = progress + "%";
+          }, 100);
+        });
+      });
+    </script>
 
     <%- include("./partials/footer.ejs") %>
   </body>

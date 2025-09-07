@@ -29,12 +29,11 @@ h1 {
 .achievement-card {
     background: rgba(50, 50, 50, 0.9);
     border-radius: 20px;
-    padding: 30px;
+    padding: 30px 20px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.6);
     transition: transform 0.3s, box-shadow 0.3s;
     position: relative;
     overflow: hidden;
-    text-align: center;
 }
 
 .achievement-card::before {
@@ -62,10 +61,13 @@ h1 {
 .achievement-icon {
     margin-bottom: 15px;
     font-size: 2.5rem;
-    transition: transform 0.3s;
 }
 
-.achievement-icon:hover {
+.achievement-icon i {
+    transition: transform 0.2s;
+}
+
+.achievement-icon i:hover {
     transform: scale(1.2);
 }
 
@@ -74,12 +76,13 @@ h1 {
     font-size: 1.4rem;
     font-weight: 700;
     margin-bottom: 10px;
+    color: #fff;
 }
 
 .achievement-desc {
     font-size: 0.9rem;
     color: #ccc;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 /* Progress bar */
@@ -92,16 +95,10 @@ h1 {
 }
 
 .progress-bar {
-    background: linear-gradient(135deg, #4e89ff, #3b6fe2);
     height: 100%;
     width: 0;
-    animation: fillProgress 1s forwards;
-    transition: width 0.5s ease-in-out;
-}
-
-@keyframes fillProgress {
-    from { width: 0; }
-    to { width: var(--progress-width); }
+    background: linear-gradient(135deg, #4e89ff, #3b6fe2);
+    transition: width 1s ease-in-out;
 }
 
 .achievement-progress {
@@ -117,12 +114,21 @@ h1 {
     font-weight: 600;
     display: inline-block;
     margin-top: 10px;
+    color: #fff;
 }
 
-.badge.bronze { background: #cd7f32; color: #fff; }
-.badge.silver { background: #c0c0c0; color: #000; }
-.badge.gold { background: #ffd700; color: #000; }
-.badge.diamond { background: #b9f2ff; color: #000; }
+/* Colors by type */
+.achievement-icon.bronze i,
+.badge.bronze { color: #cd7f32; background: #cd7f32; }
+
+.achievement-icon.silver i,
+.badge.silver { color: #c0c0c0; background: #c0c0c0; }
+
+.achievement-icon.gold i,
+.badge.gold { color: #ffd700; background: #ffd700; }
+
+.achievement-icon.diamond i,
+.badge.diamond { color: #b9f2ff; background: #b9f2ff; }
 
 /* Empty state */
 .groups-empty {
