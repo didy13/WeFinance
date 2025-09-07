@@ -39,6 +39,10 @@ body {
     color: #ccc;
 }
 
+.achievement-progress{
+    color: #ccc;
+}
+
 .badge {
     padding: 0.3rem 0.6rem;
     border-radius: 6px;

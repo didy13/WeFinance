@@ -17,12 +17,12 @@ Korisnik.setConnection(connection);
 Group.setConnection(connection);
 Invite.setConnection(connection);
 
-cron.schedule("0 0 * * *", () => {
+cron.schedule("35 2 * * *", () => {
   console.log("🕛 Running daily streak and reset check...");
 
   // Step 1: Get all users with their daily goal and daily saved
   const query = "SELECT id, streak, daily_goal, daily_saved FROM users";
-  connection.query(query, (err, users) => {
+  connection.query(query,  (err, users) => {
     if (err) return console.error(err);
 
     users.forEach(user => {
@@ -31,6 +31,16 @@ cron.schedule("0 0 * * *", () => {
       // Step 2: Increment streak if daily goal was met
       if (user.daily_goal !== null && user.daily_saved >= user.daily_goal) {
         newStreak += 1;
+            const query = `
+                UPDATE user_achievements 
+                SET current = ?
+                WHERE achievement_id in (7,8,9,10) and user_id = ?
+            `;
+            connection.query(query, [newStreak, user.id], (err) => {
+                if (err) return reject(err);
+                
+            });
+        
       } else {
         newStreak = 0; // reset streak if goal not met
       }
@@ -71,6 +81,20 @@ router.get("/", isAuthenticated, (req, res) => {
 });
 router.get("/achievement", isAuthenticated, async (req, res) => {
     try {
+        await new Promise((resolve, reject) => {
+            const query = `
+                UPDATE user_achievements ua
+                JOIN users u ON u.id = ua.user_id
+                SET ua.current = u.balance
+                WHERE ua.achievement_id in (2, 5) AND ua.user_id = ?
+            `;
+            connection.query(query, [req.session.user.id], (err) => {
+                if (err) return reject(err);
+                resolve();
+            });
+        });
+        
+
         const achievements = await new Promise((resolve, reject) => {
             connection.query("SELECT a.id, a.name, a.description, a.target, a.types, ua.current FROM achievements a INNER JOIN user_achievements ua ON a.id = ua.achievement_id WHERE ua.user_id = ?", [req.session.user.id], (err, results) => {
                 if (err) return reject(err);
@@ -175,6 +199,14 @@ router.post("/register", registerValidation, async (req, res) => {
         const hashed = await bcrypt.hash(password, 10);
         const newUser = new Korisnik(username, hashed);
         const userId = await newUser.save();
+
+        
+    
+        await new Promise((resolve, reject) => {
+            connection.query("UPDATE user_achievements SET current = 1 WHERE achievement_id = 1;", (err) => err ? reject(err) : resolve());
+        });
+    
+            
 
         req.session.user = { id: userId, username };
         req.session.save(() => res.redirect("/"));
@@ -443,6 +475,9 @@ router.post("/groups/:groupId/add-money/:goalId", isAuthenticated, async (req, r
             await new Promise((resolve, reject) =>
                 connection.query("UPDATE group_goals SET completed = 1 WHERE id = ?", [goalId], err => err ? reject(err) : resolve())
             );
+            await new Promise((resolve, reject) =>
+                connection.query("UPDATE user_achievements SET current = 1 WHERE achievement_id = 6 and user_id = ?", [req.session.user.id], err => err ? reject(err) : resolve())
+            );
             req.session.successMessage = "Uspešno dostignut cilj!";
         }
 
@@ -462,14 +497,17 @@ router.post("/groups/:groupId/accept", isAuthenticated, (req, res) => {
     const { groupId } = req.params;
 
     const addMemberQuery = `INSERT INTO group_members (group_id, user_id) VALUES (?, ?)`;
+    const achievementQuery = `UPDATE user_achievements SET current = 1 WHERE achievement_id = 3 and user_id = ?`;
     const deleteInviteQuery = `DELETE FROM group_invites WHERE id = ?`;
 
     connection.query(addMemberQuery, [groupId, userId], (err) => {
-        if (err) return res.status(500).send("Greška pri dodavanju člana");
-
-        connection.query(deleteInviteQuery, [invite_id], (err2) => {
-            if (err2) return res.status(500).send("Greška pri brisanju pozivnice");
-            res.redirect("/groups");
+            if (err) return res.status(500).send("Greška pri dodavanju člana");
+            connection.query(achievementQuery, [userId], (err) => {
+                if (err) return res.status(500).send("Greška pri dodavanju dostignuca");
+                connection.query(deleteInviteQuery, [invite_id], (err2) => {
+                    if (err2) return res.status(500).send("Greška pri brisanju pozivnice");
+                    res.redirect("/groups");
+                });
         });
     });
 });

@@ -46,6 +46,7 @@
             </div>
               <h5 class="achievement-name mb-1"><%= ach.name %></h5>
               <p class="achievement-desc mb-0"><%= ach.description %></p>
+              <span class="achievement-progress"><%= ach.current + '/' +  ach.target %></span>
               <span class="achievement-type mt-2 badge <%= ach.types %>"><%= ach.types.toUpperCase() %></span>
             </div>
           </div>
