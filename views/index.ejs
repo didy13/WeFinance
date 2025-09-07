@@ -1,90 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include("./partials/head.ejs")%>
-<body>
-    <div id="preloader">
-        <div class="preloader-text"></div>
-    </div>
-    <section class="hero-section">
-        <%- include("./partials/nav.ejs") %>
-        <div class="container">
-            <div class="hero-info">
-                <h1>Keš Kolica & Šmekerica</h1>
-                <p>Da li si znao da prosečan mladi građanin u <span style="color: #C73339; font-weight: 700;">Sr</span><span style="color: #0C4076; font-weight: 700;">bi</span><span style="font-weight: 700;">ji</span> u 25. godini <span style="font-weight: 700;">NIJE</span> uštedeo ni dinar <br> dok bi mogao da zaradi svoj prvi auto samo ako štedi svakodnevno 1 godinu?</p>
-                <div class="buttons-wrapper">
-                    <a class="custom-button" href="/profile">Profil</a>
-                    <a class="custom-button" href="/help">Pomoć</a>
+<%- include("./partials/head.ejs") %>
+
+    <body>
+        <!-- Preloader -->
+        <div id="preloader">
+            <div class="preloader-text"></div>
+        </div>
+
+        <!-- Hero Section sa Parallax -->
+        <section class="hero-section">
+            <%- include("./partials/nav.ejs") %>
+                <div class="container hero-content">
+                    <div class="hero-info">
+                        <h1>Keš Kolica & Šmekerica</h1>
+                        <p>Da li si znao da prosečan mladi građanin u <span
+                                style="color: #C73339; font-weight: 700;">Sr</span><span
+                                style="color: #0C4076; font-weight: 700;">bi</span><span
+                                style="font-weight: 700;">ji</span> u 25. godini <span
+                                style="font-weight: 700;">NIJE</span> uštedeo ni dinar <br> dok bi mogao da zaradi svoj
+                            prvi auto samo ako štedi svakodnevno 1 godinu?</p>
+                        <div class="buttons-wrapper">
+                            <a class="custom-button" href="/profile">Profil</a>
+                            <a class="custom-button" href="/help">Pomoć</a>
+                        </div>
+                    </div>
                 </div>
+        </section>
+
+        <!-- Second Section -->
+        <section class="second-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 col-12 second-left-column">
+                        <p>Cilj</p>
+                        <h2>Ostvarite svoje snove <br> o štednji zajedno</h2>
+                    </div>
+                    <div class="col-md-6 col-12 second-right-column">
+                        <p>Sa Welnvest-om, možete postaviti lične ciljeve štednje koji će vas inspirisati da efikasnije
+                            štedite. Udružite se sa prijateljima za grupne ciljeve, čineći štednju zabavnim i
+                            zajedničkim iskustvom. Bilo da je u pitanju putovanje ili poseban događaj, zajednički rad
+                            pojačava motivaciju i odgovornost.</p>
+                        <div class="buttons-wrapper">
+                            <a class="custom-button" href="/profile">Profil</a>
+                            <a class="custom-button" href="/groups">Grupe</a>
+                        </div>
+                    </div>
+                </div>
+                <img src="/images/Cilj.jpg" alt="Cilj">
             </div>
-        </div>
-    </section>
-    <section class="second-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 col-12 second-left-column">
-                    <p>Cilj</p>
-                    <h2>Ostvarite svoje snove <br> o štednji zajedno</h2>
-                </div>
-                <div class="col-md-6 col-12 second-right-column">
-                    <p>Sa Welnvest-om, možete postaviti lične ciljeve štednje koji će vas inspirisati da efikasnije štedite. Udružite se sa prijateljima za grupne ciljeve, čineći štednju zabavnim i zajedničkim iskustvom. Bilo da je u pitanju putovanje ili poseban događaj, zajednički rad pojačava motivaciju i odgovornost.</p>
-                <div class="buttons-wrapper">
-                    <a class="custom-button" href="/profile">Profil</a>
-                    <a class="custom-button" href="/groups">Grupe</a>
-                </div>
-                </div>
-            </div>
-            <img src="/images/Cilj.jpg" alt="Cilj">
-        </div>
-    </section>
-    <section class="third-section">
-        <div class="container">
-        </div>
-    </section>
-    <section class="fourth-section">
-        <div class="container">
-            <span>Tim</span>
-            <h2>Ko su The Šmekeri?</h2>
-            <div class="row g-3 mt-4"><!-- umesto card-gorup-style -->
-            <div class="col-md-3 col-sm-6 col-12">
-                <div class="card-info">
-                    <img src="/images/people/David.jpg" alt="David Koloski" loading="lazy">
-                    <div class="card-text">
-                        <p class="tim-name">David Koloski</p>
-                        <p>Kapiten ekipe i vođa projekta. Specijalizovan za backend razvoj, zadužen za arhitekturu sistema i stabilnost aplikacije.</p>
+        </section>
+
+        <!-- Fourth Section - Team -->
+        <section class="fourth-section">
+            <div class="container">
+                <span>Tim</span>
+                <h2>Ko su The Šmekeri?</h2>
+                <div class="row g-3 mt-4">
+                    <div class="col-md-3 col-sm-6 col-12">
+                        <div class="card-info">
+                            <img src="/images/people/David.jpg" alt="David Koloski" loading="lazy">
+                            <div class="card-text">
+                                <p class="tim-name">David Koloski</p>
+                                <p>Kapiten ekipe i vođa projekta. Specijalizovan za backend razvoj, zadužen za
+                                    arhitekturu sistema i stabilnost aplikacije.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-12">
+                        <div class="card-info">
+                            <img src="/images/people/Stefan.jpg" alt="Stefan Sofronijević" loading="lazy">
+                            <div class="card-text">
+                                <p class="tim-name">Stefan Sofronijević</p>
+                                <p>Backend developer. Fokusiran na validaciju korisničkih podataka, registraciju i
+                                    implementaciju ključnih funkcionalnosti.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-12">
+                        <div class="card-info">
+                            <img src="/images/people/Aleksa.jpg" alt="Aleksa Stankić" loading="lazy">
+                            <div class="card-text">
+                                <p class="tim-name">Aleksa Stankić</p>
+                                <p>Glavni čovek za frontend razvoj. Odgovoran za izgled i korisničko iskustvo
+                                    aplikacije, spajajući dizajn i funkcionalnost.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-12">
+                        <div class="card-info">
+                            <img src="/images/people/Mizdrak.jpg" alt="Stefan Mizdrak" loading="lazy">
+                            <div class="card-text">
+                                <p class="tim-name">Stefan Mizdrak</p>
+                                <p>Specijalizovani frontend developer. Posvećen izradi interaktivnih elemenata i
+                                    unapređenju korisničkog interfejsa.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6 col-12">
-                <div class="card-info">
-                    <img src="/images/people/Stefan.jpg" alt="Stefan Sofronijević" loading="lazy">
-                    <div class="card-text">
-                        <p class="tim-name">Stefan Sofronijević</p>
-                        <p>Backend developer. Fokusiran na validaciju korisničkih podataka, registraciju i implementaciju ključnih funkcionalnosti.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6 col-12">
-                <div class="card-info">
-                    <img src="/images/people/Aleksa.jpg" alt="Aleksa Stankić" loading="lazy">
-                    <div class="card-text">
-                        <p class="tim-name">Aleksa Stankić</p>
-                        <p>Glavni čovek za frontend razvoj. Odgovoran za izgled i korisničko iskustvo aplikacije, spajajući dizajn i funkcionalnost.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6 col-12">
-                <div class="card-info">
-                    <img src="/images/people/Mizdrak.jpg" alt="Stefan Mizdrak" loading="lazy">
-                    <div class="card-text">
-                        <p class="tim-name">Stefan Mizdrak</p>
-                        <p>Specijalizovani frontend developer. Posvećen izradi interaktivnih elemenata i unapređenju korisničkog interfejsa.</p>
-                    </div>
-                </div>
-            </div>
-            </div>
-        </div>
-    </section>
-    <section class="testimonials">
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials">
         <div class="container">
             <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
@@ -157,40 +175,42 @@
             </div>
         </div>
     </section>
-    <script>
-    const texts = ["Keš 💸", "Kolica 🛒", "Šmekerica 😎"];
-    const durations = [550, 500, 500];
-    const preloader = document.getElementById("preloader");
-    const preloaderText = document.querySelector(".preloader-text");
 
-    let index = 0;
+        <%- include("./partials/footer.ejs") %>
 
-    function showNextText() {
-        preloaderText.classList.remove("show");
+            <!-- Preloader Script -->
+            <script>
+                const texts = ["Keš 💸", "Kolica 🛒", "Šmekerica 😎"];
+                const durations = [550, 500, 500];
+                const preloader = document.getElementById("preloader");
+                const preloaderText = document.querySelector(".preloader-text");
+                let index = 0; function showNextText() {
+                    preloaderText.classList.remove("show");
+                    setTimeout(() => {
+                        preloaderText.textContent = texts[index];
+                        preloaderText.classList.add("show");
+                        const currentDuration = durations[index];
+                        index++;
+                        if (index < texts.length) {
+                            setTimeout(showNextText, currentDuration);
+                        } else {
+                            setTimeout(() => {
+                                preloader.style.opacity = "0";
+                                setTimeout(() => {
+                                    preloader.style.display = "none";
+                                }, 500);
+                            }, currentDuration + 200);
+                        }
+                    }, 250);
+                }
+                window.addEventListener("load", () => { showNextText(); });
 
-        setTimeout(() => {
-        preloaderText.textContent = texts[index];
-        preloaderText.classList.add("show");
+                const hero = document.querySelector('.hero-section');
+                window.addEventListener('scroll', () => {
+                    const scrollPosition = window.scrollY;
+                    hero.style.backgroundPosition = `center ${scrollPosition * 0.5}px`;
+                });
+            </script>
+    </body>
 
-        const currentDuration = durations[index];
-        index++;
-        if (index < texts.length) {
-            setTimeout(showNextText, currentDuration);
-        } else {
-            setTimeout(() => {
-            preloader.style.opacity = "0";
-            setTimeout(() => {
-                preloader.style.display = "none";
-            }, 500);
-            }, currentDuration + 200);
-        }
-        }, 250);
-    }
-
-    window.addEventListener("load", () => {
-        showNextText();
-    });
-    </script>
-    <%- include("./partials/footer.ejs") %>
-</body>
 </html>
