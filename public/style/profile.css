@@ -233,6 +233,9 @@ body {
   font-size: 1rem;
   transition: border-color 0.3s, box-shadow 0.3s;
 }
+input::placeholder{
+  color: #797979 !important;
+}
 
 #monthlyIncome:focus {
   border-color: #4e89ff;
