@@ -9,7 +9,7 @@
     <div class="row">
 
       <!-- Leva kolona -->
-      <div class="col-lg-3 mb-4">
+      <div class="col-lg-3 mb-4 leva_kolona">
         <div class="dashboard-card p-3 mb-3">
           <div class="dashboard-user mb-3">
             <i class="fas fa-user me-2"></i>
@@ -17,12 +17,11 @@
           </div>
 
           <div class="dashboard-balance-highlight mb-3">
-            <i class="fas fa-wallet me-2"></i>
-            Balans: <span><%= user.balance %> $</span>
+            <i class="fas fa-wallet me-2"></i> Balans: <span><%= user.balance %> $</span>
           </div>
 
-          <form action="/logout" method="GET" class="dashboard-logout">
-            <button type="submit">
+          <form action="/logout" method="GET" class="dashboard-logout mb-3">
+            <button type="submit" class="btn-create-goal w-100">
               <i class="fas fa-sign-out-alt me-1"></i> Izloguj se
             </button>
           </form>
@@ -32,9 +31,9 @@
         </div>
 
         <div class="dashboard-card p-3">
-          <form action="/changebalance" method="POST" class="dashboard-page__change-balance mb-2">
-            <input id="balans" name="balans" step="0.01" type="number" placeholder="Iznos" class="form-control mb-2" required>
-            <button type="submit" class="btn-create-goal w-100">
+          <form action="/changebalance" method="POST" class="dashboard-page__change-balance d-flex flex-wrap gap-2">
+            <input id="balans" name="balans" step="0.01" type="number" placeholder="Iznos" class="form-control" required>
+            <button type="submit" class="btn-create-goal">
               <i class="fas fa-plus-circle me-1"></i> Dodaj novac
             </button>
           </form>
@@ -43,7 +42,7 @@
 
       <!-- Srednja kolona -->
       <div class="col-lg-5">
-        <div class="dashboard-single-goal p-3 bg-dark text-light rounded shadow-sm mb-3">
+        <div class="dashboard-single-goal p-3 bg-dark text-light rounded shadow-sm mb-3 dnevni_cilj">
           <div class="dashboard-goal-info d-flex justify-content-between mb-2">
             <strong><i class="fas fa-bullseye me-2"></i> Dnevni cilj</strong>
             <span><%= user.daily_saved %> / <%= user.daily_goal %> $</span>
@@ -52,17 +51,17 @@
             <div class="progress-bar bg-success" role="progressbar"
                  style="width:<%= Math.min((user.daily_saved / user.daily_goal) * 100, 100) %>%"></div>
           </div>
-          <form action="/changedailygoal" method="POST" class="dashboard-page__change-balance mb-2">
-            <input id="dailyGoal" name="dailyGoal" step="0.01" type="number" placeholder="Iznos" class="form-control mb-2" required>
-            <p id="recommendedSavings" class="text-muted small mb-2"></p>
-            <button type="submit" class="btn-create-goal w-100">
+          <form action="/changedailygoal" method="POST" class="dashboard-page__change-balance d-flex flex-wrap gap-2 mb-2">
+            <input id="dailyGoal" name="dailyGoal" step="0.01" type="number" placeholder="Iznos" class="form-control" required>
+            <p id="recommendedSavings" class="text-muted small"></p>
+            <button type="submit" class="btn-create-goal">
               <i class="fas fa-plus-circle me-1"></i> Promeni dnevni cilj
             </button>
           </form>
         </div>
 
         <h2 class="mb-3">Tvoji ciljevi:</h2>
-        <div class="row">
+        <div class="row tvoji_ciljevi">
           <% if (goals.length > 0) { %>
             <% goals.forEach(goal => { %>
               <div class="col-md-12 mb-3">
@@ -75,10 +74,10 @@
                     <div class="progress-bar bg-success" role="progressbar"
                          style="width:<%= Math.min((goal.current / goal.target) * 100, 100) %>%"></div>
                   </div>
-                  <form action="/addgoalbalance" method="POST" class="dashboard-goal__form mb-2">
-                    <input name="goalbalance" step="0.01" type="number" placeholder="Iznos" class="form-control mb-2" required>
+                  <form action="/addgoalbalance" method="POST" class="dashboard-goal__form d-flex flex-wrap gap-2">
+                    <input name="goalbalance" step="0.01" type="number" placeholder="Iznos" class="form-control" required>
                     <input type="hidden" name="goalId" value="<%= goal.id %>">
-                    <button type="submit" class="btn-create-goal w-100">
+                    <button type="submit" class="btn-create-goal">
                       <i class="fas fa-plus me-1"></i> Dodaj novac
                     </button>
                   </form>
@@ -90,8 +89,8 @@
           <% } %>
         </div>
 
-        <form action="/newgoals" method="GET" class="mt-3">
-          <button type="submit" class="btn-create-goal w-100">
+        <form action="/newgoals" method="GET" class="mt-3 novi_cilj">
+          <button type="submit" class="btn-create-goal">
             <i class="fas fa-flag me-1"></i> Kreiraj novi cilj
           </button>
         </form>
@@ -99,7 +98,7 @@
 
       <!-- Desna kolona -->
       <div class="col-lg-4">
-        <div class="dashboard-card p-3 mb-3">
+        <div class="dashboard-card p-3 mb-3 prihodi">
           <h3 class="mb-3">Mesečni prihod</h3>
           <form id="monthlyIncomeForm" class="mb-3">
             <input id="monthlyIncome" type="number" step="0.01" placeholder="Unesi svoj prosečni mesečni prihod" class="form-control mb-2">
@@ -109,7 +108,7 @@
           </form>
         </div>
 
-        <div class="dashboard-card p-3 mb-3">
+        <div class="dashboard-card p-3 mb-3 rashodi">
           <h3 class="mb-3">Mesecni rashodi</h3>
           <ul id="expensesList" class="list-group mb-3">
             <% if(expenses.length > 0) { %>
@@ -123,8 +122,7 @@
             <% } %>
           </ul>
 
-          <!-- Novi rashod -->
-          <form action="/add" method="POST">
+          <form id="addExpenseForm">
             <input name="name" type="text" placeholder="Naziv rashoda" class="form-control mb-2" required>
             <input name="amount" type="number" step="0.01" placeholder="Iznos" class="form-control mb-2" required>
             <button class="btn-create-goal w-100" type="submit">
@@ -137,6 +135,18 @@
     </div>
   </div>
 
+  <!-- Tutorijal overlay -->
+  <div id="tutorialOverlay" class="tutorial-overlay d-none">
+    <div id="tutorialStep" class="tutorial-step">
+      <p id="tutorialText"></p>
+      <span id="tutorialCounter"></span>
+      <div class="tutorial-buttons mt-2">
+        <button id="prevStep" class="btn-create-goal">Prethodni</button>
+        <button id="nextStep" class="btn-create-goal">Sledeći</button>
+      </div>
+    </div>
+  </div>
+
   <%- include("./partials/footer.ejs") %>
 
   <!-- JS -->
@@ -146,7 +156,7 @@
     const incomeInput = document.getElementById('monthlyIncome');
     const recommended = document.getElementById('recommendedSavings');
 
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', function(e) {
       e.preventDefault();
       const income = parseFloat(incomeInput.value);
       if (!isNaN(income) && income > 0) {
@@ -156,6 +166,97 @@
         recommended.textContent = '';
       }
     });
+
+    // Dodavanje rashoda frontend
+    const expenseForm = document.getElementById('addExpenseForm');
+    const expenseList = document.getElementById('expensesList');
+
+    expenseForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = expenseForm.name.value.trim();
+      const amount = parseFloat(expenseForm.amount.value);
+      if(name && !isNaN(amount)) {
+        const li = document.createElement('li');
+        li.className = "list-group-item d-flex justify-content-between align-items-center";
+        li.innerHTML = `${name} <span>${amount.toFixed(2)} $</span>`;
+        expenseList.appendChild(li);
+        expenseForm.reset();
+      }
+    });
+
+    // Tutorijal overlay
+    const steps = [
+      { element: '.leva_kolona', text: 'Ovo je tvoj korisnički panel, ovde vidiš svoje ime, balans kao i opciju dodavanja balansa.' },
+      { element: '.dnevni_cilj', text: 'Ovo je dnevni cilj koji morate uštedeti, kao i tralalaala.' },
+      { element: '.tvoji_ciljevi', text: 'Ovde možeš videti polje gde ce se nalaziti svi tvoji ciljevi.' },
+      { element: '.novi_cilj', text: 'Ovo je dugme koje pravi novi cilj.' },
+      { element: '.prihodi', text: 'Ovde možeš izračunati koliko ti mi predlažemo da štediš na dnevnom nivou na osnovu mesečne zarade.' },
+      { element: '.rashodi', text: 'Ovde možeš videti svoje rashode (gde sve ide tvoj novac osim u štednju).' }
+    ];
+
+    let currentStep = 0;
+    const overlay = document.getElementById('tutorialOverlay');
+    const tutorialText = document.getElementById('tutorialText');
+    const tutorialCounter = document.getElementById('tutorialCounter');
+    const prevBtn = document.getElementById('prevStep');
+    const nextBtn = document.getElementById('nextStep');
+
+    function showStep(stepIndex) {
+      if (stepIndex < 0 || stepIndex >= steps.length) return;
+      currentStep = stepIndex;
+      const step = steps[stepIndex];
+      const el = document.querySelector(step.element);
+
+      tutorialText.textContent = step.text;
+      tutorialCounter.textContent = `Korak ${currentStep + 1} od ${steps.length}`;
+      overlay.classList.remove('d-none');
+
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      document.querySelectorAll('.tutorial-highlight').forEach(e => e.classList.remove('tutorial-highlight'));
+      el.classList.add('tutorial-highlight');
+
+      const tutorialBox = document.querySelector('.tutorial-step');
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile) {
+        tutorialBox.style.top = 'auto';
+        tutorialBox.style.left = '50%';
+        tutorialBox.style.bottom = '10px';
+        tutorialBox.style.transform = 'translateX(-50%)';
+      } else {
+        tutorialBox.style.top = currentStep === 2 ? '5%' : '50%';
+        tutorialBox.style.left = '50%';
+        tutorialBox.style.transform = currentStep === 2 ? 'translate(-50%,0)' : 'translate(-50%,-50%)';
+      }
+
+      prevBtn.style.display = currentStep === 0 ? 'none' : 'inline-flex';
+      if (currentStep === steps.length - 1) {
+        nextBtn.style.display = 'none';
+        if (!document.getElementById('finishStep')) {
+          const finishBtn = document.createElement('button');
+          finishBtn.id = 'finishStep';
+          finishBtn.className = 'btn-create-goal';
+          finishBtn.textContent = 'Završi';
+          finishBtn.style.marginLeft = '5px';
+          finishBtn.addEventListener('click', () => {
+            overlay.classList.add('d-none');
+            el.classList.remove('tutorial-highlight');
+          });
+          nextBtn.parentNode.appendChild(finishBtn);
+        } else {
+          document.getElementById('finishStep').style.display = 'inline-flex';
+        }
+      } else {
+        nextBtn.style.display = 'inline-flex';
+        if (document.getElementById('finishStep')) {
+          document.getElementById('finishStep').style.display = 'none';
+        }
+      }
+    }
+
+    nextBtn.addEventListener('click', () => { if(currentStep < steps.length-1) showStep(currentStep+1); });
+    prevBtn.addEventListener('click', () => { if(currentStep >0) showStep(currentStep-1); });
+    window.addEventListener('load', () => { showStep(0); });
   </script>
 
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
