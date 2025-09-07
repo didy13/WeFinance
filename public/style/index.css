@@ -354,13 +354,11 @@ nav {
     min-height: 100vh;
     color: white;
     margin-top: 0rem;
-    padding-top: 1rem;
     overflow: hidden;
 }
 .hero-content {
     position: relative;
     z-index: 2;
-    padding-top: 4rem;
     padding-bottom: 10rem;
     text-align: left;
 }
@@ -589,10 +587,7 @@ footer img {
 
 @media (max-width: 768px) {
     .hero-info {
-        margin-left: 1rem;
-        padding-top: 3.5rem;
-        padding-bottom: 0rem;
-        text-align: left;
+        padding-top: 8rem !important;
     }
     .hero-info h1 {
         font-size: 3rem;
@@ -620,5 +615,8 @@ footer img {
     }
     .second-left-column h2, .third-section h2 {
         font-size: 2rem;
+    }
+    .hero-info {
+        padding-top: 8rem !important;
     }
 }
