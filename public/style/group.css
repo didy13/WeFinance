@@ -25,21 +25,6 @@ body {
   text-shadow: 0 2px 10px rgba(0,0,0,0.7);
 }
 
-.btn-new-group {
-  padding: 0.8rem 1.5rem;
-  font-size: 1.1rem;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #4e89ff, #3b6fe2);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.btn-new-group:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.7);
-}
 
 /* Layout dve kolone */
 .groups-container {
