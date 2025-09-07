@@ -8,17 +8,30 @@
       <h2>Registracija</h2>
       <form action="/register" method="POST">
         <div class="register-input-group">
-          <label for="username">Korisničko ime</label>
-          <input type="text" id="username" name="username" placeholder="Unesite korisničko ime" value="<%= typeof user !== 'undefined' ? user.username : '' %>">
-        </div>
-        <div class="register-input-group">
-          <label for="password">Lozinka</label>
-          <input type="password" id="password" name="password" placeholder="Unesite lozinku">
-        </div>
-        <div class="register-input-group">
-          <label for="confirmPassword">Potvrdi lozinku</label>
-          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Ponovite lozinku">
-        </div>
+  <label for="username">Korisničko ime</label>
+  <input type="text" id="username" name="username" 
+         placeholder="Unesite korisničko ime" 
+         value="<%= typeof user !== 'undefined' ? user.username : '' %>">
+  <% if (errors && errors.username) { %>
+    <p class="error-message"><%= errors.username.msg %></p>
+  <% } %>
+</div>
+
+<div class="register-input-group">
+  <label for="password">Lozinka</label>
+  <input type="password" id="password" name="password" placeholder="Unesite lozinku">
+  <% if (errors && errors.password) { %>
+    <p class="error-message"><%= errors.password.msg %></p>
+  <% } %>
+</div>
+
+<div class="register-input-group">
+  <label for="confirmPassword">Potvrdi lozinku</label>
+  <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Ponovite lozinku">
+  <% if (errors && errors.confirmPassword) { %>
+    <p class="error-message"><%= errors.confirmPassword.msg %></p>
+  <% } %>
+</div>
         <% if (typeof errors !== "undefined" && errors.length > 0) { %>
           <div class="register-error-list">
             <ul>

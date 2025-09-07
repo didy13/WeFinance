@@ -10,6 +10,7 @@ const cron = require("node-cron");
 const Group = require("../models/Group");
 const Invite = require("../models/Invites");
 const { showThrottleMessage } = require("ethers");
+const loginValidation = require("../public/js/loginValidation");
 
 var index = "index";
 var group = "group";
@@ -231,7 +232,7 @@ router.get("/profile", isAuthenticated, async (req, res) => {
 
 router.get("/login", (req, res) => {
   if (req.session.user) return res.redirect("/");
-  res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "" });
+  res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "", errors: {} });
 });
 
 router.post("/finish-tutorial", isAuthenticated, (req, res) => {
@@ -279,26 +280,59 @@ router.post("/add", isAuthenticated, (req, res) => {
   });
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", loginValidation, async (req, res) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const mappedErrors = errors.mapped(); // { username: {msg: ...}, password: {msg: ...} }
+    return res.render("login", {
+      title: "WeInvest - Prijava",
+      css: index,
+      user: req.body,
+      errors: mappedErrors
+    });
+  }
+
   const { username, password } = req.body;
-  if (!username || !password) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Korisničko ime i lozinka su obavezni" });
 
   try {
     const user = await Korisnik.findByUsername(username);
-    if (!user) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Nepostojeće korisničko ime" });
+    if (!user) {
+      return res.render("login", {
+        title: "WeInvest - Prijava",
+        css: index,
+        user: req.body,
+        errors: { username: { msg: "Nepostojeće korisničko ime" } }
+      });
+    }
 
     const valid = await bcrypt.compare(password, user.password);
-    if (!valid) return res.render("login", { title: "WeInvest - Prijava", css: index, user: "", error: "Netačna lozinka" });
+    if (!valid) {
+      return res.render("login", {
+        title: "WeInvest - Prijava",
+        css: index,
+        user: req.body,
+        errors: { password: { msg: "Netačna lozinka" } }
+      });
+    }
 
-    // minimalno, refreshUser middleware će dopuniti sve posle
-    req.session.user = { id: user.id, username: user.username, streak: user.streak };
+    // ako je sve ok
+    req.session.user = {
+      id: user.id,
+      username: user.username,
+      streak: user.streak
+    };
     req.session.save(() => res.redirect("/"));
   } catch (err) {
     console.error(err);
-    res.status(500).send("Greška na serveru");
+    res.status(500).render("login", {
+      title: "WeInvest - Prijava",
+      css: index,
+      user: req.body,
+      errors: { general: { msg: "Greška na serveru, pokušajte ponovo" } }
+    });
   }
 });
-
 router.get("/logout", (req, res) => {
   req.session.destroy(err => {
     if (err) return res.status(500).send("Greška pri odjavi");
@@ -314,26 +348,55 @@ router.get("/register", (req, res) => {
 
 router.post("/register", registerValidation, async (req, res) => {
   const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.render("register", { title: "WeInvest - Registracija", user: "", css: index, error: errors.array()[0].msg, errors: errors.array() });
+
+  if (!errors.isEmpty()) {
+    const mappedErrors = errors.mapped(); // { username: { msg: "..." }, password: {...}, confirmPassword: {...} }
+    return res.render("register", {
+      title: "WeInvest - Registracija",
+      user: req.body, // da inputi ostanu popunjeni
+      css: index,
+      error: "",
+      errors: mappedErrors
+    });
+  }
 
   const { username, password } = req.body;
+
   try {
     const existing = await Korisnik.findByUsername(username);
-    if (existing) return res.render("register", { title: "WeInvest - Registracija", user: "", css: index, error: "Korisničko ime već postoji", errors: [] });
+    if (existing) {
+      return res.render("register", {
+        title: "WeInvest - Registracija",
+        user: req.body,
+        css: index,
+        error: "",
+        errors: { username: { msg: "Korisničko ime već postoji" } }
+      });
+    }
 
     const hashed = await bcrypt.hash(password, 10);
     const newUser = new Korisnik(username, hashed);
     const userId = await newUser.save();
 
+    // inicijalno postignuće
     await new Promise((resolve, reject) => {
-      connection.query("UPDATE user_achievements SET current = 1 WHERE achievement_id = 1;", (err) => err ? reject(err) : resolve());
+      connection.query(
+        "UPDATE user_achievements SET current = 1 WHERE achievement_id = 1;",
+        (err) => (err ? reject(err) : resolve())
+      );
     });
 
     req.session.user = { id: userId, username };
     req.session.save(() => res.redirect("/"));
   } catch (err) {
     console.error(err);
-    res.status(500).render("register", { title: "WeInvest - Registracija", user: "", css: index, error: "Greška, pokušajte ponovo", errors: [] });
+    res.status(500).render("register", {
+      title: "WeInvest - Registracija",
+      user: req.body,
+      css: index,
+      error: "",
+      errors: { general: { msg: "Greška, pokušajte ponovo" } }
+    });
   }
 });
 
