@@ -112,13 +112,18 @@ async function loadAndRenderProfile(req, res, errorMessage = "") {
       );
     });
 
-    const goals = await new Promise((resolve, reject) => {
+    // Pokupi sve ciljeve korisnika
+    const allGoals = await new Promise((resolve, reject) => {
       connection.query(
-        "SELECT id, name, current, target FROM goals WHERE user_id = ?",
+        "SELECT id, name, current, target, completed FROM goals WHERE user_id = ?",
         [userId],
         (err, results) => err ? reject(err) : resolve(results)
       );
     });
+
+    // Odmah ih podeli
+    const completedGoals = allGoals.filter(g => g.completed === 1);
+    const activeGoals = allGoals.filter(g => !g.completed || g.completed === 0);
 
     const expenses = await new Promise((resolve, reject) => {
       connection.query(
@@ -128,10 +133,10 @@ async function loadAndRenderProfile(req, res, errorMessage = "") {
       );
     });
 
-    // Markiraj završene ciljeve
+    // Markiraj završene ciljeve (ako current == target)
     await new Promise((resolve, reject) => {
       connection.query(
-        "UPDATE goals AS g INNER JOIN users AS u ON g.user_id = u.id SET completed = 1 WHERE g.current = g.target AND u.id = ?",
+        "UPDATE goals SET completed = 1 WHERE current = target AND user_id = ?",
         [userId],
         (err) => err ? reject(err) : resolve()
       );
@@ -139,7 +144,7 @@ async function loadAndRenderProfile(req, res, errorMessage = "") {
 
     const showTutorial = !user.tutorial;
 
-    // osveži sesiju da uvek ima showTutorial
+    // update sesije
     req.session.user = {
       ...req.session.user,
       username: user.username,
@@ -154,7 +159,8 @@ async function loadAndRenderProfile(req, res, errorMessage = "") {
     res.render("profile", {
       title: "WeInvest - Moj profil",
       user,
-      goals,
+      goals: activeGoals,       // <--- šalješ samo aktivne
+      completedGoals,           // <--- i posebno završene
       expenses,
       css: "profile",
       error: errorMessage,
@@ -652,9 +658,9 @@ router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
   const { goalbalance, goalId } = req.body;
   const userId = req.session.user.id;
 
-  const amount = parseFloat(goalbalance);
+  let amount = parseFloat(goalbalance);
   if (isNaN(amount) || amount <= 0) {
-    return res.redirect("/profile");
+    return loadAndRenderProfile(req, res, "Uneli ste nevažeći iznos.");
   }
 
   const query = `
@@ -672,45 +678,53 @@ router.post("/addgoalbalance", isAuthenticated, async (req, res) => {
     const goalCurrent = parseFloat(results[0].current);
     const goalTarget = parseFloat(results[0].target);
 
+    // korisnik nema dovoljno novca
     if (amount > userBalance) {
-      return loadAndRenderProfile(req, res, "Nemate dovoljno novca");
-    }
-    if (amount + goalCurrent > goalTarget) {
-      return loadAndRenderProfile(req, res, "Ukupan novac premašuje cilj!");
+      return loadAndRenderProfile(req, res, `Nemate dovoljno novca. Balans: ${userBalance}`);
     }
 
-    if (amount + goalCurrent === goalTarget) {
+    // koliko je ostalo do cilja
+    const remaining = goalTarget - goalCurrent;
+    if (remaining <= 0) {
+      return loadAndRenderProfile(req, res, "Cilj je već dostignut.");
+    }
+
+    // ako je uneo više nego što je potrebno → skrati na preostali iznos
+    if (amount > remaining) {
+      amount = remaining;
+    }
+
+    const newGoalCurrent = goalCurrent + amount;
+    const newUserBalance = userBalance - amount;
+
+    // Ako je cilj dostignut nakon ove transakcije
+    if (newGoalCurrent >= goalTarget) {
       const queryDone = `
-        UPDATE goals as g
-        INNER JOIN users as u ON u.id = g.user_id
-        SET completed = 1
-        WHERE g.id = ? and u.id = ?
+        UPDATE goals SET completed = 1 WHERE id = ? AND user_id = ?
       `;
       connection.query(queryDone, [goalId, userId], (err2) => {
         if (err2) console.error(err2);
       });
+
       const achQuery = `
         UPDATE user_achievements
         SET current = 1
-        WHERE achievement_id = 4 and user_id = ?
+        WHERE achievement_id = 4 AND user_id = ?
       `;
       connection.query(achQuery, [userId], (err3) => {
         if (err3) console.error(err3);
       });
     }
 
-    const newGoalCurrent = Math.min(goalCurrent + amount, goalTarget);
-    const newUserBalance = userBalance - amount;
-
+    // update daily_saved
     const updateDailySavedQuery = `
-      UPDATE users
-      SET daily_saved = daily_saved + ?
-      WHERE id = ?
+      UPDATE users SET daily_saved = daily_saved + ? WHERE id = ?
     `;
     connection.query(updateDailySavedQuery, [amount, userId], err4 => {
       if (err4) console.error(err4);
     });
 
+    // update goal i balans korisnika
     const updateQuery = `
       UPDATE users u
       JOIN goals g ON g.user_id = u.id
